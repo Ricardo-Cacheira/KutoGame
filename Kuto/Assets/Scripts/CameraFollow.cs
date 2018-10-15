@@ -4,11 +4,10 @@ public class CameraFollow : MonoBehaviour {
 
     public Transform target;
 
-    Camera camera;
+    private Camera camera;
 
     public float smoothSpeed = 0.125f;
     public float size;
-    private Vector3 velocity = Vector3.zero;
 
     public float cameraMinimum = 2f;
     public float cameraMaximum = 7f;
@@ -18,12 +17,12 @@ public class CameraFollow : MonoBehaviour {
     {
         camera = GetComponent<Camera>();
 
-        size = 3f;
+        size = 7f;
     }
  
     void Update () {
         float zoom = size;
-        zoom += Input.GetAxis("Mouse ScrollWheel") * sensitivity;
+        zoom -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
         zoom = Mathf.Clamp(zoom, cameraMinimum, cameraMaximum);
         size = zoom;
     }

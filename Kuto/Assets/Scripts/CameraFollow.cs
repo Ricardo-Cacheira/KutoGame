@@ -25,9 +25,6 @@ public class CameraFollow : MonoBehaviour {
         zoom -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
         zoom = Mathf.Clamp(zoom, cameraMinimum, cameraMaximum);
         size = zoom;
-        
-        if(new Vector2(0,0) != Vector2.zero)
-        Debug.Log("asdasd");
     }
     
     void LateUpdate()
@@ -38,5 +35,4 @@ public class CameraFollow : MonoBehaviour {
 
         camera.orthographicSize = size;
     }
-    
 }

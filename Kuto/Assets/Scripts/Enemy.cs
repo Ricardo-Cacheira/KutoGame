@@ -10,10 +10,15 @@ public class Enemy : MonoBehaviour {
 	private Animator anim;
 	// public GameObject bloodEffect;
 
+	Vector2 dir;
+
 	void Start () 
 	{
 		// anim.GetComponent<Animator>();
 		// anim.SetBool("isRunning", true);
+		int randX = Random.Range(-1, 2);
+		int randY = Random.Range(-1, 2);
+		dir = new Vector2(randX, randY);
 	}
 	
 	void Update () 
@@ -22,8 +27,8 @@ public class Enemy : MonoBehaviour {
 		{
 			Destroy(gameObject);
 		}
-
-		transform.Translate(Vector2.left * speed * Time.deltaTime);
+		
+		transform.Translate(dir.normalized * speed * Time.deltaTime);
 	}
 
 	public void TakeDamage(int damage) 

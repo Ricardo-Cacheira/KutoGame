@@ -14,14 +14,20 @@ public class PlayerAttack : MonoBehaviour {
 	public LayerMask whatIsEnemies;
 	public float attackRange;
 	public int damage;
-	
+	public GameObject player;
+	Movement movScript;
+
+	void Start () {
+		movScript = transform.GetComponent<Movement>();
+	}
+
 	void Update () 
 	{
-		if (Input.GetKey(KeyCode.F))
+		if (Input.GetButtonDown("Fire2"))
 		{
-			Attack();
-		}
-		
+			
+			Attack();	
+		}		
 	}
 
 	void Attack()
@@ -31,10 +37,12 @@ public class PlayerAttack : MonoBehaviour {
 			// camAnim.SetTrigger("shake");
 			// playerAnim.SetTrigger("attack");
 			Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPos.position, attackRange, whatIsEnemies);
+			
 			for (int i = 0; i < enemiesToDamage.Length; i++)
 			{
 				enemiesToDamage[i].GetComponent<Enemy>().TakeDamage(damage);
-			}		
+			}
+
 			timeBtwAttack = startTimeBtwAttack;
 		} else
 		{

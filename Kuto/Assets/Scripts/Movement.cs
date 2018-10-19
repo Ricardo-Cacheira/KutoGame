@@ -6,7 +6,8 @@ public class Movement : MonoBehaviour {
 
 	private Rigidbody2D rigidbody2D;
 
-	Vector2 movement;
+	public Vector2 movement;
+	public Transform attackPosition;
 
 	bool dashing, leaping;
 	public float speed = 5f;
@@ -30,9 +31,10 @@ public class Movement : MonoBehaviour {
 	{
 		float x = Input.GetAxisRaw("Horizontal");
 		float y = Input.GetAxisRaw("Vertical");
-		float lookx = Input.GetAxisRaw("HorizontalLook");
-		float looky = Input.GetAxisRaw("VerticalLook");
+
+		// movement = new Vector2(x, y);
 		
+
 		if (dashing)
 		{
 			StartCoroutine(Dash());
@@ -42,19 +44,8 @@ public class Movement : MonoBehaviour {
 			StartCoroutine(Leap());
 		}else
 		{
-			movement = new Vector2(x, y);
-			rigidbody2D.velocity = movement * speed;
-
-			if(movement == Vector2.zero)
-			{
-				movement = new Vector2(lastX, lastY).normalized;
-				Debug.Log(new Vector2(lastX, lastY));
-			}else if(movement != new Vector2(lastX,lastY)){
-			}
-				// transform.eulerAngles = new Vector3(0,0, Mathf.Atan2(lookx,looky)*180 / Mathf.PI);
-			if (lookx != 0 || looky != 0)
-			{
-			}
+			movement = new Vector2(x, y).normalized;
+			rigidbody2D.velocity = movement * speed;	
 
 			if(Input.GetButtonDown("Dash") && timeStamp <= Time.time)
 			{
@@ -67,13 +58,22 @@ public class Movement : MonoBehaviour {
 				leaping = true;
 				Debug.Log("leaping");
 			}
+			Debug.Log("Movement: " + movement);
+
+			if (movement != new Vector2(lastX, lastY) && movement != Vector2.zero)
+			{
+				attackPosition.position = transform.position + (Vector3)(movement);
+				// attackPosition.rotation = Quaternion.Euler(0, 0, Vector2.Angle(movement, Vector2.up));	
+			}	
+			
 		}
 
-		if(movement!= Vector2.zero && !dashing && !leaping) 
+		if(movement != Vector2.zero)
 		{
-			lastX = x;
-			lastY = y;
+		lastX = x;
+		lastY = y;
 		}
+		
 	}
 
 	IEnumerator Dash()

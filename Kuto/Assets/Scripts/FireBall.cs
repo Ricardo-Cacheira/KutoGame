@@ -12,6 +12,7 @@ public class FireBall : MonoBehaviour {
 		GameObject player = GameObject.FindWithTag("Player");
 		Movement movScript = player.GetComponent<Movement>();
 		Vector2 dir = new Vector2(movScript.lastX,movScript.lastY);
+		Debug.Log(movScript.lastX);
 		rb = GetComponent<Rigidbody2D>();
 		rb.velocity = dir * speed;
 	}

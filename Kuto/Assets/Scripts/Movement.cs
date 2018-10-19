@@ -5,6 +5,7 @@ using UnityEngine;
 public class Movement : MonoBehaviour {
 
 	private Rigidbody2D rigidbody2D;
+
 	Vector2 movement;
 
 	bool dashing, leaping;
@@ -16,7 +17,6 @@ public class Movement : MonoBehaviour {
 	public float lastX = 1f;
 	public float lastY = 0f;
 
-	// Use this for initialization
 	void Start () {
 		
 		rigidbody2D = GetComponent<Rigidbody2D>();
@@ -45,6 +45,12 @@ public class Movement : MonoBehaviour {
 			movement = new Vector2(x, y);
 			rigidbody2D.velocity = movement * speed;
 
+			if(movement == Vector2.zero)
+			{
+				movement = new Vector2(lastX, lastY).normalized;
+				Debug.Log(new Vector2(lastX, lastY));
+			}else if(movement != new Vector2(lastX,lastY)){
+			}
 				// transform.eulerAngles = new Vector3(0,0, Mathf.Atan2(lookx,looky)*180 / Mathf.PI);
 			if (lookx != 0 || looky != 0)
 			{

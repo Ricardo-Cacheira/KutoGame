@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: dd9c8ff68e3dc214e82f7fe65da9cf9f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - attackPoint: {fileID: 4735760569654312, guid: a5b6028a39141b845acde78fb3bb9bf0,
+      type: 2}
+  - rigidbody2D: {fileID: 50022227761427464, guid: a5b6028a39141b845acde78fb3bb9bf0,
+      type: 2}
+  - bulletPrefab: {fileID: 1933743984748774, guid: 8103fd8a5f642fe40aab44cb96014588,
+      type: 2}
+  - player: {fileID: 1427722298308738, guid: a5b6028a39141b845acde78fb3bb9bf0, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -8,9 +8,10 @@ public class FireBall : MonoBehaviour {
 	Rigidbody2D rb;
 	public GameObject player;
 
-	void Start () {
+	void Start () 
+	{
 		player = GameObject.FindWithTag("Player");
-		Movement movScript = player.GetComponent<Movement>();
+		PlayerHandler movScript = player.GetComponent<PlayerHandler>();
 		Vector2 dir = new Vector2(movScript.lastX,movScript.lastY).normalized;
 		rb = GetComponent<Rigidbody2D>();
 		rb.velocity = dir * speed;
@@ -23,14 +24,16 @@ public class FireBall : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D hitInfo)
 	{
-		Debug.Log(hitInfo.name);
 		if(hitInfo.tag != "Player") 
 		{
 			if (hitInfo.tag == "Enemy")
 			{
-				hitInfo.GetComponent<Enemy>().TakeDamage(1);
-
-			}
+				hitInfo.GetComponent<EnemyHandler>().GetHealthSystem().Damage(50);
+			} else if (hitInfo.tag == "EnemyRanged")
+			{
+				hitInfo.GetComponent<EnemyRangedHandler>().GetHealthSystem().Damage(50);
+			}	
+		
 		Destroy(gameObject);
 		}
 	}

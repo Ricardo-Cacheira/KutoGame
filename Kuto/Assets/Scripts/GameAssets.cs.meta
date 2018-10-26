@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 224365d1f86c42045bbbe2708b05c13e
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - pfPlayerTransform: {fileID: 4928605384772228, guid: a5b6028a39141b845acde78fb3bb9bf0,
+      type: 2}
+  - pfEnemyTransform: {fileID: 4161256954528478, guid: 997f86447a8d07f4387dc9e95da86529,
+      type: 2}
+  - pfHealthBar: {fileID: 4090514546342678, guid: 01a6b42a1d84b664c890d8dcb066becd,
+      type: 2}
+  - pfFireBall: {fileID: 4423460484850356, guid: 8103fd8a5f642fe40aab44cb96014588,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

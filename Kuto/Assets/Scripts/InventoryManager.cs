@@ -1,17 +1,51 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class InventoryManager : MonoBehaviour {
+
+		public static InventoryManager im;
 
 	[SerializeField] Inventory inventory;
 	[SerializeField] EquipmentPanel equipmentPanel;
 
 	private void Awake()
 	{
+		im = this;
 		inventory.OnItemRightClickedEvent += EquipFromInventory;
 		equipmentPanel.OnItemRightClickedEvent += unequipFromEquipmentPanel;
 	}
 
-	private void EquipFromInventory(Item item)
+	void Start()
+	{
+		Fill();
+	}
+
+	private void Fill()
+	{
+		for (int i = 0; i < GameControl.control.equippedItems.Count; i++)
+		{	
+			inventory.AddItem(GameControl.control.equippedItems[i]);
+			EquipFromInventory(inventory.inventory[0]);
+		}
+		for (int i = 0; i < GameControl.control.inventoryItems.Count; i++)
+		{
+			inventory.AddItem(GameControl.control.inventoryItems[i]);
+		}
+	}
+
+	public void SaveInventory()
+	{
+		GameControl.control.inventoryItems = inventory.inventory;
+		List<EquippableItem> equipped = new List<EquippableItem>();
+		foreach (var item in equipmentPanel.equipped)
+		{
+			if(item.Item != null)
+				equipped.Add((EquippableItem)item.Item);
+		}
+		GameControl.control.equippedItems = equipped;		
+	}
+
+	public void EquipFromInventory(Item item)
 	{
 		if(item is EquippableItem)
 		{

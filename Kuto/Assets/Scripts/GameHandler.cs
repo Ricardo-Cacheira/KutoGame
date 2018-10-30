@@ -11,6 +11,7 @@ public class GameHandler : MonoBehaviour {
 	private List<EnemyHandler> enemyMeleeHandlerList;
 	private List<EnemyRangedHandler> enemyRangedHandlerList;
 
+
 	[SerializeField]
     private CameraFollow cameraFollow;
 
@@ -22,8 +23,8 @@ public class GameHandler : MonoBehaviour {
 
 		cameraFollow.Setup(7.5f, playerHandler.GetPosition);
 		
-		FunctionPeriodic.Create(SpawnMeleeEnemy, 5f);
-		FunctionPeriodic.Create(SpawnRangedEnemy, 8f);
+		FunctionPeriodic.Create(SpawnMeleeEnemy, 8f);
+		FunctionPeriodic.Create(SpawnRangedEnemy, 15f);
 	}
 
 	private void SpawnMeleeEnemy() 

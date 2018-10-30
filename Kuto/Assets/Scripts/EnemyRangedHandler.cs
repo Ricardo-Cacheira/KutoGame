@@ -27,7 +27,7 @@ public class EnemyRangedHandler : MonoBehaviour {
     private PlayerHandler playerHandler;
     private HealthSystem healthSystem;
     private Vector3 lastMoveDir;
-	private Vector3 moveDir;
+	public Vector3 moveDir;
     private State state;
 	public Transform attackPoint;
 	public LayerMask whatIsPlayer;
@@ -66,6 +66,7 @@ public class EnemyRangedHandler : MonoBehaviour {
             break;
 
         case State.Busy:
+            HandleAttack();
             break;
         }
     }
@@ -73,7 +74,7 @@ public class EnemyRangedHandler : MonoBehaviour {
     private void HandleMovement() 
     {	
 		float distanceToPlayer = Vector3.Distance(PlayerHandler.playerHandler.GetPosition(), GetPosition());
-		Vector3 moveDir = (PlayerHandler.playerHandler.GetPosition() - GetPosition()).normalized;
+		moveDir = (PlayerHandler.playerHandler.GetPosition() - GetPosition()).normalized;
 
 		if (distanceToPlayer > 8) 
 		{
@@ -82,34 +83,17 @@ public class EnemyRangedHandler : MonoBehaviour {
 			transform.position = transform.position + (-moveDir) * (speed/2) * Time.deltaTime;
 		} else 
 		{
-			// Instantiate(GameAssets.i.pfFireBall, GetPosition(), attackPoint.rotation);
-			// SetStateBusy();
-			// StartCoroutine(Attack());
+			SetStateBusy();
+			StartCoroutine(Attack());
 		}
     }
 
-	// private void HandleAttack() 
-    // {
-    //     float distanceToPlayer = Vector3.Distance(GetPosition(), playerHandler.GetPosition());
-    //     if (distanceToPlayer < 1.5f) 
-    //     {  
-    //         attackPoint.position = transform.position + (Vector3) moveDir;
-
-    //         if (state == State.Normal) 
-    //         {
-    //             SetStateBusy();
-    //             StartCoroutine(Attack());
-    //         } 
-    //     }
-    // }
-
     IEnumerator Attack() 
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1f);
         SetStateNormal();
-        Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 1, whatIsPlayer);
-        player.GetComponent<PlayerHandler>().GetHealthSystem().Damage(10);
-        if (player.GetComponent<PlayerHandler>().GetHealthSystem().GetHealthPercent() <= 0) {
+        Instantiate(GameAssets.i.pfVoidBall, GetPosition(), Quaternion.AngleAxis(Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg, Vector3.forward));
+        if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
             GameHandler.Restart();
         }
     }

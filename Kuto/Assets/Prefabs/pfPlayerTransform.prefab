@@ -178,6 +178,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9375ffd1523f4c4ba9aae56a03d9dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveDir: {x: 0, y: 0, z: 0}
+  attackPoint: {fileID: 0}
+  whatIsPlayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &114729418136612788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -190,7 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackPoint: {fileID: 4735760569654312}
-  rigidbody2D: {fileID: 50022227761427464}
+  rb2d: {fileID: 50022227761427464}
   attackRange: 1
   damage: 1
   whatIsEnemies:
@@ -203,8 +208,6 @@ MonoBehaviour:
   recoveryTime: 0.5
   lastX: 1
   lastY: 0
-  bulletPrefab: {fileID: 1933743984748774, guid: 8103fd8a5f642fe40aab44cb96014588,
-    type: 2}
   player: {fileID: 1427722298308738}
   animator: {fileID: 95971407172551570}
   timeBtwAttack: 0

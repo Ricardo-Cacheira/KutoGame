@@ -8,7 +8,7 @@ public class PlayerHandler : MonoBehaviour {
     {
         Transform playerTransform = Instantiate(GameAssets.i.pfPlayerTransform, new Vector3(0, 0), Quaternion.identity);
         
-        HealthSystem healthSystem = new HealthSystem(100);
+        HealthSystem healthSystem = new HealthSystem(150);
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, new Vector3(0, 1.5f), Quaternion.identity, playerTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
@@ -22,7 +22,7 @@ public class PlayerHandler : MonoBehaviour {
 	public event EventHandler OnDead;
     public Transform attackPoint;
 
-    public Rigidbody2D rigidbody2D;
+    public Rigidbody2D rb2d;
 	public float attackRange;
 	public int damage;
     public LayerMask whatIsEnemies;
@@ -43,13 +43,13 @@ public class PlayerHandler : MonoBehaviour {
 	public float lastX = 1f;
 	public float lastY = 0f;
 
-    public GameObject bulletPrefab;
 	public GameObject player;
     public Animator animator;
 
     public float timeBtwAttack;
     public float startTimeBtwAttack;
     private bool healing = false;
+    private bool aoe = false;
 
     private enum State 
     {
@@ -106,14 +106,6 @@ public class PlayerHandler : MonoBehaviour {
 		float y = Input.GetAxisRaw("Vertical");
         float xScale = transform.localScale.x;
 
-        //Change x direction
-        if (x == -1 && xScale != -1) {
-            transform.localScale -= new Vector3(2, 0);
-
-        } else if (x == 1 && xScale != 1) {
-            transform.localScale += new Vector3(2, 0);
-        }
-
         //stop colliding with enemies
         if (dashing == true) {
             this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 0.35f);
@@ -134,88 +126,62 @@ public class PlayerHandler : MonoBehaviour {
 		} else
 		{
 			movement = new Vector2(x, y).normalized;
-			rigidbody2D.velocity = movement * speed;
+			rb2d.velocity = movement * speed;
 
-            if(movement == Vector2.zero) 
-            {
-                animator.SetInteger("Direction", 0);
-                animator.SetBool("IsWalking", false);
-            } 
+            if(movement == Vector2.zero) animator.SetBool("isWalking", false);
 
-			if(Input.GetButtonDown("Dash") && timeStamp <= Time.time)
-			{
-				dashing = true;
-				Debug.Log("dashing");
-			}
+			if(Input.GetButtonDown("Dash") && timeStamp <= Time.time) dashing = true;
+			if(Input.GetButtonDown("Leap") && timeStamp <= Time.time) leaping = true;
 
-			if(Input.GetButtonDown("Leap") && timeStamp <= Time.time)
-			{
-				leaping = true;
-				Debug.Log("leaping");
-			}
-
-			if (movement != new Vector2(lastX, lastY) && movement != Vector2.zero)
-			{
-				attackPoint.position = transform.position + (Vector3)(movement);
-			}	
+			if (movement != new Vector2(lastX, lastY) && movement != Vector2.zero)attackPoint.position = transform.position + (Vector3)(movement);	
 			
 		}
 
 		if(movement != Vector2.zero)
 		{
-            animator.SetBool("IsWalking", true);
+            animator.SetBool("isWalking", true);
 		    lastX = x;
 	    	lastY = y;
-            if ((lastX == 1 || lastX == -1) && lastY == 0)
-            {
-                animator.SetInteger("Direction", 3);
-            }
-            if ((lastX != 1) && lastY == -1)
-            {
-                animator.SetInteger("Direction", 5);
-            }       
+
+            //right
+            if (lastX == 1 && lastY == 0) animator.SetInteger("Direction", 3);
+            //left
+            if (lastX == -1 && lastY == 0) animator.SetInteger("Direction", 7);
+            //down
+            if ((lastX != 1) && lastY == -1) animator.SetInteger("Direction", 5);  
         }
 	}
 
 	IEnumerator Dash()
 	{   
-		if(movement == Vector2.zero)
-		{
-			movement = new Vector2(lastX, lastY).normalized;
-		}
+		if(movement == Vector2.zero) movement = new Vector2(lastX, lastY).normalized;
 
 		timeStamp = Time.time + recoveryTime;
-		rigidbody2D.velocity = movement * dashSpeed;
+		rb2d.velocity = movement * dashSpeed;
 		yield return new WaitForSeconds(dashTime);
 		dashing = false;
 	}
 
 	IEnumerator Leap()
 	{	
-		if(movement == Vector2.zero)
-		{
-			movement = new Vector2(lastX, lastY).normalized;
-		}
+		if(movement == Vector2.zero) movement = new Vector2(lastX, lastY).normalized;
 
 		timeStamp = Time.time + recoveryTime;
-		rigidbody2D.velocity = (movement * -1) * dashSpeed * 1.5f;
+		rb2d.velocity = (movement * -1) * dashSpeed * 1.5f;
 		yield return new WaitForSeconds(dashTime);
 		leaping = false;
 	}
     
     private void HandleShooting() 
     {
-        if (Input.GetButtonDown("Fire1")) 
-        {
-		    Instantiate(GameAssets.i.pfFireBall, player.transform.position, attackPoint.rotation);
-	    }
+        if (Input.GetButtonDown("Fire1")) Instantiate(GameAssets.i.pfFireBall, player.transform.position, attackPoint.rotation);
     }
 
     private void HandleAttack() 
     {
         if (Input.GetButtonDown("Fire2") && timeBtwAttack <= 0) 
         {
-            animator.SetBool("IsAttacking", true);
+            animator.SetTrigger("Attack");
 
             Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, whatIsEnemies);      
 
@@ -225,19 +191,13 @@ public class PlayerHandler : MonoBehaviour {
                 {
                    EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
                    enemy.GetHealthSystem().Damage(20);
-                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) 
-                    {
-                        enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
-                    }        
+                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
                 } else if (enemiesToDamage[i].gameObject.tag == "Enemy")
                 {
                     EnemyHandler enemy = enemiesToDamage[i].GetComponent<EnemyHandler>();  
                     enemy.GetHealthSystem().Damage(20);
-                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) 
-                    {
-                        enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
-                    } 
+                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
 
@@ -246,61 +206,51 @@ public class PlayerHandler : MonoBehaviour {
         } else
         {    
         timeBtwAttack -= Time.deltaTime;
-
-        if (timeBtwAttack > 0) 
-        {
-        animator.SetBool("IsAttacking", false);
-        }
 
         }
     } 
 
     private void HandleAoe() 
     {
-         if (Input.GetKeyDown(KeyCode.M) && timeBtwAttack <= 0) 
-        {
-            Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPoint.position, attackRange * 3, whatIsEnemies);      
+         if (Input.GetKeyDown(KeyCode.M) && aoe == false) StartCoroutine(AoE());     
+    }
+
+    IEnumerator AoE() 
+    {
+        aoe = true;
+        Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
+        StartCoroutine(DeletePf());
+
+        Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(transform.position, attackRange * 4, whatIsEnemies);      
 
             for (int i = 0; i < enemiesToDamage.Length; i++)
             {
                 if (enemiesToDamage[i].gameObject.tag == "EnemyRanged") 
                 {
-                   EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
-                   enemy.GetHealthSystem().Damage(50);
-                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) 
-                    {
-                        enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
-                    }        
+                    EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
+                    enemy.GetHealthSystem().Damage(50);
+                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
                 } else if (enemiesToDamage[i].gameObject.tag == "Enemy")
                 {
                     EnemyHandler enemy = enemiesToDamage[i].GetComponent<EnemyHandler>();  
                     enemy.GetHealthSystem().Damage(50);
-                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) 
-                    {
-                        enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
-                    } 
+                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
-
-            timeBtwAttack = startTimeBtwAttack;
-
-        } else
-        {    
-        timeBtwAttack -= Time.deltaTime;
-
-        if (timeBtwAttack > 0) 
-        {
-        }
-
-        }
+        yield return new WaitForSeconds(5);
+        aoe = false;
     }
 
+    IEnumerator DeletePf() 
+    {
+        GameObject toDelete = GameObject.FindWithTag("Circle");
+        yield return new WaitForSeconds(1);
+        Destroy(toDelete);       
+    }
     private void HandleHealing()
     {
-        if (Input.GetKeyDown(KeyCode.K) && !healing) {
-            StartCoroutine(Healing());
-        }
+        if (Input.GetKeyDown(KeyCode.K) && !healing) StartCoroutine(Healing());
     }
     IEnumerator Healing()
 	{	
@@ -309,6 +259,19 @@ public class PlayerHandler : MonoBehaviour {
 		yield return new WaitForSeconds(3);
         healing = false;
 	}
+
+    void OnTriggerEnter2D(Collider2D hitInfo)
+	{
+		if(hitInfo.gameObject.tag == "Bomb") 
+		{
+			this.GetHealthSystem().Damage(50);
+			this.rb2d.AddForce(700 * -movement * speed); //wth
+            // this.rb2d.AddExplosionForce(10, hitInfo.transform.position, 5, 3);
+			Destroy(hitInfo.gameObject);
+		}
+	}
+
+
     private void SetStateBusy() 
     {
         state = State.Busy;
@@ -338,5 +301,7 @@ public class PlayerHandler : MonoBehaviour {
 	{
 		Gizmos.color = Color.red;
 		Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.color = Color.blue;
+		Gizmos.DrawWireSphere(transform.position, attackRange * 4);
 	}
 }

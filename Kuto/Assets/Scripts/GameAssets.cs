@@ -14,4 +14,6 @@ public class GameAssets : MonoBehaviour {
     public Transform pfEnemyRangedTransform;
     public Transform pfHealthBar;
     public Transform pfFireBall;
+    public Transform pfVoidBall;
+    public Transform pfCircle;
 }

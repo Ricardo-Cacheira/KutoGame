@@ -89,10 +89,10 @@ public class EnemyHandler : MonoBehaviour {
 
     IEnumerator Attack() 
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1.5f);
         SetStateNormal();
         Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 1, whatIsPlayer);
-        PlayerHandler.playerHandler.GetHealthSystem().Damage(10);
+        if (player != null) PlayerHandler.playerHandler.GetHealthSystem().Damage(10);
         if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
             GameHandler.Restart();
         }

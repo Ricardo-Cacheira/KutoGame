@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class InventoryManager : MonoBehaviour {
 
-		public static InventoryManager im;
+	public static InventoryManager im;
 
 	[SerializeField] Inventory inventory;
 	[SerializeField] EquipmentPanel equipmentPanel;
@@ -15,13 +15,19 @@ public class InventoryManager : MonoBehaviour {
 		equipmentPanel.OnItemRightClickedEvent += unequipFromEquipmentPanel;
 	}
 
-	void Start()
-	{
-		Fill();
-	}
+	// void Start()
+	// {
+	// 	Fill();
+	// }
 
-	private void Fill()
+	public void Fill()
 	{
+		inventory.inventory.Clear();
+		// System.Array.Clear(equipmentPanel.equipped,0,3);
+		for (int i = 0; i < equipmentPanel.equipped.Length; i++)
+		{
+			equipmentPanel.equipped[i].Item = null;
+		}
 		for (int i = 0; i < GameControl.control.equippedItems.Count; i++)
 		{	
 			inventory.AddItem(GameControl.control.equippedItems[i]);

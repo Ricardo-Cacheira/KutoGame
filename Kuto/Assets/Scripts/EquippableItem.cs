@@ -9,6 +9,7 @@ public enum EquipmentType {
 }
 
 [CreateAssetMenu]
+[Serializable]
 public class EquippableItem : Item {
 
 	public int strenghtBonus;

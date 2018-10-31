@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour {
-
+	
 	[SerializeField] List<Item> items;
 	public List<Item> inventory{
 		get{ return items; }
+		set{ items = value;}
 	}
 	[SerializeField] Transform itemsParent;
 	[SerializeField] ItemSlot[] itemSlots;

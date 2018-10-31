@@ -9,6 +9,8 @@ public class EquipmentPanel : MonoBehaviour {
 	[SerializeField] EquipmentSlot[] equipmentSlots;
 	public EquipmentSlot[] equipped{
 		get{ return equipmentSlots; }
+		set{ equipmentSlots = value; }
+
 	}
 
 	public event Action<Item> OnItemRightClickedEvent;

@@ -15,7 +15,8 @@ public class Menu : MonoBehaviour {
 	
 	public void Junk()
 	{
-		Debug.Log("Junk");
+		Debug.Log(0.1f+0.2f);
+		Debug.Log((0.1f+0.2f) == 0.3f);
 	}
 
 	public void Ware()
@@ -29,13 +30,13 @@ public class Menu : MonoBehaviour {
 
 		if(inventoryVisible)
 		{
-			inventory.transform.Translate(1500,0,0);
+			inventory.transform.localPosition = new Vector3(1500f, 0, 0);
 			inventoryVisible = false;
 			InventoryManager.im.SaveInventory();
 		}
 		else
 		{
-			inventory.transform.Translate(-1500,0,0);
+			inventory.transform.localPosition = new Vector3(0, 0, 0);
 			inventoryVisible = true;
 		}
 	}

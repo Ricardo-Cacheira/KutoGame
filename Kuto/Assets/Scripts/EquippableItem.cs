@@ -12,12 +12,13 @@ public enum EquipmentType {
 [Serializable]
 public class EquippableItem : Item {
 
-	public int strenghtBonus;
-	public int vitalityBonus;
+
+	// public int strenghtBonus;
+	// public int vitalityBonus;
 
 	[Space] // Visible in unity editor
 	
-	// public Skill ability;
+	public int skillID;
 
 	[Space] // Visible in unity editor
 	

@@ -7,18 +7,15 @@ public class InventoryManager : MonoBehaviour {
 
 	[SerializeField] Inventory inventory;
 	[SerializeField] EquipmentPanel equipmentPanel;
+	[SerializeField] List<StatDisplay> stats;
 
 	private void Awake()
 	{
 		im = this;
 		inventory.OnItemRightClickedEvent += EquipFromInventory;
 		equipmentPanel.OnItemRightClickedEvent += unequipFromEquipmentPanel;
-	}
 
-	// void Start()
-	// {
-	// 	Fill();
-	// }
+	}
 
 	public void Fill()
 	{
@@ -37,6 +34,11 @@ public class InventoryManager : MonoBehaviour {
 		{
 			inventory.AddItem(GameControl.control.inventoryItems[i]);
 		}
+
+		stats[0].ValueText.text = GameControl.control.GetLevel().ToString();
+		stats[1].ValueText.text = GameControl.control.vitality.ToString();
+		stats[2].ValueText.text = GameControl.control.strength.ToString();
+		stats[3].ValueText.text = GameControl.control.gold.ToString();
 	}
 
 	public void SaveInventory()

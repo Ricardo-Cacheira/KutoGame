@@ -15,7 +15,7 @@ public class GameControl : MonoBehaviour {
 	[Space]
 
 	public int gold;
-	public float vitality;
+	public float vitality = 100;
 	public float strength;
 	public float experience;
 
@@ -32,13 +32,20 @@ public class GameControl : MonoBehaviour {
 		Load();
 	}
 
+	public int GetLevel()
+	{
+		int number = (int)(experience / 1000);
+
+		return number;
+	}
+
 	public void Save(){
 		BinaryFormatter bf = new BinaryFormatter();
 		//Persistent data path which is a file path to store game realated data in AppData Roaming  ...
 		//.dat  is usually a generic data file that stores information specific to the application it refers to
 		//Sometimes you'll find them by themselves but often they're with other configuration files like DLL files
 		// FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
-		FileStream file = File.Create(Application.persistentDataPath + "playerInfo.json");
+		FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.json");
 
 		PlayerData data = new PlayerData();
 
@@ -64,12 +71,12 @@ public class GameControl : MonoBehaviour {
 	//keep in mind that this is jsut a way to do it
 	public void Load()
 	{
-		if(File.Exists(Application.persistentDataPath + "playerInfo.json"))
+		if(File.Exists(Application.persistentDataPath + "/playerInfo.json"))
 		{
 			BinaryFormatter bf = new BinaryFormatter();
 			// FileStream file = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);			
 			// PlayerData data = (PlayerData)bf.Deserialize(file);
-			string json = File.ReadAllText(Application.persistentDataPath + "playerInfo.json", System.Text.Encoding.Unicode);
+			string json = File.ReadAllText(Application.persistentDataPath + "/playerInfo.json", System.Text.Encoding.Unicode);
 			PlayerData data = JsonUtility.FromJson<PlayerData>(json);
 			// file.Close();
 
@@ -85,6 +92,8 @@ public class GameControl : MonoBehaviour {
 		else{
 			Debug.Log("Failed to load");
 		}
+
+		Debug.Log(Application.persistentDataPath);
 	}
 
 }

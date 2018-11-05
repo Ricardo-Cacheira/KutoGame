@@ -126,7 +126,6 @@ public class EnemyHandler : MonoBehaviour {
 
     private void HealthSystem_OnDead(object sender, EventArgs e) 
     {
-        // Dead! Destroy self
         if (OnDead != null) OnDead(this, EventArgs.Empty);
         Destroy(gameObject);
     }

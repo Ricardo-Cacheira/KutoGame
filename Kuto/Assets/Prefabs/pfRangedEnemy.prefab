@@ -129,6 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9375ffd1523f4c4ba9aae56a03d9dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveDir: {x: 0, y: 0, z: 0}
   attackPoint: {fileID: 4733741171066920}
   whatIsPlayer:
     serializedVersion: 2
@@ -167,7 +168,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: b37fe737e6bcce945b704d7dc158fb66, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

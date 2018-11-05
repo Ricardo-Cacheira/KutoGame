@@ -15,6 +15,10 @@ public class GameHandler : MonoBehaviour {
 	[SerializeField]
     private CameraFollow cameraFollow;
 
+	private bool asStarted = false;
+
+	GameObject enemySpawner;
+
 	private void Start() 
 	{
 		enemyMeleeHandlerList = new List<EnemyHandler>();
@@ -22,12 +26,37 @@ public class GameHandler : MonoBehaviour {
 		playerHandler = PlayerHandler.CreatePlayer(GetClosestEnemyHandler);
 
 		cameraFollow.Setup(7.5f, playerHandler.GetPosition);
-		
-		FunctionPeriodic.Create(SpawnMeleeEnemy, 8f);
-		FunctionPeriodic.Create(SpawnRangedEnemy, 15f);
+
+		enemySpawner = GameObject.Find("EnemySpawner");
+
 	}
 
-	private void SpawnMeleeEnemy() 
+	private void Update()
+	{
+		if (!asStarted) 
+		{
+			if (enemyMeleeHandlerList.Count > 0) asStarted = true;
+
+		} else if (asStarted)
+		{
+			for(int i = enemyMeleeHandlerList.Count - 1; i > -1; i--)
+ 			{
+    			if (enemyMeleeHandlerList[i] == null) enemyMeleeHandlerList.RemoveAt(i);
+ 			}
+			for(int i = enemyRangedHandlerList.Count - 1; i > -1; i--)
+			{
+				if (enemyRangedHandlerList[i] == null)	enemyRangedHandlerList.RemoveAt(i);
+			} 
+
+			if (enemyMeleeHandlerList.Count == 0 && enemyRangedHandlerList.Count == 0 && enemySpawner == null) 
+			{
+				playerHandler.SaveRewards();
+				Restart();
+			}
+		}
+	}
+
+	public void SpawnMeleeEnemy() 
 	{
 		Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2, 3f); 
 		EnemyHandler enemyHandler = EnemyHandler.CreateEnemy(spawnPosition, playerHandler);
@@ -35,7 +64,7 @@ public class GameHandler : MonoBehaviour {
 		enemyMeleeHandlerList.Add(enemyHandler);
 	}
 
-	private void SpawnRangedEnemy() 
+	public void SpawnRangedEnemy() 
 	{
 		Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(6, 7.5f); 
 		EnemyRangedHandler enemyRangedHandler = EnemyRangedHandler.CreateEnemy(spawnPosition, playerHandler);
@@ -47,6 +76,7 @@ public class GameHandler : MonoBehaviour {
 	{
 		EnemyHandler enemyMeleeHandler = sender as EnemyHandler;
 		enemyMeleeHandlerList.Remove(enemyMeleeHandler);
+		playerHandler.GetRewards(20, 10);
 	}
 
 	private EnemyHandler GetClosestEnemyHandler(Vector3 playerPosition) 
@@ -76,6 +106,7 @@ public class GameHandler : MonoBehaviour {
 	{
 		EnemyRangedHandler enemyRangedHandler = sender as EnemyRangedHandler;
 		enemyRangedHandlerList.Remove(enemyRangedHandler);
+		playerHandler.GetRewards(30, 7);
 	}
 
 	private EnemyRangedHandler GetClosestEnemyRangedHandler(Vector3 playerPosition) 

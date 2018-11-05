@@ -14,7 +14,11 @@ public class InventoryManager : MonoBehaviour {
 		im = this;
 		inventory.OnItemRightClickedEvent += EquipFromInventory;
 		equipmentPanel.OnItemRightClickedEvent += unequipFromEquipmentPanel;
+	}
 
+	void Start()
+	{
+		Fill();
 	}
 
 	public void Fill()

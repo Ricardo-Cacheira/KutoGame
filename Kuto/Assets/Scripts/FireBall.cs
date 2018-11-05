@@ -26,10 +26,10 @@ public class FireBall : MonoBehaviour {
 	{
 		if(hitInfo.tag != "Player") 
 		{
-			if (hitInfo.tag == "Enemy")
+			if (hitInfo.CompareTag("Enemy"))
 			{
 				hitInfo.GetComponent<EnemyHandler>().GetHealthSystem().Damage(50);
-			} else if (hitInfo.tag == "EnemyRanged")
+			} else if (hitInfo.CompareTag("EnemyRanged"))
 			{
 				hitInfo.GetComponent<EnemyRangedHandler>().GetHealthSystem().Damage(50);
 			}	

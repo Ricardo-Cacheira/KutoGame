@@ -9,9 +9,6 @@ public class VoidBall : MonoBehaviour {
 
 	void Start () 
 	{
-		enemy = GameObject.FindWithTag("EnemyRanged");
-		//EnemyRangedHandler movScript = enemy.GetComponent<EnemyRangedHandler>();
-		//Vector2 dir = new Vector2(movScript.moveDir.x,movScript.moveDir.y).normalized;
 		rb = GetComponent<Rigidbody2D>();
 		rb.velocity = transform.right * speed;
 	}
@@ -22,15 +19,11 @@ public class VoidBall : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D hitInfo)
-	{
-		if(hitInfo.tag != "EnemyRanged") 
+	{	
+		if (hitInfo.CompareTag("Player"))
 		{
-			if (hitInfo.tag == "Player")
-			{
 				hitInfo.GetComponent<PlayerHandler>().GetHealthSystem().Damage(34);
-			}
-		
-		Destroy(gameObject);
+				Destroy(gameObject);
 		}
 	}
 }

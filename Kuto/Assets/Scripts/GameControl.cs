@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameControl : MonoBehaviour {
 
@@ -17,7 +18,7 @@ public class GameControl : MonoBehaviour {
 	public int gold;
 	public float vitality = 100;
 	public float strength;
-	public float experience;
+	public float xp;
 
 	void Awake()
 	{
@@ -34,7 +35,7 @@ public class GameControl : MonoBehaviour {
 
 	public int GetLevel()
 	{
-		int number = (int)(experience / 1000);
+		int number = (int)(xp / 1000) + 1;
 
 		return number;
 	}
@@ -52,7 +53,7 @@ public class GameControl : MonoBehaviour {
 		data.gold = gold;
 		data.vitality = vitality;
 		data.strength = strength;
-		data.experience = experience;
+		data.xp = xp;
 		data.inventoryItems = inventoryItems;
 		data.equippedItems = equippedItems;
 
@@ -83,11 +84,17 @@ public class GameControl : MonoBehaviour {
 			gold = data.gold;
 			vitality = data.vitality;
 			strength = data.strength;
-			experience = data.experience;
+			xp = data.xp;
 			inventoryItems = data.inventoryItems;
 			equippedItems = data.equippedItems;
 			Debug.Log("Loaded");
-			InventoryManager.im.Fill();
+
+			Scene m_Scene;
+			string sceneName;
+			m_Scene = SceneManager.GetActiveScene();
+			sceneName = m_Scene.name;
+			if(sceneName == "townhub")
+				InventoryManager.im.Fill();
 		}
 		else{
 			Debug.Log("Failed to load");
@@ -105,7 +112,7 @@ class PlayerData
 	public int gold;
 	public float vitality;
 	public float strength;
-	public float experience;
+	public float xp;
 
 	public List<Item> inventoryItems;
 	public List<EquippableItem> equippedItems;

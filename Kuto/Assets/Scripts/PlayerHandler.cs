@@ -78,7 +78,7 @@ public class PlayerHandler : MonoBehaviour {
 
     Text xpText;
     GameObject xpTextObject;
-    GameControl gameControl;
+    // GameControl gameControl;
 
     GameObject pc;
 
@@ -100,11 +100,15 @@ public class PlayerHandler : MonoBehaviour {
         xpTextObject =  GameObject.Find("CurrentXp");
         xpText = xpTextObject.GetComponent<Text>();
 
-        pc = GameObject.Find("PersistenceControl");
-        gameControl = pc.GetComponent<GameControl>();
-        // gameControl.Load();
-        goldText.text = gameControl.gold.ToString(); 
-        xpText.text = gameControl.xp.ToString();
+        // pc = GameObject.Find("PersistenceControl");
+        // gameControl = pc.GetComponent<GameControl>();
+        GameControl.control.Load();
+
+        gold = GameControl.control.gold;
+        xp = GameControl.control.xp;
+        
+        goldText.text = GameControl.control.gold.ToString(); 
+        xpText.text = GameControl.control.xp.ToString();
     }
 
     void Awake() 
@@ -408,9 +412,9 @@ public class PlayerHandler : MonoBehaviour {
 
     public void SaveRewards()
     {
-        gameControl.xp = xp;
-        gameControl.gold = gold;
-        gameControl.Save();
+        GameControl.control.xp = xp;
+        GameControl.control.gold = gold;
+        GameControl.control.Save();
     }
 
     private void SetStateBusy() 

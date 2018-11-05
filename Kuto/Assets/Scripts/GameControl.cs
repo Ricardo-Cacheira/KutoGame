@@ -18,7 +18,7 @@ public class GameControl : MonoBehaviour {
 	public int gold;
 	public float vitality = 100;
 	public float strength;
-	public float xp;
+	public int xp;
 
 	void Awake()
 	{
@@ -88,13 +88,7 @@ public class GameControl : MonoBehaviour {
 			inventoryItems = data.inventoryItems;
 			equippedItems = data.equippedItems;
 			Debug.Log("Loaded");
-
-			Scene m_Scene;
-			string sceneName;
-			m_Scene = SceneManager.GetActiveScene();
-			sceneName = m_Scene.name;
-			if(sceneName == "townhub")
-				InventoryManager.im.Fill();
+			InventoryManager.im.Fill();
 		}
 		else{
 			Debug.Log("Failed to load");
@@ -112,7 +106,7 @@ class PlayerData
 	public int gold;
 	public float vitality;
 	public float strength;
-	public float xp;
+	public int xp;
 
 	public List<Item> inventoryItems;
 	public List<EquippableItem> equippedItems;

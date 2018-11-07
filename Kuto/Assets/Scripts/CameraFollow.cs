@@ -21,7 +21,6 @@ public class CameraFollow : MonoBehaviour {
     {
         this.GetCameraFollowPosition = GetCameraFollowPosition;
     }
-
     void Update () 
     {
         HandleCameraMove();
@@ -29,9 +28,31 @@ public class CameraFollow : MonoBehaviour {
 
     private void HandleCameraMove() 
     {
-        Vector3 desiredPosition = GetCameraFollowPosition() + new Vector3(0,0,-10);
-        transform.position = desiredPosition;
-        myCamera.orthographicSize = size;
-    }
+        // Vector3 desiredPosition = GetCameraFollowPosition() + new Vector3(0,0,-10);
+        // transform.position = desiredPosition;
+        // myCamera.orthographicSize = size;#
+
+        Vector3 cameraFollowPos = GetCameraFollowPosition();
+
+        cameraFollowPos.z = transform.position.z;
+        Vector3 cameraMoveDir = (cameraFollowPos - transform.position).normalized;
+        float dist = Vector3.Distance(cameraFollowPos, transform.position);
+        float cameraMoveSpeed = dist;
+        cameraMoveSpeed *= 4; //check it
+
+        if (dist > 0f) {
+            Vector3 mainCameraNewPos = transform.position + (cameraMoveDir * cameraMoveSpeed) * Time.deltaTime;
+
+            // Test Overshoot
+            float distAfter = Vector3.Distance(cameraFollowPos, transform.position);
+            if (distAfter > dist) 
+            {
+                // Overshot
+                transform.position = cameraFollowPos;
+            }
+
+                transform.position = mainCameraNewPos;
+        }
+    } 
 }
 

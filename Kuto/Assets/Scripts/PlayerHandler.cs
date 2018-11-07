@@ -69,8 +69,8 @@ public class PlayerHandler : MonoBehaviour {
     float aoeCd = 7;
     float shootingCd = 2;
 
-    //run values
-    public int gold;
+    //rewards values
+    private int gold;
     Text goldText;
     GameObject goldTextObject;
 
@@ -78,7 +78,7 @@ public class PlayerHandler : MonoBehaviour {
 
     Text xpText;
     GameObject xpTextObject;
-    // GameControl gameControl;
+    GameControl gameControl;
 
     GameObject pc;
 
@@ -100,27 +100,21 @@ public class PlayerHandler : MonoBehaviour {
         xpTextObject =  GameObject.Find("CurrentXp");
         xpText = xpTextObject.GetComponent<Text>();
 
-        // pc = GameObject.Find("PersistenceControl");
-        // gameControl = pc.GetComponent<GameControl>();
-        GameControl.control.Load();
-
-        gold = GameControl.control.gold;
-        xp = GameControl.control.xp;
-        
-        goldText.text = GameControl.control.gold.ToString(); 
-        xpText.text = GameControl.control.xp.ToString();
+        pc = GameObject.Find("PersistenceControl");
+        gameControl = pc.GetComponent<GameControl>();
+        gameControl.Load();
+        gold = gameControl.gold;
+        xp = gameControl.xp;
+        goldText.text = gameControl.gold.ToString(); 
+        xpText.text = gameControl.xp.ToString();
     }
 
     void Awake() 
     {
         playerHandler = this;
         potion = GameAssets.i.potion;
-        potionColor = potion.GetComponent<Image>().color;
         aoeFire = GameAssets.i.aoeFire;
-
         bullet = GameAssets.i.bullet;
-        
-        gold = 0;
     }
 
     private void Setup(HealthSystem healthSystem, Func<Vector3, EnemyHandler> getClosestEnemyHandlerFunc) 
@@ -158,8 +152,6 @@ public class PlayerHandler : MonoBehaviour {
             GameHandler.Restart();
             break;
         }
-
-        if (GetHealthSystem().GetHealthPercent() <= 0) IsDead();
     }
 
     private void HandleMovement() 
@@ -168,8 +160,13 @@ public class PlayerHandler : MonoBehaviour {
 		float y = Input.GetAxisRaw("Vertical");
         float xScale = transform.localScale.x;
 
+        animator.SetFloat("WalkingH", x);
+        animator.SetFloat("WalkingV", y);
+
+        Debug.Log(lastX + ", " + lastY);
+
         //stop colliding with enemies
-        if (dashing == true) {
+        if (dashing == true || leaping == true) {
             this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 0.35f);
             gameObject.layer = 10;
         } else {
@@ -203,35 +200,30 @@ public class PlayerHandler : MonoBehaviour {
 		{
             animator.SetBool("isWalking", true);
 		    lastX = x;
-	    	lastY = y;
-
-            //right
-            if (lastX == 1 && lastY == 0) animator.SetInteger("Direction", 3);
-            //left
-            if (lastX == -1 && lastY == 0) animator.SetInteger("Direction", 7);
-            //down
-            if ((lastX != 1) && lastY == -1) animator.SetInteger("Direction", 5);  
+	    	lastY = y;  
         }
 	}
 
 	IEnumerator Dash()
 	{   
 		if(movement == Vector2.zero) movement = new Vector2(lastX, lastY).normalized;
-
+        animator.speed = 5;
 		timeStamp = Time.time + recoveryTime;
 		rb2d.velocity = movement * dashSpeed;
 		yield return new WaitForSeconds(dashTime);
+        animator.speed = 1;
 		dashing = false;
 	}
 
 	IEnumerator Leap()
 	{	
 		if(movement == Vector2.zero) movement = new Vector2(lastX, lastY).normalized;
-
+        animator.speed = 0;
 		timeStamp = Time.time + recoveryTime;
 		rb2d.velocity = (movement * -1) * dashSpeed * 1.5f;
 		yield return new WaitForSeconds(dashTime);
-		leaping = false;
+		animator.speed = 1;
+        leaping = false;
 	}
     
     private void HandleShooting() 
@@ -412,9 +404,9 @@ public class PlayerHandler : MonoBehaviour {
 
     public void SaveRewards()
     {
-        GameControl.control.xp = xp;
-        GameControl.control.gold = gold;
-        GameControl.control.Save();
+        gameControl.xp = xp;
+        gameControl.gold = gold;
+        gameControl.Save();
     }
 
     private void SetStateBusy() 

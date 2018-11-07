@@ -24,17 +24,12 @@ public class FireBall : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D hitInfo)
 	{
-		if(hitInfo.tag != "Player") 
+		if (hitInfo.CompareTag("Enemy"))
 		{
-			if (hitInfo.CompareTag("Enemy"))
-			{
-				hitInfo.GetComponent<EnemyHandler>().GetHealthSystem().Damage(50);
-			} else if (hitInfo.CompareTag("EnemyRanged"))
-			{
-				hitInfo.GetComponent<EnemyRangedHandler>().GetHealthSystem().Damage(50);
-			}	
-		
-		Destroy(gameObject);
+			hitInfo.GetComponent<EnemyHandler>().GetHealthSystem().Damage(35);
+		} else if (hitInfo.CompareTag("EnemyRanged"))
+		{
+			hitInfo.GetComponent<EnemyRangedHandler>().GetHealthSystem().Damage(35);
 		}
-	}
+	}	
 }

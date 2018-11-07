@@ -88,7 +88,13 @@ public class GameControl : MonoBehaviour {
 			inventoryItems = data.inventoryItems;
 			equippedItems = data.equippedItems;
 			Debug.Log("Loaded");
-			InventoryManager.im.Fill();
+
+			Scene m_Scene;
+			string sceneName;
+			m_Scene = SceneManager.GetActiveScene();
+			sceneName = m_Scene.name;
+			if(sceneName == "townhub")
+				InventoryManager.im.Fill();
 		}
 		else{
 			Debug.Log("Failed to load");

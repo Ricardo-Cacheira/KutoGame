@@ -90,7 +90,7 @@ public class EnemyRangedHandler : MonoBehaviour {
 
     IEnumerator Attack() 
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.5f);
         SetStateNormal();
         Instantiate(GameAssets.i.pfVoidBall, GetPosition(), Quaternion.AngleAxis(Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg, Vector3.forward));
         if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {

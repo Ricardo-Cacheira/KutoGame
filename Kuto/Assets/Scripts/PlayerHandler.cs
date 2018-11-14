@@ -19,7 +19,7 @@ public class PlayerHandler : MonoBehaviour {
         return playerHandler;
     }
 
-    #region 
+    #region VARIABLES
 
     public static PlayerHandler playerHandler;
 
@@ -112,9 +112,10 @@ public class PlayerHandler : MonoBehaviour {
     void Awake() 
     {
         playerHandler = this;
-        potion = GameAssets.i.potion;
+        
         aoeFire = GameAssets.i.aoeFire;
         bullet = GameAssets.i.bullet;
+        potion = GameAssets.i.potion;
     }
 
     private void Setup(HealthSystem healthSystem, Func<Vector3, EnemyHandler> getClosestEnemyHandlerFunc) 
@@ -163,8 +164,6 @@ public class PlayerHandler : MonoBehaviour {
         animator.SetFloat("WalkingH", x);
         animator.SetFloat("WalkingV", y);
 
-        Debug.Log(lastX + ", " + lastY);
-
         //stop colliding with enemies
         if (dashing == true || leaping == true) {
             this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 0.35f);
@@ -192,7 +191,8 @@ public class PlayerHandler : MonoBehaviour {
 			if(Input.GetButtonDown("Dash") && timeStamp <= Time.time) dashing = true;
 			if(Input.GetButtonDown("Leap") && timeStamp <= Time.time) leaping = true;
 
-			if (movement != new Vector2(lastX, lastY) && movement != Vector2.zero)attackPoint.position = transform.position + (Vector3)(movement);	
+			if (movement != new Vector2(lastX, lastY) && movement != Vector2.zero)
+                attackPoint.position = transform.position + (Vector3)(movement);	
 			
 		}
 
@@ -269,15 +269,20 @@ public class PlayerHandler : MonoBehaviour {
             {
                 if (enemiesToDamage[i].gameObject.CompareTag("EnemyRanged")) 
                 {
-                   EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
-                   enemy.GetHealthSystem().Damage(20);
+                    EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
+                    enemy.GetHealthSystem().Damage(20);
+
+                    enemy.KnockBack();
+
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
-                    // if (enemy.GetHealthSystem().GetHealthPercent() <= 0) GetGold(5);
 
                 } else if (enemiesToDamage[i].gameObject.CompareTag("Enemy"))
                 {
                     EnemyHandler enemy = enemiesToDamage[i].GetComponent<EnemyHandler>();  
                     enemy.GetHealthSystem().Damage(20);
+
+                    enemy.KnockBack();
+
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
@@ -293,7 +298,7 @@ public class PlayerHandler : MonoBehaviour {
 
     private void HandleAoe() 
     {
-         if (Input.GetButtonDown("AoE") && aoe == false) StartCoroutine(AoE());     
+        if (Input.GetButtonDown("AoE") && aoe == false) StartCoroutine(AoE());     
     }
 
     IEnumerator AoE() 
@@ -301,9 +306,6 @@ public class PlayerHandler : MonoBehaviour {
         aoe = true;
         Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
         StartCoroutine(FadeToF(aoeCd, aoeFire.GetComponent<Image>().color));
-
-        // cooldownTimerScript.timeLeft = aoeCd;
-            // cooldownTimer.SetActive(true);
 
         Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(transform.position, attackRange * 4, whatIsEnemies);      
 
@@ -355,22 +357,24 @@ public class PlayerHandler : MonoBehaviour {
     {
         if (Input.GetButtonDown("Heal") && !healing) StartCoroutine(Healing());
     }
+
+
     IEnumerator Healing()
 	{	
         healing = true;
         healthSystem.Heal(25);
-        StartCoroutine(FadeTo(0f, (float) healingCd, potionColor));
+        StartCoroutine(FadeTo(healingCd, potion.GetComponent<Image>().color));
 		yield return new WaitForSeconds(healingCd);
         healing = false;
 	}
 
-    IEnumerator FadeTo(float aValue, float aTime, Color cooldownColor)
+    IEnumerator FadeTo(float aTime, Color cooldownColor)
     {
         StartCoroutine(HealCdColor());
         float alpha = cooldownColor.a;
         for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
         {
-            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(aValue, alpha,t));
+            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(0f, alpha,t));
             potion.GetComponent<Image>().color = newColor;
             yield return null;
         }

@@ -4,6 +4,7 @@ using UnityEngine;
 using CodeMonkey.Utils;
 using CodeMonkey;
 using System;
+using UnityEngine.UI;
 
 public class GameHandler : MonoBehaviour {
 
@@ -51,9 +52,20 @@ public class GameHandler : MonoBehaviour {
 			if (enemyMeleeHandlerList.Count == 0 && enemyRangedHandlerList.Count == 0 && enemySpawner == null) 
 			{
 				playerHandler.SaveRewards();
-				Restart();
+				StartCoroutine(WinMessage());
 			}
 		}
+	}
+
+	IEnumerator WinMessage()
+	{
+		GameObject objectWinText = GameObject.Find("WinText");
+		Text WinText = objectWinText.GetComponent<Text>();
+		WinText.enabled = true;
+		yield return new WaitForSeconds(5);
+		WinText.enabled = false;
+		Restart();
+		
 	}
 
 	public void SpawnMeleeEnemy() 

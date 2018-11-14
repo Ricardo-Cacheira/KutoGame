@@ -33,6 +33,8 @@ public class EnemyHandler : MonoBehaviour {
     private Vector3 moveDir;
     public LayerMask whatIsPlayer;
 
+    Animator animator;
+
 
     private enum State {
         Normal,
@@ -50,6 +52,9 @@ public class EnemyHandler : MonoBehaviour {
     private void Start() 
     {
         state = State.Normal;
+        animator = gameObject.GetComponent<Animator>();
+        attackPoint.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.2f);
+        
     }
 
     private void Update() 
@@ -89,19 +94,42 @@ public class EnemyHandler : MonoBehaviour {
 
     IEnumerator Attack() 
     {
+        animator.SetTrigger("Charging");
+        StartCoroutine(ChargeAttack(1, 1.5f, attackPoint.GetComponent<SpriteRenderer>().color));
         yield return new WaitForSeconds(1.5f);
+        animator.SetTrigger("Attack");
+        attackPoint.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.2f);
+        Debug.Log("playing");
         SetStateNormal();
-        Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 1, whatIsPlayer);
+        Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 0.7f, whatIsPlayer);
         if (player != null) PlayerHandler.playerHandler.GetHealthSystem().Damage(10);
         if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
             GameHandler.Restart();
         }
+        yield return new WaitForSeconds(0.5f);
+    }
+
+    IEnumerator ChargeAttack(float aValue, float aTime, Color cooldownColor)
+    {
+        float alpha = cooldownColor.a;
+        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
+        {
+            Color newColor = new Color(1f, 1f, 1f, Mathf.Lerp(alpha, aValue,t));
+            attackPoint.GetComponent<SpriteRenderer>().color = newColor;
+            yield return null;
+        }
+    }
+
+    public void KnockBack()
+    {   
+        Vector2 knock = (this.transform.position - playerHandler.transform.position).normalized;
+        gameObject.GetComponent<Rigidbody2D>().AddForce(knock * 200000);
     }
 
     void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere(attackPoint.position, 1);
+		Gizmos.DrawWireSphere(attackPoint.position, 0.7f);
 	}
 
     private void SetStateBusy() 

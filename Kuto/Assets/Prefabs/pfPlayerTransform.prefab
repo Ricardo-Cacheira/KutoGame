@@ -24,7 +24,6 @@ GameObject:
   - component: {fileID: 61712154628681790}
   - component: {fileID: 114729418136612788}
   - component: {fileID: 95971407172551570}
-  - component: {fileID: 114643282224204102}
   m_Layer: 1
   m_Name: pfPlayerTransform
   m_TagString: Player
@@ -141,7 +140,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 2}
-    newSize: {x: 0.32, y: 0.64}
+    newSize: {x: 1, y: 2}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -167,22 +166,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114643282224204102
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1427722298308738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9375ffd1523f4c4ba9aae56a03d9dfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveDir: {x: 0, y: 0, z: 0}
-  attackPoint: {fileID: 0}
-  whatIsPlayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &114729418136612788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -196,15 +179,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackPoint: {fileID: 4735760569654312}
   rb2d: {fileID: 50022227761427464}
-  attackRange: 1
+  attackRange: 0.7
   damage: 1
   whatIsEnemies:
     serializedVersion: 2
     m_Bits: 512
   movement: {x: 0, y: 0}
   speed: 6
-  dashSpeed: 12
-  dashTime: 0.4
+  dashSpeed: 13
+  dashTime: 0.35
   recoveryTime: 0.5
   lastX: 1
   lastY: 0
@@ -212,8 +195,6 @@ MonoBehaviour:
   animator: {fileID: 95971407172551570}
   timeBtwAttack: 0
   startTimeBtwAttack: 0.4
-  goldText: {fileID: 0}
-  gold: 0
 --- !u!212 &212575885513982034
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -249,12 +230,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: 61848ae1a4ab15b4e9f751fafe45aab9, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: a705a8ec5b7eab041b173ec5f9cc7bd4, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.32, y: 0.64}
+  m_Size: {x: 1, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

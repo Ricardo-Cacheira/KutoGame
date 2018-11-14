@@ -30,6 +30,7 @@ public class GameControl : MonoBehaviour {
 		{
 			Destroy(gameObject);
 		}
+
 		Load();
 	}
 
@@ -85,8 +86,8 @@ public class GameControl : MonoBehaviour {
 			vitality = data.vitality;
 			strength = data.strength;
 			xp = data.xp;
-			inventoryItems = data.inventoryItems;
-			equippedItems = data.equippedItems;
+			// inventoryItems = data.inventoryItems;
+			// equippedItems = data.equippedItems;
 			Debug.Log("Loaded");
 
 			Scene m_Scene;

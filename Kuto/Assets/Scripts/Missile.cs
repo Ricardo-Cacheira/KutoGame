@@ -9,6 +9,7 @@ public class Missile : MonoBehaviour {
     {
         rb2d = GetComponent<Rigidbody2D>();
     }
+
     void FixedUpdate()
     {
         player = GameObject.FindGameObjectWithTag("Player");
@@ -25,11 +26,21 @@ public class Missile : MonoBehaviour {
 
     }
 
+    void OnBecameInvisible()
+    {
+        Destroy(gameObject);
+    }
+
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.CompareTag("Player")) col.GetComponent<PlayerHandler>().GetHealthSystem().Damage(50);
+        if (col.CompareTag("Player")) {
+            col.GetComponent<PlayerHandler>().GetHealthSystem().Damage(50);
+            Destroy(gameObject);
+        }
 
-        Destroy(gameObject);
+        if (col.CompareTag("Walls")) {
+            Destroy(gameObject);
+        }
     }
 
 }

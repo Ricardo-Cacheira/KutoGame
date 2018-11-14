@@ -109,6 +109,12 @@ public class EnemyRangedHandler : MonoBehaviour {
 		Gizmos.DrawWireSphere(moveDir, 1);
 	}
 
+    public void KnockBack()
+    {   
+        Vector2 knock = (this.transform.position - playerHandler.transform.position).normalized;
+        gameObject.GetComponent<Rigidbody2D>().AddForce(knock * 200000);
+    }
+
     private void SetStateBusy() 
     {
         state = State.Busy;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public enum MissionType {
     Kill,
@@ -25,7 +26,6 @@ public class Menu : MonoBehaviour {
 	void Awake () {
 		inventoryVisible = false;
 		missionsVisible = false;
-		// inventory.SetActive(false);
 	}
 	
 	public void Junk()
@@ -47,6 +47,11 @@ public class Menu : MonoBehaviour {
 			inventory.transform.localPosition = new Vector3(0, 0, 0);
 			inventoryVisible = true;
 		}
+	}
+
+	public void StartMission()
+	{
+		SceneManager.LoadScene("Prototype");
 	}
 	
 	public void Phone()
@@ -97,6 +102,6 @@ public class Menu : MonoBehaviour {
 			newMission.transform.Find("Text").GetComponent<Text>().text = location + "and assassinate " + ammount +" targets.";
 		else
 			newMission.transform.Find("Text").GetComponent<Text>().text = location + "and survive for " + ammount +" minutes.";
-	
 	}
+
 }

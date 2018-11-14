@@ -9,6 +9,8 @@ TagManager:
   - EnemyRanged
   - Circle
   - Bomb
+  - Potion
+  - Walls
   layers:
   - Default
   - TransparentFX

@@ -38,7 +38,7 @@ public class CameraFollow : MonoBehaviour {
         Vector3 cameraMoveDir = (cameraFollowPos - transform.position).normalized;
         float dist = Vector3.Distance(cameraFollowPos, transform.position);
         float cameraMoveSpeed = dist;
-        cameraMoveSpeed *= 4; //check it
+        cameraMoveSpeed *= 3; //check it
 
         if (dist > 0f) {
             Vector3 mainCameraNewPos = transform.position + (cameraMoveDir * cameraMoveSpeed) * Time.deltaTime;

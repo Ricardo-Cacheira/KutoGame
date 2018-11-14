@@ -4,11 +4,10 @@ using UnityEngine;
 public class EnemySpawn : MonoBehaviour {
 	public GameObject gameHandle;
 	private GameHandler gameHandler;
-	public float repeatRate = 7f;
+	public float repeatRate = 5.5f;
 	private bool wasActivated;
 
 	void Start () {
-		Time.timeScale = 1;
 		gameHandler = gameHandle.GetComponent<GameHandler>();
 	}
 	

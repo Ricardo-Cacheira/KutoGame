@@ -21,7 +21,7 @@ public class CameraFollow : MonoBehaviour {
     {
         this.GetCameraFollowPosition = GetCameraFollowPosition;
     }
-    void Update () 
+    void FixedUpdate () 
     {
         HandleCameraMove();
     }

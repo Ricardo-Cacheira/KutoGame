@@ -9,7 +9,7 @@ public class PlayerHandler : MonoBehaviour {
     {
         Transform playerTransform = Instantiate(GameAssets.i.pfPlayerTransform, new Vector3(0, 0), Quaternion.identity);
         
-        HealthSystem healthSystem = new HealthSystem(150);
+        HealthSystem healthSystem = new HealthSystem(7000);
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, new Vector3(0, 1.5f), Quaternion.identity, playerTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
@@ -55,6 +55,7 @@ public class PlayerHandler : MonoBehaviour {
     private bool healing = false;
     private bool aoe = false;
     private bool isShooting = false;
+
     Image potion;
     Color potionColor;
 
@@ -82,7 +83,6 @@ public class PlayerHandler : MonoBehaviour {
 
     GameObject pc;
 
-    
     #endregion
 
     private enum State 
@@ -107,6 +107,7 @@ public class PlayerHandler : MonoBehaviour {
         xp = gameControl.xp;
         goldText.text = gameControl.gold.ToString(); 
         xpText.text = gameControl.xp.ToString();
+
     }
 
     void Awake() 
@@ -165,14 +166,6 @@ public class PlayerHandler : MonoBehaviour {
         animator.SetFloat("WalkingV", y);
 
         //stop colliding with enemies
-        if (dashing == true || leaping == true) {
-            this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 0.35f);
-            gameObject.layer = 10;
-        } else {
-            this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 1f);
-            gameObject.layer = 1;
-        }
-
 		if (dashing)
 		{
 			StartCoroutine(Dash());
@@ -204,15 +197,23 @@ public class PlayerHandler : MonoBehaviour {
         }
 	}
 
+
 	IEnumerator Dash()
 	{   
 		if(movement == Vector2.zero) movement = new Vector2(lastX, lastY).normalized;
         animator.speed = 5;
 		timeStamp = Time.time + recoveryTime;
 		rb2d.velocity = movement * dashSpeed;
+        Color tmp = this.GetComponent<SpriteRenderer>().color;
+        tmp.a = .35f;
+        this.GetComponent<SpriteRenderer>().color = tmp;
+        gameObject.layer = 15;
 		yield return new WaitForSeconds(dashTime);
         animator.speed = 1;
 		dashing = false;
+        tmp.a = 1f;
+        this.GetComponent<SpriteRenderer>().color = tmp;
+        gameObject.layer = 1;
 	}
 
 	IEnumerator Leap()
@@ -221,9 +222,13 @@ public class PlayerHandler : MonoBehaviour {
         animator.speed = 0;
 		timeStamp = Time.time + recoveryTime;
 		rb2d.velocity = (movement * -1) * dashSpeed * 1.5f;
+        this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 0.35f);
+        gameObject.layer = 15;
 		yield return new WaitForSeconds(dashTime);
 		animator.speed = 1;
         leaping = false;
+        this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 1f);
+        gameObject.layer = 1;
 	}
     
     private void HandleShooting() 
@@ -272,7 +277,7 @@ public class PlayerHandler : MonoBehaviour {
                     EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
                     enemy.GetHealthSystem().Damage(20);
 
-                    enemy.KnockBack();
+                    enemy.KnockBack(200000);
 
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -281,10 +286,18 @@ public class PlayerHandler : MonoBehaviour {
                     EnemyHandler enemy = enemiesToDamage[i].GetComponent<EnemyHandler>();  
                     enemy.GetHealthSystem().Damage(20);
 
-                    enemy.KnockBack();
+                    enemy.KnockBack(200000);
 
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
-                }
+                } else if (enemiesToDamage[i].gameObject.CompareTag("EnemySlower"))
+                {
+                    EnemySlowerHandler enemy = enemiesToDamage[i].GetComponent<EnemySlowerHandler>();  
+                    enemy.GetHealthSystem().Damage(20);
+
+                    enemy.KnockBack(200000);
+
+                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                } 
             }
 
             timeBtwAttack = startTimeBtwAttack;
@@ -315,12 +328,20 @@ public class PlayerHandler : MonoBehaviour {
                 {
                     EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
                     enemy.GetHealthSystem().Damage(50);
+                    enemy.KnockBack(1000000);
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
                 } else if (enemiesToDamage[i].gameObject.CompareTag("Enemy"))
                 {
                     EnemyHandler enemy = enemiesToDamage[i].GetComponent<EnemyHandler>();  
                     enemy.GetHealthSystem().Damage(50);
+                    enemy.KnockBack(1000000);
+                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                } else if (enemiesToDamage[i].gameObject.CompareTag("EnemySlower"))
+                {
+                    EnemySlowerHandler enemy = enemiesToDamage[i].GetComponent<EnemySlowerHandler>();  
+                    enemy.GetHealthSystem().Damage(50);
+                    enemy.KnockBack(1000000);
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
@@ -384,7 +405,20 @@ public class PlayerHandler : MonoBehaviour {
     {
         yield return new WaitForSeconds(healingCd);
         potion.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+    }
 
+    public void SlowPlayer()
+    {
+        StartCoroutine(Slowed());
+    }
+
+    IEnumerator Slowed()
+    {
+        speed = 1.5f;
+        this.GetComponent<SpriteRenderer>().color = new Color (0.3f, 1f, 1f, 1f);
+        yield return new WaitForSeconds(4);
+        this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
+        speed = 6f;
     }
 
     private void OnTriggerEnter2D(Collider2D hitInfo)
@@ -392,9 +426,13 @@ public class PlayerHandler : MonoBehaviour {
 		if(hitInfo.gameObject.CompareTag("Bomb")) 
 		{
 			this.GetHealthSystem().Damage(50);
-			this.rb2d.AddForce(700 * -movement * speed); //wth
-            // this.rb2d.AddExplosionForce(10, hitInfo.transform.position, 5, 3);
-			Destroy(hitInfo.gameObject);
+			this.rb2d.AddForce(1000 * -movement * speed); //wth
+            hitInfo.GetComponent<ParticleSystem>().Play();
+
+            hitInfo.GetComponent<SpriteRenderer>().enabled = false;
+            hitInfo.GetComponent<BoxCollider2D>().enabled = false;
+            
+			Destroy(hitInfo.gameObject, 1f);
 		}
 	}
 

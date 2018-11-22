@@ -6,18 +6,23 @@ using UnityEngine.UI;
 public class GameAssets : MonoBehaviour {
     public static GameAssets i;
     
-    private void Awake() {
+    private void Awake() 
+    {
         i = this;
     }
+
     public Image potion;
     public Image aoeFire;
-    public Image  bullet;
+    public Image bullet;
     public Transform pfPlayerTransform;
     public Transform pfEnemyTransform;
     public Transform pfEnemyRangedTransform;
+    public Transform pfEnemySlowerTransform;
     public Transform pfHealthBar;
     public Transform pfFireBall;
     public Transform pfVoidBall;
+    public Transform pfSlowWave;
     public Transform pfCircle;
-    
+    public Transform pfBomb;
+    public Transform pfMissile;  
 }

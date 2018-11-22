@@ -11,6 +11,10 @@ TagManager:
   - Bomb
   - Potion
   - Walls
+  - SpawnPoint
+  - Rooms
+  - EnemySlower
+  - Spawners
   layers:
   - Default
   - TransparentFX
@@ -22,12 +26,12 @@ TagManager:
   - 
   - Walls
   - Enemies
+  - Spawners
+  - 
+  - 
+  - 
+  - 
   - Void
-  - 
-  - 
-  - 
-  - 
-  - 
   - 
   - 
   - 

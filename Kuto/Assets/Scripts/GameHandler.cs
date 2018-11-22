@@ -11,6 +11,7 @@ public class GameHandler : MonoBehaviour {
 	private PlayerHandler playerHandler;
 	private List<EnemyHandler> enemyMeleeHandlerList;
 	private List<EnemyRangedHandler> enemyRangedHandlerList;
+	private List<EnemySlowerHandler> enemySlowerHandlerList;
 
 
 	[SerializeField]
@@ -18,17 +19,20 @@ public class GameHandler : MonoBehaviour {
 
 	private bool asStarted = false;
 
-	GameObject enemySpawner;
+	GameObject[] enemySpawner;
+
+	public LayerMask wallLayer;
 
 	private void Start() 
 	{
 		enemyMeleeHandlerList = new List<EnemyHandler>();
 		enemyRangedHandlerList = new List<EnemyRangedHandler>();
+		enemySlowerHandlerList = new List<EnemySlowerHandler>();
 		playerHandler = PlayerHandler.CreatePlayer(GetClosestEnemyHandler);
 
-		cameraFollow.Setup(7.5f, playerHandler.GetPosition);
+		cameraFollow.Setup(11.25f, playerHandler.GetPosition);
 
-		enemySpawner = GameObject.Find("EnemySpawner");
+		enemySpawner = GameObject.FindGameObjectsWithTag("Spawners");
 
 	}
 
@@ -47,9 +51,18 @@ public class GameHandler : MonoBehaviour {
 			for(int i = enemyRangedHandlerList.Count - 1; i > -1; i--)
 			{
 				if (enemyRangedHandlerList[i] == null)	enemyRangedHandlerList.RemoveAt(i);
-			} 
+			}
+			for(int i = enemySlowerHandlerList.Count - 1; i > -1; i--)
+			{
+				if (enemySlowerHandlerList[i] == null)	enemySlowerHandlerList.RemoveAt(i);
+			}
+			for(int i = enemySpawner.Length - 1; i > -1; i--)
+			{
+				
+			}  
 
-			if (enemyMeleeHandlerList.Count == 0 && enemyRangedHandlerList.Count == 0 && enemySpawner == null) 
+			if (enemyMeleeHandlerList.Count == 0 && enemyRangedHandlerList.Count == 0 && 
+				enemySlowerHandlerList.Count == 0 && enemySpawner == null) 
 			{
 				playerHandler.SaveRewards();
 				StartCoroutine(WinMessage());
@@ -70,18 +83,50 @@ public class GameHandler : MonoBehaviour {
 
 	public void SpawnMeleeEnemy() 
 	{
-		Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2, 3f); 
-		EnemyHandler enemyHandler = EnemyHandler.CreateEnemy(spawnPosition, playerHandler);
-		enemyHandler.OnDead += EnemyHandler_OnDead;
-		enemyMeleeHandlerList.Add(enemyHandler);
+		for (int i = 0; i < 30; i++)
+		{
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2, 3f); 
+			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
+			if (colliders.Length == 0)
+			{
+				EnemyHandler enemyHandler = EnemyHandler.CreateEnemy(spawnPosition, playerHandler);
+				enemyHandler.OnDead += EnemyHandler_OnDead;
+				enemyMeleeHandlerList.Add(enemyHandler);
+				break;
+			}
+		}
 	}
 
 	public void SpawnRangedEnemy() 
 	{
-		Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(6, 7.5f); 
-		EnemyRangedHandler enemyRangedHandler = EnemyRangedHandler.CreateEnemy(spawnPosition, playerHandler);
-		enemyRangedHandler.OnDead += EnemyHandler_OnDead;
-		enemyRangedHandlerList.Add(enemyRangedHandler);
+		for (int i = 0; i < 30; i++)
+		{
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2, 3f); 
+			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
+			if (colliders.Length == 0)
+			{
+				EnemyRangedHandler enemyRangedHandler = EnemyRangedHandler.CreateEnemy(spawnPosition, playerHandler);
+				enemyRangedHandler.OnDead += EnemyRangedHandler_OnDead;
+				enemyRangedHandlerList.Add(enemyRangedHandler);
+				break;
+			}
+		}
+	}
+
+	public void SpawnSlowerEnemy() 
+	{
+		for (int i = 0; i < 30; i++)
+		{
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2, 3f); 
+			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
+			if (colliders.Length == 0)
+			{
+				EnemySlowerHandler enemySlowerHandler = EnemySlowerHandler.CreateEnemy(spawnPosition, playerHandler);
+				enemySlowerHandler.OnDead += EnemySlowerHandler_OnDead;
+				enemySlowerHandlerList.Add(enemySlowerHandler);
+				break;
+			}
+		}
 	}
 
 	private void EnemyHandler_OnDead(object sender, System.EventArgs e) 
@@ -89,6 +134,20 @@ public class GameHandler : MonoBehaviour {
 		EnemyHandler enemyMeleeHandler = sender as EnemyHandler;
 		enemyMeleeHandlerList.Remove(enemyMeleeHandler);
 		playerHandler.GetRewards(20, 10);
+	}
+
+	private void EnemyRangedHandler_OnDead(object sender, System.EventArgs e) 
+	{
+		EnemyRangedHandler enemyRangedHandler = sender as EnemyRangedHandler;
+		enemyRangedHandlerList.Remove(enemyRangedHandler);
+		playerHandler.GetRewards(30, 7);
+	}
+
+	private void EnemySlowerHandler_OnDead(object sender, System.EventArgs e) 
+	{
+		EnemySlowerHandler enemySlowerHandler = sender as EnemySlowerHandler;
+		enemySlowerHandlerList.Remove(enemySlowerHandler);
+		playerHandler.GetRewards(10, 15);
 	}
 
 	private EnemyHandler GetClosestEnemyHandler(Vector3 playerPosition) 
@@ -112,13 +171,6 @@ public class GameHandler : MonoBehaviour {
 			}
 		}
 		return closest;
-	}
-
-	private void EnemyRangedHandler_OnDead(object sender, System.EventArgs e) 
-	{
-		EnemyRangedHandler enemyRangedHandler = sender as EnemyRangedHandler;
-		enemyRangedHandlerList.Remove(enemyRangedHandler);
-		playerHandler.GetRewards(30, 7);
 	}
 
 	private EnemyRangedHandler GetClosestEnemyRangedHandler(Vector3 playerPosition) 

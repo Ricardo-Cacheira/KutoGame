@@ -20,6 +20,7 @@ public class Menu : MonoBehaviour {
 	public GameObject missionPrefab;
 	public GameObject inventory;
 	public GameObject missionPanel;
+	public GameObject shopPanel;
 	bool inventoryVisible;
 	bool missionsVisible;
 
@@ -29,12 +30,6 @@ public class Menu : MonoBehaviour {
 	}
 	
 	public void Junk()
-	{
-		Debug.Log(0.1f+0.2f);
-		Debug.Log((0.1f+0.2f) == 0.3f);
-	}
-
-	public void Ware()
 	{
 		if(inventoryVisible)
 		{
@@ -46,6 +41,23 @@ public class Menu : MonoBehaviour {
 		{
 			inventory.transform.localPosition = new Vector3(0, 0, 0);
 			inventoryVisible = true;
+		}
+	}
+
+	public void Ware()
+	{
+		if(inventoryVisible)
+		{
+			inventory.transform.localPosition = new Vector3(1500f, 0, 0);
+			inventoryVisible = false;
+			InventoryManager.im.SaveInventory();
+			shopPanel.SetActive(true);
+		}
+		else
+		{
+			inventory.transform.localPosition = new Vector3(0, 0, 0);
+			inventoryVisible = true;
+			shopPanel.SetActive(false);
 		}
 	}
 
@@ -74,6 +86,7 @@ public class Menu : MonoBehaviour {
 
 	public void Save()
 	{
+		InventoryManager.im.SaveInventory();
 		GameControl.control.Save();
 	}
 

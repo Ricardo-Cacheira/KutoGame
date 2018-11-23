@@ -12,6 +12,7 @@ public class Item : ScriptableObject {
 	
 	public string name;
 	public Sprite icon;
+	public int level;
 
 	#if UNITY_EDITOR
 	protected virtual void OnValidate()

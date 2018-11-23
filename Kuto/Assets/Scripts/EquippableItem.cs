@@ -15,7 +15,6 @@ public class EquippableItem : Item {
 
 	// public int strenghtBonus;
 	// public int vitalityBonus;
-	public int level;
 
 	[Space] // Visible in unity editor
 	

@@ -43,6 +43,7 @@ public class InventoryManager : MonoBehaviour {
 		stats[1].ValueText.text = GameControl.control.vitality.ToString();
 		stats[2].ValueText.text = GameControl.control.strength.ToString();
 		stats[3].ValueText.text = GameControl.control.gold.ToString();
+		stats[4].ValueText.text = GameControl.control.shards.ToString();
 	}
 
 	public void SaveInventory()

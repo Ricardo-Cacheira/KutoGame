@@ -1,38 +1,54 @@
-﻿// using System.Collections;
-// using System.Collections.Generic;
-// using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
 
-// public class Shop : MonoBehaviour {
+public class Shop : MonoBehaviour {
 
-// 	public float shardFactor;
-// 	public float goldFactor;
-// 	public float shardBase;
-// 	public float goldBase;
+	public float shardFactor;
+	public float goldFactor;
+	public int shardBase;
+	public int goldBase;
 
-// 	void Start()
-// 	{
-// 		shardBase = 5f;
-// 		goldBase = 150f;
-// 		shardFactor = 1f;
-// 		goldFactor = 1.5f;
-// 	}
+    private Text text;
+    [SerializeField] Transform buttons;
 
-// 	public void Sell(Item itemToSell)
-// 	{
-// 		GameControl.control.gold += goldBase;
-// 		GameControl.control.shard += shardBase;
-// 		// GameControl.control.gold += goldBase * (itemToSell.level * goldFactor);
-// 		// GameControl.control.shard += shardBase * (itemToSell.level * shardFactor);
-// 	}
+    public int mode; //0- none //1-upgrade //2-sell
 
-// 	public void Upgrade(Item itemToSell)
-// 	{
-// 		itemToSell.level += 1;
+	void Start()
+	{
+        // buttons = transform.GetChild(1).GetComponent<Transform>();
+        text = transform.GetChild(0).GetComponent<Text>();
+        text.text = @"What can I"+System.Environment.NewLine+" help you with?";
+		mode = 0;
+		shardBase = 5;
+		goldBase = 150;
+		shardFactor = 1f;
+		goldFactor = 1.5f;
+	}
 
-// 		int goldCost = (int)goldBase * (itemToSell.level * goldFactor);
-// 		int shardCost = (int)shardBase * (itemToSell.level * shardFactor);
+	public void Sell(Item itemToSell)
+	{
+		GameControl.control.gold += goldBase;
+		GameControl.control.shards += shardBase;
+		// GameControl.control.gold += goldBase * (itemToSell.level * goldFactor);
+		// GameControl.control.shard += shardBase * (itemToSell.level * shardFactor);
+	}
 
-// 		GameControl.control.gold -= goldCost;
-// 		GameControl.control.shard -= shardCost;
-// 	}
-// }
+	public void Upgrade(Item itemToSell)
+	{
+		itemToSell.level += 1;
+
+		int goldCost = (int)(goldBase * (itemToSell.level * goldFactor));
+		int shardCost = (int)(shardBase * (itemToSell.level * shardFactor));
+
+		GameControl.control.gold -= goldCost;
+		GameControl.control.shards -= shardCost;
+	}
+
+    public void Choose(int action)
+    {
+        mode = action;
+        Debug.Log("mode " + mode);
+
+        text.text = @"Left Click to "+ (mode == 1 ? "upgrade" : "sell") +System.Environment.NewLine+"cursor over item to see " + (mode == 1 ? "cost" : "reward");
+    }
+}

@@ -56,26 +56,25 @@ public class GameControl : MonoBehaviour {
 		PlayerData data = new PlayerData();
 
 		data.gold = gold;
+		data.shards = shards;
 		data.vitality = vitality;
 		data.strength = strength;
 		data.xp = xp;
 		// data.inventoryItems = inventoryItems;
 		// data.equippedItems = equippedItems;
 
-		foreach (var item in inventoryItems)
-		{
-			ItemData itemData = new ItemData(item.ID, item.level);
-			data.inventoryItems.Add(itemData);
-		}
 
-		foreach (var item in equippedItems)
-		{
-			ItemData itemData = new ItemData(item.ID, item.level);
-			data.equippedItems.Add(itemData);
-		}
+		// foreach (var item in inventoryItems)
+		// {
+		// 	ItemData itemData = new ItemData(item.ID, item.level);
+		// 	data.inventoryItems.Add(itemData);
+		// }
 
-		// itemSaveManager.SaveEquipment();
-		// itemSaveManager.SaveInventory();
+		// foreach (var item in equippedItems)
+		// {
+		// 	ItemData itemData = new ItemData(item.ID, item.level);
+		// 	data.equippedItems.Add(itemData);
+		// }
 
 		string json = JsonUtility.ToJson(data, true);
 		byte[] bytes = System.Text.Encoding.Unicode.GetBytes(json);
@@ -102,26 +101,25 @@ public class GameControl : MonoBehaviour {
 			// file.Close();
 
 			gold = data.gold;
+			shards = data.shards;
 			vitality = data.vitality;
 			strength = data.strength;
 			xp = data.xp;
 			// inventoryItems = data.inventoryItems;
 			// equippedItems = data.equippedItems;
 
-			foreach (var itemData in data.inventoryItems)
-			{
-				Item item = itemDatabase.GetItemCopy(itemData.id);
-				inventoryItems.Add(item);
-			}
 
-			foreach (var itemData in data.equippedItems)
-			{
-				EquippableItem item = (EquippableItem)itemDatabase.GetItemCopy(itemData.id);
-				equippedItems.Add(item);
-			}
+			// foreach (var itemData in data.inventoryItems)
+			// {
+			// 	Item item = itemDatabase.GetItemCopy(itemData.id);
+			// 	inventoryItems.Add(item);
+			// }
 
-			// itemSaveManager.LoadEquipment();
-			// itemSaveManager.LoadInventory();
+			// foreach (var itemData in data.equippedItems)
+			// {
+			// 	EquippableItem item = (EquippableItem)itemDatabase.GetItemCopy(itemData.id);
+			// 	equippedItems.Add(item);
+			// }
 
 			Debug.Log("Loaded");
 
@@ -146,6 +144,7 @@ public class GameControl : MonoBehaviour {
 class PlayerData
 {
 	public int gold;
+	public int shards;
 	public float vitality;
 	public float strength;
 	public int xp;

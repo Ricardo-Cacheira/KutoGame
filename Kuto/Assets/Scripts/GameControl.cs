@@ -13,9 +13,9 @@ public class GameControl : MonoBehaviour {
 	[SerializeField] ItemDatabase itemDatabase;
 	// [SerializeField] ItemSaveManager itemSaveManager;
 	
-	public List<Item> inventoryItems;
+	public List<Item> inventoryItems = new List<Item>();
 	[Space]
-	public List<EquippableItem> equippedItems;
+	public List<EquippableItem> equippedItems = new List<EquippableItem>();
 	[Space]
 
 	public int gold;
@@ -64,17 +64,17 @@ public class GameControl : MonoBehaviour {
 		// data.equippedItems = equippedItems;
 
 
-		// foreach (var item in inventoryItems)
-		// {
-		// 	ItemData itemData = new ItemData(item.ID, item.level);
-		// 	data.inventoryItems.Add(itemData);
-		// }
+		foreach (var item in inventoryItems)
+		{
+			ItemData itemData = new ItemData(item.ID, item.level);
+			data.inventoryItems.Add(itemData);
+		}
 
-		// foreach (var item in equippedItems)
-		// {
-		// 	ItemData itemData = new ItemData(item.ID, item.level);
-		// 	data.equippedItems.Add(itemData);
-		// }
+		foreach (var item in equippedItems)
+		{
+			ItemData itemData = new ItemData(item.ID, item.level);
+			data.equippedItems.Add(itemData);
+		}
 
 		string json = JsonUtility.ToJson(data, true);
 		byte[] bytes = System.Text.Encoding.Unicode.GetBytes(json);
@@ -108,18 +108,24 @@ public class GameControl : MonoBehaviour {
 			// inventoryItems = data.inventoryItems;
 			// equippedItems = data.equippedItems;
 
+			inventoryItems.Clear();
+			equippedItems.Clear();
+			foreach (var itemData in data.inventoryItems)
+			{
+				Item item = itemDatabase.GetItemCopy(itemData.id);
+				item.level = itemData.level;
+				inventoryItems.Add(item);
+			}
 
-			// foreach (var itemData in data.inventoryItems)
-			// {
-			// 	Item item = itemDatabase.GetItemCopy(itemData.id);
-			// 	inventoryItems.Add(item);
-			// }
+			foreach (var itemData in data.equippedItems)
+			{
+				EquippableItem item = (EquippableItem)itemDatabase.GetItemCopy(itemData.id);
+				item.level = itemData.level;
+				equippedItems.Add(item);
+				Debug.Log(equippedItems[equippedItems.Count - 1].level);
+			}
 
-			// foreach (var itemData in data.equippedItems)
-			// {
-			// 	EquippableItem item = (EquippableItem)itemDatabase.GetItemCopy(itemData.id);
-			// 	equippedItems.Add(item);
-			// }
+
 
 			Debug.Log("Loaded");
 
@@ -149,8 +155,8 @@ class PlayerData
 	public float strength;
 	public int xp;
 
-	public List<ItemData> inventoryItems;
-	public List<ItemData> equippedItems;
+	public List<ItemData> inventoryItems = new List<ItemData>();
+	public List<ItemData> equippedItems = new List<ItemData>();
 
 	// public List<Item> inventoryItems;
 	// public List<EquippableItem> equippedItems;
@@ -169,4 +175,3 @@ class ItemData
 		this.level = level;
     }
 }
-

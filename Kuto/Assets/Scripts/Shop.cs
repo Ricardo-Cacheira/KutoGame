@@ -9,13 +9,12 @@ public class Shop : MonoBehaviour {
 	public int goldBase;
 
     private Text text;
-    [SerializeField] Transform buttons;
+    [SerializeField] GameObject buttons;
 
     public int mode; //0- none //1-upgrade //2-sell
 
 	void Start()
 	{
-        // buttons = transform.GetChild(1).GetComponent<Transform>();
         text = transform.GetChild(0).GetComponent<Text>();
         text.text = @"What can I"+System.Environment.NewLine+" help you with?";
 		mode = 0;
@@ -48,6 +47,8 @@ public class Shop : MonoBehaviour {
     {
         mode = action;
         Debug.Log("mode " + mode);
+
+		buttons.SetActive(false);
 
         text.text = @"Left Click to "+ (mode == 1 ? "upgrade" : "sell") +System.Environment.NewLine+"cursor over item to see " + (mode == 1 ? "cost" : "reward");
     }

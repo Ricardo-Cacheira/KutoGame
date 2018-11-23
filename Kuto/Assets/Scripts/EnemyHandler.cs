@@ -95,18 +95,17 @@ public class EnemyHandler : MonoBehaviour {
     IEnumerator Attack() 
     {
         animator.SetTrigger("Charging");
-        StartCoroutine(ChargeAttack(1, 1.5f, attackPoint.GetComponent<SpriteRenderer>().color));
-        yield return new WaitForSeconds(1.5f);
+        StartCoroutine(ChargeAttack(1, 1f, attackPoint.GetComponent<SpriteRenderer>().color));
+        yield return new WaitForSeconds(1f);
         animator.SetTrigger("Attack");
         attackPoint.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.2f);
-        Debug.Log("playing");
         SetStateNormal();
         Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 0.7f, whatIsPlayer);
         if (player != null) PlayerHandler.playerHandler.GetHealthSystem().Damage(10);
         if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
             GameHandler.Restart();
         }
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
     }
 
     IEnumerator ChargeAttack(float aValue, float aTime, Color cooldownColor)
@@ -120,10 +119,10 @@ public class EnemyHandler : MonoBehaviour {
         }
     }
 
-    public void KnockBack()
+    public void KnockBack(float force)
     {   
         Vector2 knock = (this.transform.position - playerHandler.transform.position).normalized;
-        gameObject.GetComponent<Rigidbody2D>().AddForce(knock * 200000);
+        gameObject.GetComponent<Rigidbody2D>().AddForce(knock * force);
     }
 
     void OnDrawGizmosSelected()

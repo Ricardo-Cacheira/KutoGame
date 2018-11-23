@@ -59,7 +59,7 @@ MonoBehaviour:
   equippedItems:
   - {fileID: 11400000, guid: 68b507f1fd0cca2419a5b1895e4acada, type: 2}
   - {fileID: 11400000, guid: 9a57668866e70724d836cc3af10aba69, type: 2}
-  gold: 0
+  gold: 200
   vitality: 100
   strength: 20
   xp: 0

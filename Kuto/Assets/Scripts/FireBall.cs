@@ -26,10 +26,22 @@ public class FireBall : MonoBehaviour {
 	{
 		if (hitInfo.CompareTag("Enemy"))
 		{
-			hitInfo.GetComponent<EnemyHandler>().GetHealthSystem().Damage(35);
+			EnemyHandler enemy = hitInfo.GetComponent<EnemyHandler>();
+			enemy.GetHealthSystem().Damage(35);
+			enemy.KnockBack(400000);
 		} else if (hitInfo.CompareTag("EnemyRanged"))
 		{
-			hitInfo.GetComponent<EnemyRangedHandler>().GetHealthSystem().Damage(35);
+			EnemyRangedHandler enemy = hitInfo.GetComponent<EnemyRangedHandler>();
+			enemy.GetHealthSystem().Damage(35);
+			enemy.KnockBack(400000);		
+		} else if (hitInfo.CompareTag("EnemySlower"))
+		{
+			EnemySlowerHandler enemy = hitInfo.GetComponent<EnemySlowerHandler>();
+			enemy.GetHealthSystem().Damage(35);
+			enemy.KnockBack(400000);
+		} else if (hitInfo.CompareTag("Walls"))
+		{
+			Destroy(gameObject);
 		}
 	}	
 }

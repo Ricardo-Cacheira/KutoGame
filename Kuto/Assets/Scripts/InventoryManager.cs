@@ -5,8 +5,8 @@ public class InventoryManager : MonoBehaviour {
 
 	public static InventoryManager im;
 
-	[SerializeField] Inventory inventory;
-	[SerializeField] EquipmentPanel equipmentPanel;
+	public Inventory inventory;
+	public EquipmentPanel equipmentPanel;
 	[SerializeField] List<StatDisplay> stats;
 
 	private void Awake()

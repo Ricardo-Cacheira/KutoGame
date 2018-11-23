@@ -9,7 +9,7 @@ public class Inventory : MonoBehaviour {
 		get{ return items; }
 	}
 	[SerializeField] Transform itemsParent;
-	[SerializeField] ItemSlot[] itemSlots;
+	public ItemSlot[] itemSlots;
 
 	public event Action<Item> OnItemRightClickedEvent;
 

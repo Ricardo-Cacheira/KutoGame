@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class EquipmentPanel : MonoBehaviour {
 
 	[SerializeField] Transform equipmentSlotsParent;
-	[SerializeField] EquipmentSlot[] equipmentSlots;
+	public EquipmentSlot[] equipmentSlots;
 	public EquipmentSlot[] equipped{
 		get{ return equipmentSlots; }
 	}

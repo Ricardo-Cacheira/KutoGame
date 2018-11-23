@@ -10,12 +10,16 @@ public class GameControl : MonoBehaviour {
 
 	public static GameControl control;
 	
+	[SerializeField] ItemDatabase itemDatabase;
+	// [SerializeField] ItemSaveManager itemSaveManager;
+	
 	public List<Item> inventoryItems;
 	[Space]
 	public List<EquippableItem> equippedItems;
 	[Space]
 
 	public int gold;
+	public int shards;
 	public float vitality = 100;
 	public float strength;
 	public int xp;
@@ -55,8 +59,23 @@ public class GameControl : MonoBehaviour {
 		data.vitality = vitality;
 		data.strength = strength;
 		data.xp = xp;
-		data.inventoryItems = inventoryItems;
-		data.equippedItems = equippedItems;
+		// data.inventoryItems = inventoryItems;
+		// data.equippedItems = equippedItems;
+
+		foreach (var item in inventoryItems)
+		{
+			ItemData itemData = new ItemData(item.ID, item.level);
+			data.inventoryItems.Add(itemData);
+		}
+
+		foreach (var item in equippedItems)
+		{
+			ItemData itemData = new ItemData(item.ID, item.level);
+			data.equippedItems.Add(itemData);
+		}
+
+		// itemSaveManager.SaveEquipment();
+		// itemSaveManager.SaveInventory();
 
 		string json = JsonUtility.ToJson(data, true);
 		byte[] bytes = System.Text.Encoding.Unicode.GetBytes(json);
@@ -88,6 +107,22 @@ public class GameControl : MonoBehaviour {
 			xp = data.xp;
 			// inventoryItems = data.inventoryItems;
 			// equippedItems = data.equippedItems;
+
+			foreach (var itemData in data.inventoryItems)
+			{
+				Item item = itemDatabase.GetItemCopy(itemData.id);
+				inventoryItems.Add(item);
+			}
+
+			foreach (var itemData in data.equippedItems)
+			{
+				EquippableItem item = (EquippableItem)itemDatabase.GetItemCopy(itemData.id);
+				equippedItems.Add(item);
+			}
+
+			// itemSaveManager.LoadEquipment();
+			// itemSaveManager.LoadInventory();
+
 			Debug.Log("Loaded");
 
 			Scene m_Scene;
@@ -115,7 +150,24 @@ class PlayerData
 	public float strength;
 	public int xp;
 
-	public List<Item> inventoryItems;
-	public List<EquippableItem> equippedItems;
+	public List<ItemData> inventoryItems;
+	public List<ItemData> equippedItems;
+
+	// public List<Item> inventoryItems;
+	// public List<EquippableItem> equippedItems;
 	//here you'd want to have getters and setters but for this we're keeping it simple
 }
+
+[Serializable]
+class ItemData
+{
+	public string id;
+	public int level;
+
+    public ItemData(string id, int level)
+    {
+		this.id = id;
+		this.level = level;
+    }
+}
+

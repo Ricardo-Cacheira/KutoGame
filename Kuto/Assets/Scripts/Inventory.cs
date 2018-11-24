@@ -12,12 +12,14 @@ public class Inventory : MonoBehaviour {
 	public ItemSlot[] itemSlots;
 
 	public event Action<Item> OnItemRightClickedEvent;
+	public event Action<Item> OnItemLeftClickedEvent;
 
 	private void Awake()
 	{
 		for (int i = 0; i < itemSlots.Length; i++)
 		{
 			itemSlots[i].OnRightClickEvent += OnItemRightClickedEvent;
+			itemSlots[i].OnLeftClickEvent += OnItemLeftClickedEvent;
 		}
 	}
 

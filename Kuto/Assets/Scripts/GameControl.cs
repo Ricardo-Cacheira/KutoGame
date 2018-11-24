@@ -122,7 +122,6 @@ public class GameControl : MonoBehaviour {
 				EquippableItem item = (EquippableItem)itemDatabase.GetItemCopy(itemData.id);
 				item.level = itemData.level;
 				equippedItems.Add(item);
-				Debug.Log(equippedItems[equippedItems.Count - 1].level);
 			}
 
 

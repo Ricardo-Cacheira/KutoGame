@@ -9,7 +9,7 @@ public class PlayerHandler : MonoBehaviour {
     {
         Transform playerTransform = Instantiate(GameAssets.i.pfPlayerTransform, new Vector3(0, 0), Quaternion.identity);
         
-        HealthSystem healthSystem = new HealthSystem(7000);
+        HealthSystem healthSystem = new HealthSystem(200);
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, new Vector3(0, 1.5f), Quaternion.identity, playerTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
@@ -42,7 +42,7 @@ public class PlayerHandler : MonoBehaviour {
 	public float speed = 6f;
 	public float dashSpeed = 10f;
 	public float dashTime = 0.3f;
-	public float recoveryTime = 0.5f;
+	public float recoveryTime = 2f;
 	private float timeStamp;
 	public float lastX = 1f;
 	public float lastY = 0f;
@@ -62,8 +62,6 @@ public class PlayerHandler : MonoBehaviour {
     Image aoeFire;
 
     Image bullet;
-
-    // public Text goldText;
 
     //upgradable values
     float healingCd = 3;
@@ -275,7 +273,7 @@ public class PlayerHandler : MonoBehaviour {
                 if (enemiesToDamage[i].gameObject.CompareTag("EnemyRanged")) 
                 {
                     EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
-                    enemy.GetHealthSystem().Damage(20);
+                    enemy.GetHealthSystem().Damage(30);
 
                     enemy.KnockBack(200000);
 
@@ -284,7 +282,7 @@ public class PlayerHandler : MonoBehaviour {
                 } else if (enemiesToDamage[i].gameObject.CompareTag("Enemy"))
                 {
                     EnemyHandler enemy = enemiesToDamage[i].GetComponent<EnemyHandler>();  
-                    enemy.GetHealthSystem().Damage(20);
+                    enemy.GetHealthSystem().Damage(30);
 
                     enemy.KnockBack(200000);
 
@@ -292,7 +290,7 @@ public class PlayerHandler : MonoBehaviour {
                 } else if (enemiesToDamage[i].gameObject.CompareTag("EnemySlower"))
                 {
                     EnemySlowerHandler enemy = enemiesToDamage[i].GetComponent<EnemySlowerHandler>();  
-                    enemy.GetHealthSystem().Damage(20);
+                    enemy.GetHealthSystem().Damage(30);
 
                     enemy.KnockBack(200000);
 
@@ -383,7 +381,7 @@ public class PlayerHandler : MonoBehaviour {
     IEnumerator Healing()
 	{	
         healing = true;
-        healthSystem.Heal(25);
+        healthSystem.Heal(35);
         StartCoroutine(FadeTo(healingCd, potion.GetComponent<Image>().color));
 		yield return new WaitForSeconds(healingCd);
         healing = false;
@@ -416,7 +414,7 @@ public class PlayerHandler : MonoBehaviour {
     {
         speed = 1.5f;
         this.GetComponent<SpriteRenderer>().color = new Color (0.3f, 1f, 1f, 1f);
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(2.5f);
         this.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1f);
         speed = 6f;
     }

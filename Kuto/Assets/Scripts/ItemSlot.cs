@@ -100,5 +100,6 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 					break;
 			}
 		}
+		tooltip.HideToolTip();
     }
 }

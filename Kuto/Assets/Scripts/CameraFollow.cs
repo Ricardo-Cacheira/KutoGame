@@ -8,9 +8,10 @@ public class CameraFollow : MonoBehaviour {
     public static CameraFollow instance;
     private Camera myCamera;
     private Func<Vector3> GetCameraFollowPosition;
-    private float size;
+    private int size;
+    public float PPU = 32; // pixels per unit (your tile size)
 
-    public void Setup(float size, Func<Vector3> GetCameraFollowPosition) 
+    public void Setup(int size, Func<Vector3> GetCameraFollowPosition) 
     {
         this.size = size;
         myCamera = transform.GetComponent<Camera>();
@@ -21,10 +22,21 @@ public class CameraFollow : MonoBehaviour {
     {
         this.GetCameraFollowPosition = GetCameraFollowPosition;
     }
-    void FixedUpdate () 
+    void LateUpdate () 
     {
         HandleCameraMove();
     }
+
+    
+
+	// private void LateUpdate() {
+	// 	Vector3 position = transform.localPosition;
+
+	// 	position.x = (Mathf.Round(transform.parent.position.x * PPU) / PPU) - transform.parent.position.x; 
+	// 	position.y = (Mathf.Round(transform.parent.position.y * PPU) / PPU) - transform.parent.position.y;
+
+	// 	transform.localPosition = position;
+	// }
 
     private void HandleCameraMove() 
     {

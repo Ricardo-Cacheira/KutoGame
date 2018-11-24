@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class GameHandler : MonoBehaviour {
 
-	private PlayerHandler playerHandler;
+	public PlayerHandler playerHandler;
 	private List<EnemyHandler> enemyMeleeHandlerList;
 	private List<EnemyRangedHandler> enemyRangedHandlerList;
 	private List<EnemySlowerHandler> enemySlowerHandlerList;
@@ -20,8 +20,15 @@ public class GameHandler : MonoBehaviour {
 	private bool asStarted = false;
 
 	GameObject[] enemySpawner;
+	GameObject enemySpawnerBeach;
 
 	public LayerMask wallLayer;
+
+	private int timeToSurvive;
+	private float loading = 2;
+
+	public int numOfSpawners;
+	public bool noEnemies;
 
 	private void Start() 
 	{
@@ -30,17 +37,21 @@ public class GameHandler : MonoBehaviour {
 		enemySlowerHandlerList = new List<EnemySlowerHandler>();
 		playerHandler = PlayerHandler.CreatePlayer(GetClosestEnemyHandler);
 
-		cameraFollow.Setup(11.25f, playerHandler.GetPosition);
+		cameraFollow.Setup(8, playerHandler.GetPosition);
 
 		enemySpawner = GameObject.FindGameObjectsWithTag("Spawners");
+		enemySpawnerBeach = GameObject.Find("EnemySpawnerBeach");
 
 	}
 
 	private void Update()
 	{
+		Debug.Log("N. of rooms: " + numOfSpawners);
+		Debug.Log("No enemies?: " + noEnemies);
 		if (!asStarted) 
 		{
-			if (enemyMeleeHandlerList.Count > 0) asStarted = true;
+			loading -= Time.deltaTime;
+			if (loading <= 0) asStarted = true;
 
 		} else if (asStarted)
 		{
@@ -56,16 +67,18 @@ public class GameHandler : MonoBehaviour {
 			{
 				if (enemySlowerHandlerList[i] == null)	enemySlowerHandlerList.RemoveAt(i);
 			}
-			for(int i = enemySpawner.Length - 1; i > -1; i--)
-			{
-				
-			}  
 
 			if (enemyMeleeHandlerList.Count == 0 && enemyRangedHandlerList.Count == 0 && 
-				enemySlowerHandlerList.Count == 0 && enemySpawner == null) 
+				enemySlowerHandlerList.Count == 0) 
 			{
-				playerHandler.SaveRewards();
-				StartCoroutine(WinMessage());
+				noEnemies = true;
+				if (numOfSpawners == 0 || enemySpawnerBeach == null) {
+					playerHandler.SaveRewards();
+					StartCoroutine(WinMessage());
+				}
+			} else 
+			{
+				noEnemies = false;
 			}
 		}
 	}
@@ -77,15 +90,14 @@ public class GameHandler : MonoBehaviour {
 		WinText.enabled = true;
 		yield return new WaitForSeconds(5);
 		WinText.enabled = false;
-		Restart();
-		
+		Restart();	
 	}
 
 	public void SpawnMeleeEnemy() 
 	{
 		for (int i = 0; i < 30; i++)
 		{
-			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2, 3f); 
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2.5f, 3.5f); 
 			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
 			if (colliders.Length == 0)
 			{
@@ -101,7 +113,7 @@ public class GameHandler : MonoBehaviour {
 	{
 		for (int i = 0; i < 30; i++)
 		{
-			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2, 3f); 
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(3, 5f); 
 			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
 			if (colliders.Length == 0)
 			{
@@ -117,7 +129,7 @@ public class GameHandler : MonoBehaviour {
 	{
 		for (int i = 0; i < 30; i++)
 		{
-			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2, 3f); 
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(3, 5f); 
 			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
 			if (colliders.Length == 0)
 			{

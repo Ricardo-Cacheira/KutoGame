@@ -11,20 +11,4 @@ public class CooldownTimer : MonoBehaviour {
 	{
 		gameObject.SetActive(false);
 	}
-
-    void Update()
-    {
-		// Debug.Log(timeLeft);
-    //     timeLeft -= Time.deltaTime;
-    //     if(timeLeft  <= 0)
-    //     {
-	// 		Debug.Log("false");
-    //         cooldownText.enabled = false;
-	// 	} else 
-	// 	{
-	// 		Debug.Log("true");
-	// 		if (cooldownText.enabled == false) cooldownText.enabled = true;
-	// 		cooldownText.text = "" + timeLeft;
-	// 	}
-    }
 }

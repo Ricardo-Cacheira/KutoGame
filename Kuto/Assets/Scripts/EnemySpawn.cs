@@ -11,8 +11,10 @@ public class EnemySpawn : MonoBehaviour {
 	private GameObject door;
 	private TilemapRenderer doorRenderer;
 	private TilemapCollider2D doorCollider;
+	private CameraShaker cameraShaker;
+	private GameObject cameraFollow;
 	private bool wasActivated = false;
-	private bool spawnTimeEnded;
+	private bool spawnTimeEnded, finishedSpawning;
 	private float randMelee, randRanged, randSlower, randSpawnTime;
 	private int randNumBomb, randNumMissile;
 
@@ -21,9 +23,24 @@ public class EnemySpawn : MonoBehaviour {
 		gameHandle = GameObject.Find("GameManager");
 		gameHandler = gameHandle.GetComponent<GameHandler>();
 
+		cameraFollow = GameObject.Find("CameraFollow");
+
+		cameraShaker = (CameraShaker) FindObjectOfType(typeof (CameraShaker)); 
+		cameraShaker.enabled = false;
+		
 		door = this.transform.GetChild(0).gameObject;
 		doorRenderer = door.GetComponent<TilemapRenderer>();
 		doorCollider = door.GetComponent<TilemapCollider2D>();
+
+		gameHandler.numOfSpawners++;
+	}
+
+	void Update()
+	{
+		if (finishedSpawning && gameHandler.noEnemies) {
+			doorRenderer.enabled = false;
+			doorCollider.enabled = false;
+		}
 	}
 	
 	void OnTriggerEnter2D(Collider2D other)
@@ -35,6 +52,8 @@ public class EnemySpawn : MonoBehaviour {
 			
 			wasActivated = true;
 
+			StartCoroutine(ShakeScreen());
+
 			randMelee = Random.Range(6, 10);
 			randRanged = Random.Range(8, 11);
 			randSlower = Random.Range(7.5f, 10);
@@ -42,22 +61,20 @@ public class EnemySpawn : MonoBehaviour {
 			randNumBomb = Random.Range(2, 4);
 			randNumMissile = Random.Range(1, 3);
 
-			InvokeRepeating("MeleeSpawner", 1f, randMelee);
-			InvokeRepeating("RangedSpawner", 4f, randRanged);
-			InvokeRepeating("SlowerSpawner", 2f, randSlower);
+			InvokeRepeating("MeleeSpawner", 2f, randMelee);
+			InvokeRepeating("RangedSpawner", 6f, randRanged);
+			InvokeRepeating("SlowerSpawner", 4f, randSlower);
 
 			for (int i = 0; i < randNumBomb; i++)
 			{
-				Vector2 randPos = new Vector2(Random.Range(-10.5f, 10.5f), Random.Range(-5.5f, 5.5f));
+				Vector2 randPos = new Vector2(Random.Range(-9.5f, 9.5f), Random.Range(-4.5f, 4.5f));
 				Instantiate(GameAssets.i.pfBomb, new Vector2(this.transform.position.x + randPos.x, this.transform.position.y + randPos.y), Quaternion.identity);
 			}
 			for (int i = 0; i < randNumMissile; i++)
 			{
-				Vector2 randPos = new Vector2(Random.Range(-10.5f, 10.5f), Random.Range(-5.5f, 5.5f));
+				Vector2 randPos = new Vector2(Random.Range(-9.5f, 9.5f), Random.Range(-4.5f, 4.5f));
 				Instantiate(GameAssets.i.pfMissile, new Vector2(this.transform.position.x + randPos.x, this.transform.position.y + randPos.y), Quaternion.identity);
 			}
-			
-			
 			
 			StartCoroutine(DestroySelf(randSpawnTime));
 		}
@@ -66,23 +83,35 @@ public class EnemySpawn : MonoBehaviour {
 	IEnumerator DestroySelf(float time)
 	{
 		yield return new WaitForSeconds(time);
-		doorRenderer.enabled = false;
-		doorCollider.enabled = false;
-		Destroy(gameObject);
+		gameHandler.numOfSpawners--;
+		gameObject.GetComponent<BoxCollider2D>().enabled = false;
+		finishedSpawning = true;
+		wasActivated = false;
+	}
+
+	IEnumerator ShakeScreen()
+	{
+		cameraFollow.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -1);
+		cameraShaker.shakeDuration = 1f;
+		cameraShaker.enabled = true;
+		gameHandler.playerHandler.speed = 0;
+		yield return new WaitForSeconds(1);
+		gameHandler.playerHandler.speed = 6f;
+		cameraShaker.enabled = false;
 	}
 
 	private void MeleeSpawner()
 	{
-		gameHandler.SpawnMeleeEnemy();
+		if (wasActivated) gameHandler.SpawnMeleeEnemy();
 	}
 
 	private void RangedSpawner()
 	{
-		gameHandler.SpawnRangedEnemy();
+		if (wasActivated) gameHandler.SpawnRangedEnemy();
 	}
 
 	private void SlowerSpawner()
 	{
-		gameHandler.SpawnSlowerEnemy();
+		if (wasActivated) gameHandler.SpawnSlowerEnemy();
 	} 
 }

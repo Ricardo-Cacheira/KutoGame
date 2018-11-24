@@ -66,6 +66,7 @@ public class Shop : MonoBehaviour {
 		GameControl.control.inventoryItems.Remove(itemToSell);
 		itemToSell.Destroy();
 		InventoryManager.im.inventory.RefreshUI();
+		DefaultText();
 	}
 
 	public void Upgrade(Item itemToUpgrade)
@@ -77,6 +78,8 @@ public class Shop : MonoBehaviour {
 
 		GameControl.control.gold -= goldCost;
 		GameControl.control.shards -= shardCost;
+
+		Inspect((EquippableItem)itemToUpgrade);
 	}
 
 	private Vector2 Cost(int level)

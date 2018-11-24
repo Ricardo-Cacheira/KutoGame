@@ -188,7 +188,7 @@ MonoBehaviour:
   speed: 6
   dashSpeed: 13
   dashTime: 0.25
-  recoveryTime: 0.5
+  recoveryTime: 2
   lastX: 1
   lastY: 0
   player: {fileID: 1427722298308738}

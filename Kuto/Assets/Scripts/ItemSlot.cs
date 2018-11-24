@@ -75,6 +75,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 					tooltip.ShowToolTip((EquippableItem)Item);
 					break;
 			}
+			tooltip.ShowToolTip((EquippableItem)Item);
 		}
         	
     }

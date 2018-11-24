@@ -33,7 +33,7 @@ public class Inventory : MonoBehaviour {
 		RefreshUI();
 	}
 
-	private void RefreshUI()
+	public void RefreshUI()
 	{
 		int i = 0;
 		for (; i < items.Count && i < itemSlots.Length; i++)

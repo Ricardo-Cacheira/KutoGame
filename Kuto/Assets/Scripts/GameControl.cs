@@ -34,7 +34,10 @@ public class GameControl : MonoBehaviour {
 		{
 			Destroy(gameObject);
 		}
+	}
 
+	void Start()
+	{
 		Load();
 	}
 
@@ -134,6 +137,8 @@ public class GameControl : MonoBehaviour {
 			sceneName = m_Scene.name;
 			if(sceneName == "townhub")
 				InventoryManager.im.Fill();
+			
+			InventoryManager.im.inventory.RefreshUI();
 		}
 		else{
 			Debug.Log("Failed to load");

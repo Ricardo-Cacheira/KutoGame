@@ -23,7 +23,7 @@ public class Shop : MonoBehaviour {
 		instance = this;
 	}
 
-    public void Click(EquippableItem item)
+    public void Click(Item item)
     {
 		if(mode == 1)
 		{
@@ -63,7 +63,9 @@ public class Shop : MonoBehaviour {
 		// GameControl.control.gold += goldBase * (itemToSell.level * goldFactor);
 		// GameControl.control.shard += shardBase * (itemToSell.level * shardFactor);
 
-		
+		GameControl.control.inventoryItems.Remove(itemToSell);
+		itemToSell.Destroy();
+		InventoryManager.im.inventory.RefreshUI();
 	}
 
 	public void Upgrade(Item itemToUpgrade)

@@ -27,6 +27,7 @@ public class Menu : MonoBehaviour {
 	void Awake () {
 		inventoryVisible = false;
 		missionsVisible = false;
+		Time.timeScale = 1;
 	}
 	
 	public void Junk()

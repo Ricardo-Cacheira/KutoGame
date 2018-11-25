@@ -46,8 +46,8 @@ public class GameHandler : MonoBehaviour {
 
 	private void Update()
 	{
-		Debug.Log("N. of rooms: " + numOfSpawners);
-		Debug.Log("No enemies?: " + noEnemies);
+		// Debug.Log("N. of rooms: " + numOfSpawners);
+		// Debug.Log("No enemies?: " + noEnemies);
 		if (!asStarted) 
 		{
 			loading -= Time.deltaTime;

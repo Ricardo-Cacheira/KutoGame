@@ -34,10 +34,7 @@ public class GameControl : MonoBehaviour {
 		{
 			Destroy(gameObject);
 		}
-	}
 
-	void Start()
-	{
 		Load();
 	}
 
@@ -135,7 +132,7 @@ public class GameControl : MonoBehaviour {
 			string sceneName;
 			m_Scene = SceneManager.GetActiveScene();
 			sceneName = m_Scene.name;
-			if(sceneName == "townhub")
+			if(sceneName == "town")
 				InventoryManager.im.Fill();
 			
 			InventoryManager.im.inventory.RefreshUI();

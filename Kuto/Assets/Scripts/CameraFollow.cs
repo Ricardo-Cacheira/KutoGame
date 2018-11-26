@@ -22,7 +22,7 @@ public class CameraFollow : MonoBehaviour {
     {
         this.GetCameraFollowPosition = GetCameraFollowPosition;
     }
-    void LateUpdate () 
+    void Update () 
     {
         HandleCameraMove();
     }

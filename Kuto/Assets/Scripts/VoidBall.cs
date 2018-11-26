@@ -6,6 +6,7 @@ public class VoidBall : MonoBehaviour {
 	public float speed = 15f;
 	Rigidbody2D rb;
 	public GameObject enemy;
+	private int dmg = 34;
 
 	void Start () 
 	{
@@ -22,7 +23,9 @@ public class VoidBall : MonoBehaviour {
 	{	
 		if (hitInfo.CompareTag("Player"))
 		{
-				hitInfo.GetComponent<PlayerHandler>().GetHealthSystem().Damage(34);
+				PlayerHandler player = hitInfo.GetComponent<PlayerHandler>();
+				player.GetHealthSystem().Damage(dmg);
+				player.CreateText(Color.red, player.transform.position, new Vector2(-1, 2.5f), "-" + dmg);
 				Destroy(gameObject);
 		}
 	}

@@ -7,6 +7,7 @@ public class SlowWave : MonoBehaviour {
 	public float speed = 10f;
 	Rigidbody2D rb;
 	public GameObject enemy;
+	private int dmg = 10;
 
 	void Start () 
 	{
@@ -28,8 +29,10 @@ public class SlowWave : MonoBehaviour {
 	{	
 		if (hitInfo.CompareTag("Player"))
 		{
-				hitInfo.GetComponent<PlayerHandler>().GetHealthSystem().Damage(15);
-				hitInfo.GetComponent<PlayerHandler>().SlowPlayer();
+				PlayerHandler player = hitInfo.GetComponent<PlayerHandler>();
+				player.GetHealthSystem().Damage(dmg);
+				player.SlowPlayer();
+				player.CreateText(Color.red, player.transform.position, new Vector2(-1, 2.5f),"-" + dmg);
 				Destroy(gameObject);
 		}
 	}

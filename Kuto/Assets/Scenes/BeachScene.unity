@@ -72887,7 +72887,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 1562279388}
-  timeCounter: 0
+  timeCounter: 5
 --- !u!61 &950685367
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -73018,6 +73018,8 @@ MonoBehaviour:
   pfCircle: {fileID: 4234766291747788, guid: a7ff0dda51cf5014689baef9f281cc68, type: 2}
   pfBomb: {fileID: 4653551745716920, guid: db9057990af13f34f9c51203e2e0066d, type: 2}
   pfMissile: {fileID: 4007934067688074, guid: 688df658b9a9ff943a8beb2c5466a3ff, type: 2}
+  combatText: {fileID: 224028678680310062, guid: 23c021d2b8dac004c8092ec97f4b17ba,
+    type: 2}
 --- !u!1 &1061783453
 GameObject:
   m_ObjectHideFlags: 0
@@ -73051,7 +73053,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -89.8, y: 8.1}
+  m_AnchoredPosition: {x: -89.79999, y: 8.0998535}
   m_SizeDelta: {x: 65, y: 65}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &1061783455
@@ -73228,7 +73230,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -4.200012, y: 1.7000122}
+  m_AnchoredPosition: {x: -4.199951, y: 1.6999512}
   m_SizeDelta: {x: 262.94, y: 117.27}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1214935109
@@ -73417,7 +73419,7 @@ GameObject:
   - component: {fileID: 1493829368}
   m_Layer: 5
   m_Name: Canvas
-  m_TagString: Untagged
+  m_TagString: Canvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -73449,12 +73451,12 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
+  m_UiScaleMode: 1
+  m_ReferencePixelsPerUnit: 32
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
-  m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_ReferenceResolution: {x: 1600, y: 900}
+  m_ScreenMatchMode: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -73467,17 +73469,17 @@ Canvas:
   m_GameObject: {fileID: 1493829363}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 923634973}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 15
   m_TargetDisplay: 0
 --- !u!224 &1493829367
 RectTransform:
@@ -139820,7 +139822,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -50.199997, y: 22.4}
+  m_AnchoredPosition: {x: -50.199997, y: 22.399998}
   m_SizeDelta: {x: 87.36, y: 38.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1895109915

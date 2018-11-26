@@ -210,6 +210,7 @@ public class GameHandler : MonoBehaviour {
 
 	public static void Restart() 
 	{
+		PlayerHandler.playerHandler.SaveRewards();
 		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
 	}
 }

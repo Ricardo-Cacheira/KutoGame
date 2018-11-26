@@ -23,6 +23,7 @@ public class Menu : MonoBehaviour {
 	public GameObject shopPanel;
 	bool inventoryVisible;
 	bool missionsVisible;
+	bool isBeach, isTemple;
 
 	void Awake () {
 		inventoryVisible = false;
@@ -65,15 +66,17 @@ public class Menu : MonoBehaviour {
 		}
 	}
 
-	public void StartMission()
-	{
-		SceneManager.LoadScene("Prototype");
-	}
 	
 	public void Phone()
 	{
 		missionsVisible = !missionsVisible;
 		missionPanel.SetActive(missionsVisible);
+
+		if (isBeach && Input.GetButtonDown("Submit")) 
+			SceneManager.LoadScene("BeachScene");
+		else if (isTemple && Input.GetButtonDown("Submit")) 
+			SceneManager.LoadScene("Prototype");
+
 		if(missionsVisible)
 		{
 			foreach (Transform child in missionPanel.transform) {
@@ -108,11 +111,13 @@ public class Menu : MonoBehaviour {
 		{
 			newMission.transform.Find("Location").GetComponent<Image>().sprite = beach;
 			location = "Head down by the beach ";
+			isBeach = true;
 		}
 		else
 		{
 			newMission.transform.Find("Location").GetComponent<Image>().sprite = temple;
 			location = "Travel to the forest temple ";
+			isTemple = true;
 		}
 
 		if(missionType == MissionType.Kill)

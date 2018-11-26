@@ -15,6 +15,7 @@ TagManager:
   - Rooms
   - EnemySlower
   - Spawners
+  - Canvas
   layers:
   - Default
   - TransparentFX

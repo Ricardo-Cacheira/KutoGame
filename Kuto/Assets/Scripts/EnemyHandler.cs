@@ -32,6 +32,7 @@ public class EnemyHandler : MonoBehaviour {
     bool attacking;
     private Vector3 moveDir;
     public LayerMask whatIsPlayer;
+    private int dmg;
 
     Animator animator;
 
@@ -54,7 +55,7 @@ public class EnemyHandler : MonoBehaviour {
         state = State.Normal;
         animator = gameObject.GetComponent<Animator>();
         attackPoint.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.2f);
-        
+        dmg = 15;
     }
 
     private void Update() 
@@ -101,7 +102,11 @@ public class EnemyHandler : MonoBehaviour {
         attackPoint.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.2f);
         SetStateNormal();
         Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 0.7f, whatIsPlayer);
-        if (player != null) PlayerHandler.playerHandler.GetHealthSystem().Damage(10);
+        if (player != null) {
+            PlayerHandler.playerHandler.GetHealthSystem().Damage(dmg);
+            playerHandler.CreateText(Color.red, playerHandler.transform.position, new Vector2(-1, 2.5f), "-" + dmg);
+        }
+        
         if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
             GameHandler.Restart();
         }

@@ -25,4 +25,5 @@ public class GameAssets : MonoBehaviour {
     public Transform pfCircle;
     public Transform pfBomb;
     public Transform pfMissile;  
+    public RectTransform combatText;
 }

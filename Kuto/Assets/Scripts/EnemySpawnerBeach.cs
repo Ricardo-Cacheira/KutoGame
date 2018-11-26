@@ -22,7 +22,9 @@ public class EnemySpawnerBeach : MonoBehaviour {
 		gameHandle = GameObject.Find("GameManager");
 		gameHandler = gameHandle.GetComponent<GameHandler>();
 
-		timeCounter = 5;
+		timeCounter = 30;
+
+		gameHandler.numOfSpawners++;
 	}
 
 	void Update()
@@ -68,6 +70,7 @@ public class EnemySpawnerBeach : MonoBehaviour {
 			Destroy(gameObject, timeCounter);
 		}
 	}
+	
 
 	private void MeleeSpawner()
 	{

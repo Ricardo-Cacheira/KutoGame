@@ -34,7 +34,10 @@ public class GameControl : MonoBehaviour {
 		{
 			Destroy(gameObject);
 		}
+	}
 
+	void Start()
+	{
 		Load();
 	}
 

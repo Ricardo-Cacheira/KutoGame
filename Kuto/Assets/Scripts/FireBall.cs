@@ -52,6 +52,6 @@ public class FireBall : MonoBehaviour {
 
 	void CreateText()
 	{
-		playerHandler.CreateText(Color.red, this.gameObject.transform.position, new Vector2(1, 2.5f),"-" + dmg);
+		playerHandler.CreateText(Color.green, this.gameObject.transform.position, new Vector2(1, 2.5f),"-" + dmg);
 	}	
 }

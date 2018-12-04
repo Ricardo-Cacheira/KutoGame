@@ -37,7 +37,7 @@ public class EnemySpawn : MonoBehaviour {
 
 	void Update()
 	{
-		if (finishedSpawning && gameHandler.noEnemies) {
+		if (finishedSpawning && GameHandler.noEnemies) {
 			doorRenderer.enabled = false;
 			doorCollider.enabled = false;
 		}
@@ -61,7 +61,7 @@ public class EnemySpawn : MonoBehaviour {
 			randNumBomb = Random.Range(2, 4);
 			randNumMissile = Random.Range(1, 3);
 
-			InvokeRepeating("MeleeSpawner", 2f, randMelee);
+			InvokeRepeating("MeleeSpawner", 1f, randMelee);
 			InvokeRepeating("RangedSpawner", 6f, randRanged);
 			InvokeRepeating("SlowerSpawner", 4f, randSlower);
 

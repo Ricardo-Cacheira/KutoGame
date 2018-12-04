@@ -33,6 +33,7 @@ public class EnemyHandler : MonoBehaviour {
     private Vector3 moveDir;
     public LayerMask whatIsPlayer;
     private int dmg;
+    private float ranDir;
 
     Animator animator;
 
@@ -104,12 +105,14 @@ public class EnemyHandler : MonoBehaviour {
         Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 0.7f, whatIsPlayer);
         if (player != null) {
             PlayerHandler.playerHandler.GetHealthSystem().Damage(dmg);
-            playerHandler.CreateText(Color.red, playerHandler.transform.position, new Vector2(-1, 2.5f), "-" + dmg);
+            ranDir = UnityEngine.Random.Range(1.5f, 4.5f);
+            playerHandler.CreateText(Color.red, playerHandler.transform.position, new Vector2(-1, ranDir), "-" + dmg);
         }
         
         if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
             GameHandler.Restart();
         }
+        
         yield return new WaitForSeconds(0.2f);
     }
 

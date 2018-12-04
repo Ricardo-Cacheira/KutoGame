@@ -14,21 +14,35 @@ public enum MissionLocation {
 }
 
 public class Menu : MonoBehaviour {
-
+	public static Menu menu;
 	public Sprite beach;
 	public Sprite temple;
 	public GameObject missionPrefab;
 	public GameObject inventory;
 	public GameObject missionPanel;
 	public GameObject shopPanel;
+	public GameObject bossButton;
 	bool inventoryVisible;
 	bool missionsVisible;
-	bool isBeach, isTemple;
+	public bool isBeach, isTemple;
 
 	void Awake () {
+		menu = this;
 		inventoryVisible = false;
 		missionsVisible = false;
 		Time.timeScale = 1;
+	}
+	
+	void Start() {
+		// GameControl.control.CalculateLevel();
+		if (GameControl.control.xp == GameControl.control.currReqXp)
+			GameControl.control.isXpMax = true;
+
+		if (GameControl.control.isXpMax)
+			bossButton.gameObject.SetActive(true);	
+		else 
+			bossButton.gameObject.SetActive(false);
+
 	}
 	
 	public void Junk()
@@ -64,6 +78,11 @@ public class Menu : MonoBehaviour {
 			inventoryVisible = true;
 			shopPanel.SetActive(false);
 		}
+	}
+
+	public void Boss()
+	{
+		SceneManager.LoadScene("BossScene");
 	}
 
 	
@@ -103,8 +122,6 @@ public class Menu : MonoBehaviour {
 		newMission.transform.localPosition = new Vector3(0, 0, 0);
 		newMission.transform.localScale = new Vector3(1, 1, 1);
 
-		
-
 		string location;
 
 		if(missionLocation == MissionLocation.Beach)
@@ -124,6 +141,7 @@ public class Menu : MonoBehaviour {
 			newMission.transform.Find("Text").GetComponent<Text>().text = location + "and assassinate " + ammount +" targets.";
 		else
 			newMission.transform.Find("Text").GetComponent<Text>().text = location + "and survive for " + ammount +" minutes.";
+		
 	}
 
 }

@@ -58,7 +58,7 @@ GameObject:
   - component: {fileID: 114077151684526394}
   m_Layer: 0
   m_Name: ClosedExit
-  m_TagString: Rooms
+  m_TagString: RoomClosed
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

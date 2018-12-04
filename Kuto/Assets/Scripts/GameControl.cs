@@ -23,6 +23,11 @@ public class GameControl : MonoBehaviour {
 	public float vitality = 100;
 	public float strength;
 	public int xp;
+	public int lvl;
+	public int currReqXp;
+	public int lastReqXp;
+	public int tempXp;
+	public bool isXpMax;
 
 	void Awake()
 	{
@@ -30,13 +35,17 @@ public class GameControl : MonoBehaviour {
 		{
 			DontDestroyOnLoad(gameObject);
 			control = this;
+			Debug.Log("calculated");
 		}else if(control != this)
 		{
 			Destroy(gameObject);
 		}
 
-		Load();
+		Load();	
+		CalculateLevel();
+
 	}
+
 
 	public int GetLevel()
 	{
@@ -45,7 +54,29 @@ public class GameControl : MonoBehaviour {
 		return number;
 	}
 
-	public void Save(){
+	public void CalculateLevel()
+	{
+		currReqXp = 0;
+		tempXp = 0;
+		lastReqXp = 0;
+
+		for (int i = 1; i < 999; i++)
+		{
+			currReqXp = 200 + (i * i * 10);
+			tempXp += currReqXp;
+
+			if (tempXp >= xp) 
+			{
+				lvl = i;
+				if (i == 1) lastReqXp = 0;
+				break;
+			} 
+			else 
+				lastReqXp += currReqXp;
+		}
+	}
+
+	public void Save() {
 		BinaryFormatter bf = new BinaryFormatter();
 		//Persistent data path which is a file path to store game realated data in AppData Roaming  ...
 		//.dat  is usually a generic data file that stores information specific to the application it refers to

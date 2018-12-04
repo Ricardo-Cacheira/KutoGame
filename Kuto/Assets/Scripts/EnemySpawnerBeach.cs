@@ -22,9 +22,10 @@ public class EnemySpawnerBeach : MonoBehaviour {
 		gameHandle = GameObject.Find("GameManager");
 		gameHandler = gameHandle.GetComponent<GameHandler>();
 
-		timeCounter = 30;
+		timeCounter = 80;
 
 		gameHandler.numOfSpawners++;
+
 	}
 
 	void Update()
@@ -43,6 +44,7 @@ public class EnemySpawnerBeach : MonoBehaviour {
 	{
 		if (other.gameObject.CompareTag("Player") && !wasActivated)
 		{
+			StartCoroutine(InvinciblePlayer());
 			wasActivated = true;
 
 			randMelee = Random.Range(5, 13);
@@ -52,23 +54,30 @@ public class EnemySpawnerBeach : MonoBehaviour {
 			randNumBomb = Random.Range(7, 18);
 			randNumMissile = Random.Range(9, 17);
 
-			InvokeRepeating("MeleeSpawner", 2f, randMelee);
-			InvokeRepeating("RangedSpawner", 6f, randRanged);
-			InvokeRepeating("SlowerSpawner", 4f, randSlower);
+			InvokeRepeating("MeleeSpawner", 5f, randMelee);
+			InvokeRepeating("RangedSpawner", 9f, randRanged);
+			InvokeRepeating("SlowerSpawner", 7f, randSlower);
 
 			for (int i = 0; i < randNumBomb; i++)
 			{
-				Vector2 randPos = new Vector2(Random.Range(-53, 53f), Random.Range(-46f, 46f) + 3);
+				Vector2 randPos = new Vector2(Random.Range(-28f, 28), Random.Range(-30f, 30f) + 3);
 				Instantiate(GameAssets.i.pfBomb, new Vector2(this.transform.position.x + randPos.x, this.transform.position.y + randPos.y), Quaternion.identity);
 			}
 			for (int i = 0; i < randNumMissile; i++)
 			{
-				Vector2 randPos = new Vector2(Random.Range(-53, 53f), Random.Range(-46f, 46f) + 3);
+				Vector2 randPos = new Vector2(Random.Range(-28f, 28), Random.Range(-30f, 30f) + 3);
 				Instantiate(GameAssets.i.pfMissile, new Vector2(this.transform.position.x + randPos.x, this.transform.position.y + randPos.y), Quaternion.identity);
 			}
 			
 			Destroy(gameObject, timeCounter);
 		}
+	}
+
+	private IEnumerator InvinciblePlayer()
+	{
+		PlayerHandler.playerHandler.gameObject.layer = 15;
+		yield return new WaitForSeconds(2.5f);
+		PlayerHandler.playerHandler.gameObject.layer = 1;
 	}
 	
 

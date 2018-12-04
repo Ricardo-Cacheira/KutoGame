@@ -6,6 +6,9 @@ public class Mission : MonoBehaviour , IPointerClickHandler{
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		SceneManager.LoadScene("Prototype");
+		if (Menu.menu.isTemple)
+			SceneManager.LoadScene("Prototype");
+		if (Menu.menu.isBeach)
+			SceneManager.LoadScene("BeachScene");
 	}
 }

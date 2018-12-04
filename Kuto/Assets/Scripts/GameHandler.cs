@@ -13,7 +13,6 @@ public class GameHandler : MonoBehaviour {
 	private List<EnemyRangedHandler> enemyRangedHandlerList;
 	private List<EnemySlowerHandler> enemySlowerHandlerList;
 
-
 	[SerializeField]
     private CameraFollow cameraFollow;
 
@@ -21,33 +20,36 @@ public class GameHandler : MonoBehaviour {
 
 	GameObject[] enemySpawner;
 	GameObject enemySpawnerBeach;
+	GameObject EnemySpawnerBoss;
 
 	public LayerMask wallLayer;
 
 	private int timeToSurvive;
-	private float loading = 2;
+	private float loading = 1;
 
 	public int numOfSpawners;
-	public bool noEnemies;
+	public static bool noEnemies;
 
 	private void Start() 
 	{
 		enemyMeleeHandlerList = new List<EnemyHandler>();
 		enemyRangedHandlerList = new List<EnemyRangedHandler>();
 		enemySlowerHandlerList = new List<EnemySlowerHandler>();
+
 		playerHandler = PlayerHandler.CreatePlayer(GetClosestEnemyHandler);
 
 		cameraFollow.Setup(8, playerHandler.GetPosition);
 
 		enemySpawner = GameObject.FindGameObjectsWithTag("Spawners");
 		enemySpawnerBeach = GameObject.Find("EnemySpawnerBeach");
+		EnemySpawnerBoss = GameObject.Find("BossSpawner");
 
+		numOfSpawners = enemySpawner.Length;
 	}
 
 	private void Update()
 	{
 		// Debug.Log("N. of rooms: " + numOfSpawners);
-		// Debug.Log("No enemies?: " + noEnemies);
 		if (!asStarted) 
 		{
 			loading -= Time.deltaTime;
@@ -83,7 +85,7 @@ public class GameHandler : MonoBehaviour {
 		}
 	}
 
-	IEnumerator WinMessage()
+	public static IEnumerator WinMessage()
 	{
 		GameObject objectWinText = GameObject.Find("WinText");
 		Text WinText = objectWinText.GetComponent<Text>();
@@ -141,6 +143,12 @@ public class GameHandler : MonoBehaviour {
 		}
 	}
 
+	public void SpawnBoss() 
+	{
+		BossHandler bossHandler = BossHandler.CreateEnemy(new Vector3(playerHandler.transform.position.x, playerHandler.transform.position.y + 5, playerHandler.transform.position.z), playerHandler);
+		bossHandler.OnDead += BossHandler_OnDead;
+	}
+
 	private void EnemyHandler_OnDead(object sender, System.EventArgs e) 
 	{
 		EnemyHandler enemyMeleeHandler = sender as EnemyHandler;
@@ -160,6 +168,18 @@ public class GameHandler : MonoBehaviour {
 		EnemySlowerHandler enemySlowerHandler = sender as EnemySlowerHandler;
 		enemySlowerHandlerList.Remove(enemySlowerHandler);
 		playerHandler.GetRewards(10, 15);
+	}
+
+	private void BossHandler_OnDead(object sender, System.EventArgs e) 
+	{
+		BossHandler bossHandler = sender as BossHandler;
+		playerHandler.GetRewards(5000, 0);
+		GameControl.control.isXpMax = false;
+		playerHandler.xp++;
+		playerHandler.SaveRewards();
+		GameControl.control.CalculateLevel();
+		GameControl.control.Save();
+		StartCoroutine(WinMessage());
 	}
 
 	private EnemyHandler GetClosestEnemyHandler(Vector3 playerPosition) 

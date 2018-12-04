@@ -16,6 +16,9 @@ TagManager:
   - EnemySlower
   - Spawners
   - Canvas
+  - Intel
+  - RoomClosed
+  - Boss
   layers:
   - Default
   - TransparentFX

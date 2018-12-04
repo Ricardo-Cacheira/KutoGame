@@ -7,6 +7,7 @@ public class VoidBall : MonoBehaviour {
 	Rigidbody2D rb;
 	public GameObject enemy;
 	private int dmg = 34;
+	private float ranDir;
 
 	void Start () 
 	{
@@ -25,7 +26,8 @@ public class VoidBall : MonoBehaviour {
 		{
 				PlayerHandler player = hitInfo.GetComponent<PlayerHandler>();
 				player.GetHealthSystem().Damage(dmg);
-				player.CreateText(Color.red, player.transform.position, new Vector2(-1, 2.5f), "-" + dmg);
+				ranDir = Random.Range(1.5f, 4.5f);
+				player.CreateText(Color.red, player.transform.position, new Vector2(-1, ranDir), "-" + dmg);
 				Destroy(gameObject);
 		}
 	}

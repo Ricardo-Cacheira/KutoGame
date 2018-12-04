@@ -13,8 +13,14 @@ public class PlayerHandler : MonoBehaviour {
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, new Vector3(0, 1.5f), Quaternion.identity, playerTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
+        ExperienceSystem experienceSystem = new ExperienceSystem(GameControl.control.tempXp);
+        Transform experienceBarObj = Instantiate(GameAssets.i.pfXpBar, new Vector3(0, 0), Quaternion.identity);
+        ExperienceBar experienceBar = experienceBarObj.GetComponent<ExperienceBar>();
+        experienceBarObj.SetParent(GameObject.Find("XpBarHolder").GetComponent<Transform>(), false);
+        experienceBar.Setup(experienceSystem);  
+
         PlayerHandler playerHandler = playerTransform.GetComponent<PlayerHandler>();
-        playerHandler.Setup(healthSystem, getClosestEnemyHandlerFunc);
+        playerHandler.Setup(healthSystem, experienceSystem, getClosestEnemyHandlerFunc);
 
         return playerHandler;
     }
@@ -32,6 +38,7 @@ public class PlayerHandler : MonoBehaviour {
     public LayerMask whatIsEnemies;
 
     private HealthSystem healthSystem;
+    private ExperienceSystem experienceSystem;
     private Func<Vector3, EnemyHandler> getClosestEnemyHandlerFunc;
     private Vector3 lastMoveDir;
     private State state;
@@ -64,30 +71,41 @@ public class PlayerHandler : MonoBehaviour {
     Image bullet;
 
     //upgradable values
-    int basicAtkDmg = 20;
+    int basicAtkDmg = 20 + (GameControl.control.lvl * 2);
 
     int healingAmount = 45;
     float healingCd = 3;
 
-    int aoeDmg = 50;
+    int aoeDmg = 49 + (GameControl.control.lvl * 2);
     float aoeCd = 7;
 
-    int shootingDmg = 40;
+    int shootingDmg = 40 + (GameControl.control.lvl * 2);
     float shootingCd = 2;
+
+    private float randDir;
 
     //rewards values
     private int gold;
     Text goldText;
     GameObject goldTextObject;
 
-    private int xp;
+    public int xp;
+    private int lvl;
+    private int currReqXp;
 
     Text xpText;
     GameObject xpTextObject;
+
+    Text lvlText;
+    GameObject lvlTextObject;
+
+    Text xpPercentageText;
+    GameObject xpPercentageTextObject;
     // GameControl gameControl;
     GameObject canvasObj;
     RectTransform tempTextBox;
 
+    int currLvl;
 
     #endregion
 
@@ -96,24 +114,6 @@ public class PlayerHandler : MonoBehaviour {
         Normal,
         Busy,
         Dead,
-    }
-
-    void Start()
-    {
-        goldTextObject =  GameObject.Find("CurrentGold");
-        goldText = goldTextObject.GetComponent<Text>();
-
-        xpTextObject =  GameObject.Find("CurrentXp");
-        xpText = xpTextObject.GetComponent<Text>();
-
-        // pc = GameObject.Find("PersistenceControl");
-        // gameControl = pc.GetComponent<GameControl>();
-        gold = GameControl.control.gold;
-        xp = GameControl.control.xp;
-        goldText.text = GameControl.control.gold.ToString(); 
-        xpText.text = GameControl.control.xp.ToString();
-
-        canvasObj = GameObject.FindGameObjectWithTag("Canvas");
     }
 
     void Awake() 
@@ -125,9 +125,44 @@ public class PlayerHandler : MonoBehaviour {
         potion = GameAssets.i.potion;
     }
 
-    private void Setup(HealthSystem healthSystem, Func<Vector3, EnemyHandler> getClosestEnemyHandlerFunc) 
+    void Start()
+    {
+
+        goldTextObject =  GameObject.Find("CurrentGold");
+        goldText = goldTextObject.GetComponent<Text>();
+
+        xpTextObject =  GameObject.Find("CurrentXp");
+        xpText = xpTextObject.GetComponent<Text>();
+
+        xpPercentageTextObject = GameObject.Find("XpBarHolder");
+        xpPercentageText = xpPercentageTextObject.GetComponent<Text>();
+
+        lvlTextObject = GameObject.Find("LvlText");
+        lvlText = lvlTextObject.GetComponent<Text>();
+        lvlText.text = GameControl.control.lvl.ToString();
+
+        xp = GameControl.control.xp;
+        lvl = GameControl.control.lvl;
+        currReqXp = GameControl.control.currReqXp;
+
+        gold = GameControl.control.gold;
+        goldText.text = GameControl.control.gold.ToString(); 
+
+        xpText.text = GameControl.control.xp.ToString();
+
+        float tempPercentage = experienceSystem.GetXpPercent() * 100;
+        xpPercentageText.text = Math.Round((tempPercentage), 1)  + "%";
+
+        canvasObj = GameObject.FindGameObjectWithTag("Canvas");
+
+        currLvl = GameControl.control.GetLevel();
+
+    }
+
+    private void Setup(HealthSystem healthSystem, ExperienceSystem experienceSystem, Func<Vector3, EnemyHandler> getClosestEnemyHandlerFunc) 
     {
         this.healthSystem = healthSystem;
+        this.experienceSystem = experienceSystem;
         this.getClosestEnemyHandlerFunc = getClosestEnemyHandlerFunc;
 
         healthSystem.OnDead += HealthSystem_OnDead;
@@ -142,23 +177,23 @@ public class PlayerHandler : MonoBehaviour {
         if (OnDead != null) OnDead(this, EventArgs.Empty);
     }
 
-    private void Update() 
+    void Update() 
     {
         switch (state) 
         {
-        case State.Normal:
-            HandleMovement();
-            HandleAttack();
-            HandleShooting();
-            HandleHealing();
-            HandleAoe();
-            break;
-        case State.Busy:
-            HandleAttack();
-            break;
-        case State.Dead:
-            GameHandler.Restart();
-            break;
+            case State.Normal:
+                HandleMovement();
+                HandleAttack();
+                HandleShooting();
+                HandleHealing();
+                HandleAoe();
+                break;
+            case State.Busy:
+                HandleAttack();
+                break;
+            case State.Dead:
+                GameHandler.Restart();
+                break;
         }
     }
 
@@ -192,7 +227,6 @@ public class PlayerHandler : MonoBehaviour {
 
 			if (movement != new Vector2(lastX, lastY) && movement != Vector2.zero)
                 attackPoint.position = transform.position + (Vector3)(movement);	
-			
 		}
 
 		if(movement != Vector2.zero)
@@ -245,7 +279,7 @@ public class PlayerHandler : MonoBehaviour {
     IEnumerator Shooting()
     {
         StartCoroutine(FadeToS(0f, shootingCd, bullet.GetComponent<Image>().color));
-        Instantiate(GameAssets.i.pfFireBall, player.transform.position, attackPoint.rotation);
+        Instantiate(GameAssets.i.pfFireBall, player.transform.position, Quaternion.identity);
         isShooting = true;
         yield return new WaitForSeconds(shootingCd);
         isShooting = false;
@@ -283,8 +317,9 @@ public class PlayerHandler : MonoBehaviour {
                     EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
                     enemy.GetHealthSystem().Damage(basicAtkDmg); 
                     enemy.KnockBack(200000);
-
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, 2.5f), "-" + basicAtkDmg);
+                    
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + basicAtkDmg);
 
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -294,7 +329,8 @@ public class PlayerHandler : MonoBehaviour {
                     enemy.GetHealthSystem().Damage(basicAtkDmg);
                     enemy.KnockBack(200000);
 
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, 2.5f), "-" + basicAtkDmg);
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + basicAtkDmg);
 
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -303,10 +339,20 @@ public class PlayerHandler : MonoBehaviour {
                     EnemySlowerHandler enemy = enemiesToDamage[i].GetComponent<EnemySlowerHandler>();  
                     enemy.GetHealthSystem().Damage(basicAtkDmg);
                     enemy.KnockBack(200000);
-
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, 2.5f), "-" + basicAtkDmg);
+                    
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + basicAtkDmg);
 
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                } else if (enemiesToDamage[i].gameObject.CompareTag("Boss"))
+                {
+                    BossHandler boss = enemiesToDamage[i].GetComponent<BossHandler>();  
+                    boss.GetHealthSystem().Damage(basicAtkDmg);
+                    
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + basicAtkDmg);
+
+                    if (boss.GetHealthSystem().GetHealthPercent() < 0.1) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 } 
             }
 
@@ -327,7 +373,7 @@ public class PlayerHandler : MonoBehaviour {
     IEnumerator AoE() 
     {
         aoe = true;
-        Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
+        Transform tempAoe = Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
         StartCoroutine(FadeToF(aoeCd, aoeFire.GetComponent<Image>().color));
 
         Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(transform.position, attackRange * 4, whatIsEnemies);      
@@ -340,7 +386,8 @@ public class PlayerHandler : MonoBehaviour {
                     enemy.GetHealthSystem().Damage(aoeDmg);
                     enemy.KnockBack(1000000);
 
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, 2.5f), "-" + aoeDmg);
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + aoeDmg);
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
                 } else if (enemiesToDamage[i].gameObject.CompareTag("Enemy"))
@@ -349,25 +396,36 @@ public class PlayerHandler : MonoBehaviour {
                     enemy.GetHealthSystem().Damage(aoeDmg);
                     enemy.KnockBack(1000000);
 
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, 2.5f), "-" + aoeDmg);
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + aoeDmg);
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 } else if (enemiesToDamage[i].gameObject.CompareTag("EnemySlower"))
                 {
                     EnemySlowerHandler enemy = enemiesToDamage[i].GetComponent<EnemySlowerHandler>();  
                     enemy.GetHealthSystem().Damage(aoeDmg);
                     enemy.KnockBack(1000000);
-
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, 2.5f), "-" + aoeDmg);
+                    
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + aoeDmg);
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                } else if (enemiesToDamage[i].gameObject.CompareTag("Boss"))
+                {
+                    BossHandler boss = enemiesToDamage[i].GetComponent<BossHandler>();  
+                    boss.GetHealthSystem().Damage(aoeDmg);
+                    
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + aoeDmg);
+                    if (boss.GetHealthSystem().GetHealthPercent() < 0.25) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
+        Destroy(tempAoe.gameObject, 0.3f);
         yield return new WaitForSeconds(aoeCd);
         aoe = false;
+
     }
     IEnumerator FadeToF(float aTime, Color cooldownColor)
     {
         StartCoroutine(AoeCdColor());
-        StartCoroutine(DeletePf());
         float alpha = cooldownColor.a;
 
         for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
@@ -384,12 +442,6 @@ public class PlayerHandler : MonoBehaviour {
         aoeFire.GetComponent<Image>().color = new Color(1, 1, 1, 1);
     }
 
-    IEnumerator DeletePf() 
-    {
-        GameObject toDelete = GameObject.FindWithTag("Circle");
-        yield return new WaitForSeconds(1);
-        Destroy(toDelete);       
-    }
     private void HandleHealing()
     {
         if (Input.GetButtonDown("Heal") && !healing) StartCoroutine(Healing());
@@ -400,7 +452,8 @@ public class PlayerHandler : MonoBehaviour {
 	{	
         healing = true;
         healthSystem.Heal(healingAmount);
-        CreateText(Color.green, playerHandler.transform.position, new Vector2(1f, 3f),"+" + healingAmount);
+        randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+        CreateText(Color.green, playerHandler.transform.position, new Vector2(1f, randDir),"+" + healingAmount);
         StartCoroutine(FadeTo(healingCd, potion.GetComponent<Image>().color));
 		yield return new WaitForSeconds(healingCd);
         healing = false;
@@ -447,18 +500,67 @@ public class PlayerHandler : MonoBehaviour {
             hitInfo.GetComponent<ParticleSystem>().Play();
 
             hitInfo.GetComponent<SpriteRenderer>().enabled = false;
-            hitInfo.GetComponent<BoxCollider2D>().enabled = false;
+            hitInfo.GetComponent<CircleCollider2D>().enabled = false;
+
+            CreateText(Color.red, transform.position, new Vector2(-1, 4.5f), "-" + 50);
+
+            if (this.GetHealthSystem().GetHealthPercent() <= 0) {
+                GameHandler.Restart();
+            }
+
+			Destroy(hitInfo.gameObject, 1f);
+		}
+
+        
+		if (hitInfo.gameObject.CompareTag("Circle"))
+		{
+			this.GetHealthSystem().Damage(BossHandler.dmgAoe);;
+			this.rb2d.AddForce(900 * -movement * speed); //wth
+            hitInfo.GetComponent<ParticleSystem>().Play();
+
+            hitInfo.GetComponent<SpriteRenderer>().enabled = false;
+            hitInfo.GetComponent<CircleCollider2D>().enabled = false;
+
+            CreateText(Color.red, transform.position, new Vector2(-1, 3.5f), "-" + BossHandler.dmgAoe);
+
+            if (this.GetHealthSystem().GetHealthPercent() <= 0) {
+                GameHandler.Restart();
+            }
             
 			Destroy(hitInfo.gameObject, 1f);
 		}
 	}
 
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.CompareTag("Intel") && GameHandler.noEnemies)
+        {
+            GetRewards(1000, 0);
+            SaveRewards();
+			StartCoroutine(GameHandler.WinMessage());
+        }
+    }
+
     public void GetRewards(int newGold, int newXp)
     {
         gold += newGold;
-        xp += newXp;
         goldText.text = gold.ToString();
-        xpText.text = xp.ToString();
+        
+        experienceSystem.WinXp(newXp);
+        float tempPercentage = (experienceSystem.GetXpPercent() * 100.0f);
+
+            
+        if (GameControl.control.isXpMax == false) {
+            xp += newXp;
+            xpText.text = GameControl.control.xp.ToString(); 
+            xpPercentageText.text = Math.Round((tempPercentage), 1)  + "%";
+        } else 
+        {
+            xpText.text = GameControl.control.xp.ToString();
+            xpPercentageText.text = Math.Round((tempPercentage), 1) + "%";
+
+        }
+        
     }
 
     public void SaveRewards()
@@ -470,11 +572,17 @@ public class PlayerHandler : MonoBehaviour {
 
     public void CreateText(Color color, Vector3 pos, Vector2 dir, String displayDmg)
     {
-        canvasObj = GameObject.FindGameObjectWithTag("Canvas");;
+        canvasObj = GameObject.FindGameObjectWithTag("Canvas");
         tempTextBox = Instantiate(GameAssets.i.combatText, new Vector3(pos.x, pos.y + 30, 0), transform.rotation);
         tempTextBox.transform.SetParent(canvasObj.transform, false);
         tempTextBox.GetComponent<Text>().color = color;
         tempTextBox.GetComponent<CombatText>().Initialize(2, displayDmg, dir);
+    }
+
+    public void KnockBack(float force, Vector3 pos)
+    {   
+        Vector2 knock = (this.transform.position - pos).normalized;
+        gameObject.GetComponent<Rigidbody2D>().AddForce(knock * force);
     }
 
     private void SetStateBusy() 
@@ -500,6 +608,11 @@ public class PlayerHandler : MonoBehaviour {
     public HealthSystem GetHealthSystem() 
     {
         return healthSystem;
+    }
+
+    public ExperienceSystem GetExperienceSystem()
+    {
+        return experienceSystem;
     }
 
     void OnDrawGizmosSelected()

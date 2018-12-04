@@ -35,6 +35,8 @@ public class Missile : MonoBehaviour {
     {
         if (col.CompareTag("Player")) {
             col.GetComponent<PlayerHandler>().GetHealthSystem().Damage(50);
+            PlayerHandler.playerHandler.CreateText(Color.red, transform.position, new Vector2(-1, 3.5f), "-" + 50);
+
             Destroy(gameObject);
         }
 

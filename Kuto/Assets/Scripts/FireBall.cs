@@ -5,16 +5,15 @@ using UnityEngine;
 public class FireBall : MonoBehaviour {
 
 	public float speed = 20f;
-	Rigidbody2D rb;
-	public GameObject player;
+	public Rigidbody2D rb;
 	private int dmg = 35;
 	PlayerHandler playerHandler;
+	public Vector2 dir;
 
-	void Start () 
+	void Awake () 
 	{
-		player = GameObject.FindWithTag("Player");
-		playerHandler = player.GetComponent<PlayerHandler>();
-		Vector2 dir = new Vector2(playerHandler.lastX, playerHandler.lastY).normalized;
+		playerHandler = PlayerHandler.playerHandler.GetComponent<PlayerHandler>();
+		dir = new Vector2(playerHandler.lastX, playerHandler.lastY).normalized;
 		rb = GetComponent<Rigidbody2D>();
 		rb.velocity = dir * speed;
 	}
@@ -44,14 +43,16 @@ public class FireBall : MonoBehaviour {
 			enemy.GetHealthSystem().Damage(dmg);
 			enemy.KnockBack(400000);
 			CreateText();
-		} else if (hitInfo.CompareTag("Walls"))
+		} else if (hitInfo.CompareTag("Boss"))
 		{
-			Destroy(gameObject);
+			BossHandler boss = hitInfo.GetComponent<BossHandler>();
+			boss.GetHealthSystem().Damage(dmg);
+			CreateText();
 		}
 	}
 
 	void CreateText()
 	{
-		playerHandler.CreateText(Color.red, this.gameObject.transform.position, new Vector2(1, 2.5f),"-" + dmg);
+		playerHandler.CreateText(Color.green, this.gameObject.transform.position, new Vector2(1, 2.5f),"-" + dmg);
 	}	
 }

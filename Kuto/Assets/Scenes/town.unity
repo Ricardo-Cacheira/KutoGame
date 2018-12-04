@@ -837,7 +837,6 @@ GameObject:
   - component: {fileID: 280837928}
   - component: {fileID: 280837927}
   - component: {fileID: 280837931}
-  - component: {fileID: 280837932}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -943,27 +942,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   eventSystem: {fileID: 354099717}
   selectedObject: {fileID: 297177736}
-  menu: {fileID: 0}
---- !u!114 &280837932
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 280837926}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba93eb19b822e364d82e7e59712cf05f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  beach: {fileID: 0}
-  temple: {fileID: 0}
-  missionPrefab: {fileID: 0}
-  inventory: {fileID: 0}
-  missionPanel: {fileID: 0}
-  shopPanel: {fileID: 0}
-  bossButton: {fileID: 1463022461}
-  isBeach: 0
-  isTemple: 0
+  menu: {fileID: 1645344916}
 --- !u!1 &297177736
 GameObject:
   m_ObjectHideFlags: 0
@@ -5214,7 +5193,7 @@ MonoBehaviour:
   inventory: {fileID: 607661649}
   missionPanel: {fileID: 637438429}
   shopPanel: {fileID: 1783140621}
-  bossButton: {fileID: 0}
+  bossButton: {fileID: 1463022461}
   isBeach: 0
   isTemple: 0
 --- !u!1 &1709485927

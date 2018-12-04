@@ -21,7 +21,7 @@ public class PlayerHandler : MonoBehaviour {
 
     #region VARIABLES
     
-    private int[] itemSkills = new int[4];
+    [SerializeField] int[] itemSkills = new int[4];
     private Dictionary<int, Action> skills = new Dictionary<int, Action>();
 
     public static PlayerHandler playerHandler;
@@ -139,7 +139,6 @@ public class PlayerHandler : MonoBehaviour {
         for (int i = 0; i < GameControl.control.equippedItems.Count; i++)
         {
             itemSkills[i] = GameControl.control.equippedItems[i].skillID;
-            Debug.Log(itemSkills[i]);
         }
         SetupSkillIcons();
 
@@ -149,17 +148,17 @@ public class PlayerHandler : MonoBehaviour {
 
     private void SetupSkillIcons()
     {
-        if (Array.IndexOf(itemSkills, 0) > -1)
+        if (Array.IndexOf(itemSkills, 1) > -1)
             potion.enabled = true;
         else
             potion.enabled = false;
 
-        if (Array.IndexOf(itemSkills, 1) > -1)
+        if (Array.IndexOf(itemSkills, 2) > -1)
             aoeFire.enabled = true;
         else
             aoeFire.enabled = false;
             
-        if (Array.IndexOf(itemSkills, 2) > -1)
+        if (Array.IndexOf(itemSkills, 3) > -1)
             bullet.enabled = true;
         else
             bullet.enabled = false;
@@ -168,10 +167,14 @@ public class PlayerHandler : MonoBehaviour {
 
     private void SetupSkills()
     {
-        skills.Add(0, HandleHealing);
-        skills.Add(1, HandleAoe);
-        skills.Add(2, HandleShooting);
+        skills.Add(0, None);
+        skills.Add(1, HandleHealing);
+        skills.Add(2, HandleAoe);
+        skills.Add(3, HandleShooting);
     }
+
+    void None()
+    {return;}
 
     private void HealthSystem_OnDead(object sender, EventArgs e) 
     {

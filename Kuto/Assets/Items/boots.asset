@@ -11,8 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9129fb0533b4758409329c3920ec4b17, type: 3}
   m_Name: boots
   m_EditorClassIdentifier: 
+  id: 6cebde1ab2c92814dadc7de4046f13b5
   name: boots
   icon: {fileID: 21300064, guid: 63d2a355ab163f6489bb8b2b167e76da, type: 3}
-  strenghtBonus: 0
-  vitalityBonus: 0
+  level: 0
+  skillID: 1
   equipmentType: 3

@@ -2280,7 +2280,7 @@ MonoBehaviour:
   closedRooms: {fileID: 1909850917050966, guid: 7cc3a9f0cbe8dad4d8dc97f651acf1f3,
     type: 2}
   rooms: []
-  waitTime: 3
+  waitTime: 5
   spawnedBoss: 0
   boss: {fileID: 1325563005719426, guid: 21cd5ec54a55d3c4593b98cd044342be, type: 2}
 --- !u!1 &847133566

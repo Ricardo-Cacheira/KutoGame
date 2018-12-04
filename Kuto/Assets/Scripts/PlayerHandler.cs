@@ -26,6 +26,9 @@ public class PlayerHandler : MonoBehaviour {
     }
 
     #region VARIABLES
+    
+    [SerializeField] int[] itemSkills = new int[4];
+    private Dictionary<int, Action> skills = new Dictionary<int, Action>();
 
     public static PlayerHandler playerHandler;
 
@@ -167,8 +170,46 @@ public class PlayerHandler : MonoBehaviour {
 
         healthSystem.OnDead += HealthSystem_OnDead;
 
+        SetupSkills();
+        for (int i = 0; i < GameControl.control.equippedItems.Count; i++)
+        {
+            itemSkills[i] = GameControl.control.equippedItems[i].skillID;
+        }
+        SetupSkillIcons();
+
+
         attackPoint.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.2f);
     }
+
+    private void SetupSkillIcons()
+    {
+        if (Array.IndexOf(itemSkills, 1) > -1)
+            potion.enabled = true;
+        else
+            potion.enabled = false;
+
+        if (Array.IndexOf(itemSkills, 2) > -1)
+            aoeFire.enabled = true;
+        else
+            aoeFire.enabled = false;
+            
+        if (Array.IndexOf(itemSkills, 3) > -1)
+            bullet.enabled = true;
+        else
+            bullet.enabled = false;
+        
+    }
+
+    private void SetupSkills()
+    {
+        skills.Add(0, None);
+        skills.Add(1, HandleHealing);
+        skills.Add(2, HandleAoe);
+        skills.Add(3, HandleShooting);
+    }
+
+    void None()
+    {return;}
 
     private void HealthSystem_OnDead(object sender, EventArgs e) 
     {
@@ -181,19 +222,23 @@ public class PlayerHandler : MonoBehaviour {
     {
         switch (state) 
         {
-            case State.Normal:
-                HandleMovement();
-                HandleAttack();
-                HandleShooting();
-                HandleHealing();
-                HandleAoe();
-                break;
-            case State.Busy:
-                HandleAttack();
-                break;
-            case State.Dead:
-                GameHandler.Restart();
-                break;
+        case State.Normal:
+            HandleMovement();
+            HandleAttack();
+            // HandleShooting();
+            // HandleHealing();
+            // HandleAoe();
+            skills[itemSkills[0]]();
+            skills[itemSkills[1]]();
+            skills[itemSkills[2]]();
+            skills[itemSkills[3]]();
+            break;
+        case State.Busy:
+            HandleAttack();
+            break;
+        case State.Dead:
+            GameHandler.Restart();
+            break;
         }
     }
 

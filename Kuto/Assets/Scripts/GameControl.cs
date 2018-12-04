@@ -40,10 +40,12 @@ public class GameControl : MonoBehaviour {
 		{
 			Destroy(gameObject);
 		}
+	}
 
-		Load();	
+	void Start()
+	{
+		Load();
 		CalculateLevel();
-
 	}
 
 

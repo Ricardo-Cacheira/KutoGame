@@ -11,8 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9129fb0533b4758409329c3920ec4b17, type: 3}
   m_Name: gasmask
   m_EditorClassIdentifier: 
+  id: 9a57668866e70724d836cc3af10aba69
   name: gasmask
   icon: {fileID: 21300050, guid: 63d2a355ab163f6489bb8b2b167e76da, type: 3}
-  strenghtBonus: 0
-  vitalityBonus: 0
+  level: 0
+  skillID: 2
   equipmentType: 0

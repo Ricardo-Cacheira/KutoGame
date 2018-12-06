@@ -10,8 +10,7 @@ public class EnemySpawnerBeach : MonoBehaviour {
 	private GameObject gameAssetsObject;
 	private GameAssets gameAssets;
 	private bool wasActivated = false;
-	private bool spawnTimeEnded;
-	private float randMelee, randRanged, randSlower, spawnTime;
+	private float randMelee, randRanged, randSlower;
 	private int randNumBomb, randNumMissile;
 
 	public Text timerText;
@@ -50,7 +49,6 @@ public class EnemySpawnerBeach : MonoBehaviour {
 			randMelee = Random.Range(5, 13);
 			randRanged = Random.Range(7, 11);
 			randSlower = Random.Range(6.5f, 15);
-			spawnTime = 60;
 			randNumBomb = Random.Range(7, 18);
 			randNumMissile = Random.Range(9, 17);
 

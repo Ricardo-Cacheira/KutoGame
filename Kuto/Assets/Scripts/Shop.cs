@@ -60,8 +60,6 @@ public class Shop : MonoBehaviour {
 	{
 		GameControl.control.gold += goldBase;
 		GameControl.control.shards += shardBase;
-		// GameControl.control.gold += goldBase * (itemToSell.level * goldFactor);
-		// GameControl.control.shard += shardBase * (itemToSell.level * shardFactor);
 
 		GameControl.control.inventoryItems.Remove(itemToSell);
 		itemToSell.Destroy();

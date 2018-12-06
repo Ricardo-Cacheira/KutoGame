@@ -12,8 +12,6 @@ public class SelectOnInput : MonoBehaviour {
 
 	private bool buttonSelected;
 
-	bool missionSelected;
-
 	void Update () 
 	{	
 		if (Input.GetAxisRaw("Vertical") != 0 && buttonSelected == false)
@@ -22,18 +20,6 @@ public class SelectOnInput : MonoBehaviour {
 			buttonSelected = true;
 		} 
 	}
-
-	void MissionBool()
-	{
-		missionSelected = true;
-	}
-
-	// void MissionStart()
-	// {
-	// 	GameObject menu = GameObject.Find("Canvas");
-	// 	Menu menuspt = menu.GetComponent<Menu>();
-	// 	menuspt.StartMission();
-	// }
 
 	private void OnDisable()
 	{

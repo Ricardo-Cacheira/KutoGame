@@ -28,10 +28,11 @@ public class EnemySpawn : MonoBehaviour {
 		cameraShaker = (CameraShaker) FindObjectOfType(typeof (CameraShaker)); 
 		cameraShaker.enabled = false;
 		
-		door = this.transform.GetChild(0).gameObject;
-		doorRenderer = door.GetComponent<TilemapRenderer>();
-		doorCollider = door.GetComponent<TilemapCollider2D>();
-
+		if (this != null) {
+			door = this.transform.GetChild(0).gameObject;
+			doorRenderer = door.GetComponent<TilemapRenderer>();
+			doorCollider = door.GetComponent<TilemapCollider2D>();
+		}
 		gameHandler.numOfSpawners++;
 	}
 

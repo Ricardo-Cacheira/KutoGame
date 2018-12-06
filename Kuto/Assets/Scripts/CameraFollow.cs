@@ -6,15 +6,11 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour {
 
     public static CameraFollow instance;
-    private Camera myCamera;
     private Func<Vector3> GetCameraFollowPosition;
-    private int size;
     public float PPU = 32; // pixels per unit
 
-    public void Setup(int size, Func<Vector3> GetCameraFollowPosition) 
+    public void Setup(Func<Vector3> GetCameraFollowPosition) 
     {
-        this.size = size;
-        myCamera = transform.GetComponent<Camera>();
         SetGetCameraFollowPosition(GetCameraFollowPosition);
     }
 

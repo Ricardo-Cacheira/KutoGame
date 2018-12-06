@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System;
 
 public class PlayerHandler : MonoBehaviour {
-    public static PlayerHandler CreatePlayer(Func<Vector3, EnemyHandler> getClosestEnemyHandlerFunc) 
+    public static PlayerHandler CreatePlayer() 
     {
         Transform playerTransform = Instantiate(GameAssets.i.pfPlayerTransform, new Vector3(0, 0), Quaternion.identity);
         
@@ -20,7 +20,7 @@ public class PlayerHandler : MonoBehaviour {
         experienceBar.Setup(experienceSystem);  
 
         PlayerHandler playerHandler = playerTransform.GetComponent<PlayerHandler>();
-        playerHandler.Setup(healthSystem, experienceSystem, getClosestEnemyHandlerFunc);
+        playerHandler.Setup(healthSystem, experienceSystem);
 
         return playerHandler;
     }
@@ -42,7 +42,6 @@ public class PlayerHandler : MonoBehaviour {
 
     private HealthSystem healthSystem;
     private ExperienceSystem experienceSystem;
-    private Func<Vector3, EnemyHandler> getClosestEnemyHandlerFunc;
     private Vector3 lastMoveDir;
     private State state;
 
@@ -74,15 +73,15 @@ public class PlayerHandler : MonoBehaviour {
     Image bullet;
 
     //upgradable values
-    int basicAtkDmg = 20 + (GameControl.control.lvl * 2);
+    int basicAtkDmg = 20;
 
     int healingAmount = 45;
     float healingCd = 3;
 
-    int aoeDmg = 49 + (GameControl.control.lvl * 2);
+    int aoeDmg = 49;
     float aoeCd = 7;
 
-    int shootingDmg = 40 + (GameControl.control.lvl * 2);
+    int shootingDmg = 40;
     float shootingCd = 2;
 
     private float randDir;
@@ -93,8 +92,6 @@ public class PlayerHandler : MonoBehaviour {
     GameObject goldTextObject;
 
     public int xp;
-    private int lvl;
-    private int currReqXp;
 
     Text xpText;
     GameObject xpTextObject;
@@ -107,8 +104,6 @@ public class PlayerHandler : MonoBehaviour {
     // GameControl gameControl;
     GameObject canvasObj;
     RectTransform tempTextBox;
-
-    int currLvl;
 
     #endregion
 
@@ -145,8 +140,6 @@ public class PlayerHandler : MonoBehaviour {
         lvlText.text = GameControl.control.lvl.ToString();
 
         xp = GameControl.control.xp;
-        lvl = GameControl.control.lvl;
-        currReqXp = GameControl.control.currReqXp;
 
         gold = GameControl.control.gold;
         goldText.text = GameControl.control.gold.ToString(); 
@@ -158,15 +151,16 @@ public class PlayerHandler : MonoBehaviour {
 
         canvasObj = GameObject.FindGameObjectWithTag("Canvas");
 
-        currLvl = GameControl.control.GetLevel();
+        basicAtkDmg += GameControl.control.lvl * 2;
+        aoeDmg += GameControl.control.lvl * 2;
+        shootingDmg += GameControl.control.lvl * 2;
 
     }
 
-    private void Setup(HealthSystem healthSystem, ExperienceSystem experienceSystem, Func<Vector3, EnemyHandler> getClosestEnemyHandlerFunc) 
+    private void Setup(HealthSystem healthSystem, ExperienceSystem experienceSystem) 
     {
         this.healthSystem = healthSystem;
         this.experienceSystem = experienceSystem;
-        this.getClosestEnemyHandlerFunc = getClosestEnemyHandlerFunc;
 
         healthSystem.OnDead += HealthSystem_OnDead;
 
@@ -246,7 +240,6 @@ public class PlayerHandler : MonoBehaviour {
     {
         float x = Input.GetAxisRaw("Horizontal");
 		float y = Input.GetAxisRaw("Vertical");
-        float xScale = transform.localScale.x;
 
         animator.SetFloat("WalkingH", x);
         animator.SetFloat("WalkingV", y);

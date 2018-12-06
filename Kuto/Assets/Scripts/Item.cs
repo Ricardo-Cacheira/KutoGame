@@ -10,7 +10,6 @@ public class Item : ScriptableObject {
 	[SerializeField] string id;
 	public string ID { get { return id; } }
 	
-	public string name;
 	public Sprite icon;
 	public int level;
 

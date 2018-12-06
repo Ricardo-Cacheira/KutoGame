@@ -28,16 +28,10 @@ public class EnemySlowerHandler : MonoBehaviour {
     private HealthSystem healthSystem;
     private Vector3 lastMoveDir;
 	public Vector3 moveDir;
-    private State state;
 	public Transform attackPoint;
 	public LayerMask whatIsPlayer;
 
     private bool attacked;
-
-    private enum State {
-        Normal,
-        Busy,
-    }
 
     private void Setup(PlayerHandler playerHandler, HealthSystem healthSystem) 
     {
@@ -47,24 +41,10 @@ public class EnemySlowerHandler : MonoBehaviour {
         healthSystem.OnDead += HealthSystem_OnDead;
     }
 
-    private void Start() 
-    {
-        state = State.Normal;
-    }
-
-    private void Update() 
+    private void FixedUpdate() 
     {  
-        switch (state) 
-        {
-        case State.Normal:
-			HandleMovement();
-			HandleAttack();
-            break;
+		HandleMovement();
 
-        case State.Busy:
-            HandleAttack();
-            break;
-        }
     }
 
     private void HandleMovement() 
@@ -79,7 +59,6 @@ public class EnemySlowerHandler : MonoBehaviour {
 			transform.position = transform.position + (-moveDir) * (speed/2) * Time.deltaTime;
 		} else if (!attacked)
 		{
-			SetStateBusy();
 			StartCoroutine(Attack());
 		}
     }
@@ -88,18 +67,12 @@ public class EnemySlowerHandler : MonoBehaviour {
     {
         attacked = true;
         yield return new WaitForSeconds(.5f);
-        SetStateNormal();
         Instantiate(GameAssets.i.pfSlowWave, GetPosition(), Quaternion.AngleAxis(Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg, Vector3.forward));
         if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
             GameHandler.Restart();
         }
         yield return new WaitForSeconds(1f);
         attacked = false;
-    }
-
-    private void HandleAttack() 
-    {
-        float distanceToPlayer = Vector3.Distance(GetPosition(), PlayerHandler.playerHandler.GetPosition());
     }
 
 	void OnDrawGizmosSelected()
@@ -112,16 +85,6 @@ public class EnemySlowerHandler : MonoBehaviour {
     {   
         Vector2 knock = (this.transform.position - playerHandler.transform.position).normalized;
         gameObject.GetComponent<Rigidbody2D>().AddForce(knock * force);
-    }
-
-    private void SetStateBusy() 
-    {
-        state = State.Busy;
-    }
-
-    private void SetStateNormal() 
-    {
-        state = State.Normal;
     }
 
     public Vector3 GetPosition() 

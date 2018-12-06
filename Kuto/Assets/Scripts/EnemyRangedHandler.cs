@@ -61,12 +61,10 @@ public class EnemyRangedHandler : MonoBehaviour {
             else 
             {
                 HandleMovement();
-                HandleAttack();
             }
             break;
 
         case State.Busy:
-            HandleAttack();
             break;
         }
     }
@@ -96,11 +94,6 @@ public class EnemyRangedHandler : MonoBehaviour {
         if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
             GameHandler.Restart();
         }
-    }
-
-    private void HandleAttack() 
-    {
-        float distanceToPlayer = Vector3.Distance(GetPosition(), PlayerHandler.playerHandler.GetPosition());
     }
 
 	void OnDrawGizmosSelected()

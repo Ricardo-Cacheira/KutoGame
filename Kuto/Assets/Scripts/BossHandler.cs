@@ -15,7 +15,7 @@ public class BossHandler : MonoBehaviour {
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 3.5f), Quaternion.identity, bossTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
-        bossHandler.Setup(playerHandler, healthSystem);
+        bossHandler.Setup(healthSystem);
 
         return bossHandler;
     }
@@ -28,7 +28,6 @@ public class BossHandler : MonoBehaviour {
 	public static Quaternion rotation;
 	private HealthSystem healthSystem;
 	public event EventHandler OnDead;
-	float distanceToPlayer;
     public Transform attackPoint;
 	public LayerMask whatIsPlayer;
 	private bool aoe, iceStarted, aoeStarted;
@@ -42,9 +41,8 @@ public class BossHandler : MonoBehaviour {
 	int chargeCount;
 	bool waitingCharge, waitingAttack, canAttack;
 
-	private void Setup(PlayerHandler playerHandler, HealthSystem healthSystem) 
+	private void Setup(HealthSystem healthSystem) 
     {
-        this.playerHandler = playerHandler;
         this.healthSystem = healthSystem;
 
         healthSystem.OnDead += HealthSystem_OnDead;
@@ -213,7 +211,6 @@ public class BossHandler : MonoBehaviour {
 		aoe = true;
 		aoeStarted = true;
 		iceStarted = true;
-		Vector3 tempPlayerPos = PlayerHandler.playerHandler.GetPosition();
 		Transform aoeObj = Instantiate(GameAssets.i.pfCircle, PlayerHandler.playerHandler.GetPosition(), Quaternion.identity);		
 		aoeObj.gameObject.GetComponent<SpriteRenderer>().color = new Color(.1f, .1f, 1, .5f);
 
@@ -253,7 +250,6 @@ public class BossHandler : MonoBehaviour {
 	private void ChargeAttack() 
 	{
 		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, .5f, .5f, 1);
-		distanceToPlayer = Vector3.Distance(PlayerHandler.playerHandler.GetPosition(), transform.position);
 		moveDir = (PlayerHandler.playerHandler.GetPosition() - this.transform.position);
 
 		if (moveDir.magnitude > 2.3f)
@@ -281,7 +277,6 @@ public class BossHandler : MonoBehaviour {
 	private IEnumerator Attack() 
 	{
 		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, .1f, 1, 1);
-		float step = 5 * Time.deltaTime;
 		Vector3 difference = PlayerHandler.playerHandler.GetPosition() - transform.position;
  		float rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg + 90;
 		yield return new WaitForSeconds(.18f);

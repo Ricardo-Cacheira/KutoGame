@@ -34,15 +34,13 @@ public class Menu : MonoBehaviour {
 	}
 	
 	void Start() {
-		// GameControl.control.CalculateLevel();
-		if (GameControl.control.xp == GameControl.control.currReqXp)
+		if (GameControl.control.xp == GameControl.control.tempXp)
 			GameControl.control.isXpMax = true;
 
 		if (GameControl.control.isXpMax)
 			bossButton.gameObject.SetActive(true);	
 		else 
 			bossButton.gameObject.SetActive(false);
-
 	}
 	
 	public void Junk()
@@ -142,6 +140,11 @@ public class Menu : MonoBehaviour {
 		else
 			newMission.transform.Find("Text").GetComponent<Text>().text = location + "and survive for " + ammount +" minutes.";
 		
+	}
+
+	public void QuitGame()
+	{
+		Application.Quit();
 	}
 
 }

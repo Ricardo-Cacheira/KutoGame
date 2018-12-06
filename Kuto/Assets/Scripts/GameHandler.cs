@@ -20,7 +20,6 @@ public class GameHandler : MonoBehaviour {
 
 	GameObject[] enemySpawner;
 	GameObject enemySpawnerBeach;
-	GameObject EnemySpawnerBoss;
 
 	public LayerMask wallLayer;
 
@@ -36,13 +35,12 @@ public class GameHandler : MonoBehaviour {
 		enemyRangedHandlerList = new List<EnemyRangedHandler>();
 		enemySlowerHandlerList = new List<EnemySlowerHandler>();
 
-		playerHandler = PlayerHandler.CreatePlayer(GetClosestEnemyHandler);
+		playerHandler = PlayerHandler.CreatePlayer();
 
-		cameraFollow.Setup(8, playerHandler.GetPosition);
+		cameraFollow.Setup(playerHandler.GetPosition);
 
 		enemySpawner = GameObject.FindGameObjectsWithTag("Spawners");
 		enemySpawnerBeach = GameObject.Find("EnemySpawnerBeach");
-		EnemySpawnerBoss = GameObject.Find("BossSpawner");
 
 		numOfSpawners = enemySpawner.Length;
 	}
@@ -172,7 +170,6 @@ public class GameHandler : MonoBehaviour {
 
 	private void BossHandler_OnDead(object sender, System.EventArgs e) 
 	{
-		BossHandler bossHandler = sender as BossHandler;
 		playerHandler.GetRewards(5000, 0);
 		GameControl.control.isXpMax = false;
 		playerHandler.xp++;

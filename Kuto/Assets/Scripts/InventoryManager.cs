@@ -14,6 +14,7 @@ public class InventoryManager : MonoBehaviour {
 		im = this;
 		inventory.OnItemRightClickedEvent += EquipFromInventory;
 		inventory.OnItemLeftClickedEvent += Shop.instance.Click;
+		inventory.OnItemMobileClickedEvent += MobileTouch;
 		equipmentPanel.OnItemRightClickedEvent += unequipFromEquipmentPanel;
 	}
 
@@ -25,7 +26,7 @@ public class InventoryManager : MonoBehaviour {
 	public void Fill()
 	{
 		inventory.inventory.Clear();
-		// System.Array.Clear(equipmentPanel.equipped,0,3);
+		
 		for (int i = 0; i < equipmentPanel.equipped.Length; i++)
 		{
 			equipmentPanel.equipped[i].Item = null;
@@ -40,11 +41,33 @@ public class InventoryManager : MonoBehaviour {
 			inventory.AddItem(GameControl.control.inventoryItems[i]);
 		}
 
+		StatDisplay();
+	}
+
+	public void StatDisplay()
+	{
 		stats[0].ValueText.text = GameControl.control.GetLevel().ToString();
 		stats[1].ValueText.text = GameControl.control.vitality.ToString();
 		stats[2].ValueText.text = GameControl.control.strength.ToString();
 		stats[3].ValueText.text = GameControl.control.gold.ToString();
 		stats[4].ValueText.text = GameControl.control.shards.ToString();
+	}
+
+	public void MobileTouch(Item item)
+	{
+		switch (Shop.instance.mode)
+		{
+			case 0:
+				EquipFromInventory(item);
+				break;
+			case 1:
+				Shop.instance.Upgrade(item);
+				break;
+			case 2:
+				Shop.instance.Sell(item);
+				break;
+			default: break;
+		}
 	}
 
 	public void SaveInventory()

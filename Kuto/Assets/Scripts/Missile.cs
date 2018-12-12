@@ -14,17 +14,14 @@ public class Missile : MonoBehaviour {
     {
         player = GameObject.FindGameObjectWithTag("Player");
 
-        if(player != null)
+        float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
+        if (distanceToPlayer < 5) 
         {
-            float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-            if (distanceToPlayer < 5) 
-            {
-                rb2d.velocity = transform.right * 17f;
-            } else 
-            {
-                Vector3 moveDir = (player.transform.position - transform.position).normalized;
-                transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg, Vector3.forward);
-            }
+            rb2d.velocity = transform.right * 17f;
+        } else 
+        {
+            Vector3 moveDir = (player.transform.position - transform.position).normalized;
+            transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg, Vector3.forward);
         }
     }
 

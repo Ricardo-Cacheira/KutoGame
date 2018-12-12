@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,7 @@ public class Shop : MonoBehaviour {
     private Text cost;
     private Text level;
     [SerializeField] GameObject buttons;
+	[SerializeField] List<StatDisplay> resources;
 
     public int mode; //0- none //1-upgrade //2-sell
 
@@ -65,19 +67,26 @@ public class Shop : MonoBehaviour {
 		itemToSell.Destroy();
 		InventoryManager.im.inventory.RefreshUI();
 		DefaultText();
+		DisplayResources();
 	}
 
 	public void Upgrade(Item itemToUpgrade)
 	{
-		itemToUpgrade.level += 1;
-
 		int goldCost = (int)(goldBase * (itemToUpgrade.level * goldFactor));
 		int shardCost = (int)(shardBase * (itemToUpgrade.level * shardFactor));
 
-		GameControl.control.gold -= goldCost;
-		GameControl.control.shards -= shardCost;
+		if(GameControl.control.gold - goldCost > 0 && GameControl.control.shards - shardCost > 0)
+		{
+			itemToUpgrade.level += 1;
 
+			GameControl.control.gold -= goldCost;
+			GameControl.control.shards -= shardCost;
+
+			Inspect((EquippableItem)itemToUpgrade);
+			InventoryManager.im.StatDisplay();
+		}
 		Inspect((EquippableItem)itemToUpgrade);
+		DisplayResources();
 	}
 
 	private Vector2 Cost(int level)
@@ -114,6 +123,9 @@ public class Shop : MonoBehaviour {
 		{
 			cost.gameObject.SetActive(true);
 		}
+		resources[0].gameObject.SetActive(true);
+		resources[1].gameObject.SetActive(true);
+		DisplayResources();
     }
 
 	public void DefaultText()
@@ -132,8 +144,17 @@ public class Shop : MonoBehaviour {
 	{
 		level.gameObject.SetActive(false);
 		cost.gameObject.SetActive(false);
+		
+		resources[0].gameObject.SetActive(false);
+		resources[1].gameObject.SetActive(false);
 
 		buttons.SetActive(true);
 		mode = 0;
+	}
+
+	public void DisplayResources()
+	{
+		resources[0].ValueText.text = GameControl.control.gold.ToString();
+		resources[1].ValueText.text = GameControl.control.shards.ToString();
 	}
 }

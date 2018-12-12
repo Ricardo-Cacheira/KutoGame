@@ -31,6 +31,7 @@ public class PlayerHandler : MonoBehaviour {
     private Dictionary<int, Action> skills = new Dictionary<int, Action>();
 
     public static PlayerHandler playerHandler;
+    private Joystick joystick;
 
 	public event EventHandler OnDead;
     public Transform attackPoint;
@@ -101,9 +102,14 @@ public class PlayerHandler : MonoBehaviour {
 
     Text xpPercentageText;
     GameObject xpPercentageTextObject;
-    // GameControl gameControl;
+
     GameObject canvasObj;
     RectTransform tempTextBox;
+
+    //phone considerations
+    public static bool phoneAttack = false;
+    public static bool phoneShooting, phoneAoe, phoneHeal, phoneDash;
+    public Input input;
 
     #endregion
 
@@ -155,6 +161,8 @@ public class PlayerHandler : MonoBehaviour {
         aoeDmg += GameControl.control.lvl * 2;
         shootingDmg += GameControl.control.lvl * 2;
 
+        joystick = GameObject.Find("WalkingJoystick").GetComponent<Joystick>();
+        
     }
 
     private void Setup(HealthSystem healthSystem, ExperienceSystem experienceSystem) 
@@ -219,9 +227,6 @@ public class PlayerHandler : MonoBehaviour {
         case State.Normal:
             HandleMovement();
             HandleAttack();
-            // HandleShooting();
-            // HandleHealing();
-            // HandleAoe();
             skills[itemSkills[0]]();
             skills[itemSkills[1]]();
             skills[itemSkills[2]]();
@@ -238,8 +243,14 @@ public class PlayerHandler : MonoBehaviour {
 
     private void HandleMovement() 
     {
+
         float x = Input.GetAxisRaw("Horizontal");
 		float y = Input.GetAxisRaw("Vertical");
+
+        if (joystick != null && joystick.Direction != Vector2.zero) {
+            x = joystick.Horizontal;
+            y = joystick.Vertical;
+        }
 
         animator.SetFloat("WalkingH", x);
         animator.SetFloat("WalkingV", y);
@@ -260,7 +271,11 @@ public class PlayerHandler : MonoBehaviour {
 
             if(movement == Vector2.zero) animator.SetBool("isWalking", false);
 
-			if(Input.GetButtonDown("Dash") && timeStamp <= Time.time) dashing = true;
+			if((Input.GetButtonDown("Dash") || phoneDash) && timeStamp <= Time.time) 
+                dashing = true;
+            else
+                phoneDash = false;
+
 			if(Input.GetButtonDown("Leap") && timeStamp <= Time.time) leaping = true;
 
 			if (movement != new Vector2(lastX, lastY) && movement != Vector2.zero)
@@ -278,6 +293,7 @@ public class PlayerHandler : MonoBehaviour {
 
 	IEnumerator Dash()
 	{   
+        phoneDash = false;
 		if(movement == Vector2.zero) movement = new Vector2(lastX, lastY).normalized;
         animator.speed = 5;
 		timeStamp = Time.time + recoveryTime;
@@ -311,11 +327,16 @@ public class PlayerHandler : MonoBehaviour {
     
     private void HandleShooting() 
     {
-        if ((Input.GetButtonDown("Fire") || Input.GetAxisRaw("FireController") == 1) && !isShooting) StartCoroutine(Shooting());
+        if ((Input.GetButtonDown("Fire") || Input.GetAxisRaw("FireController") == 1 || phoneShooting) && !isShooting)
+            StartCoroutine(Shooting());
+        else 
+            phoneShooting = false;
+            
     }
 
     IEnumerator Shooting()
     {
+        phoneShooting = false;
         StartCoroutine(FadeToS(0f, shootingCd, bullet.GetComponent<Image>().color));
         Instantiate(GameAssets.i.pfFireBall, player.transform.position, Quaternion.identity);
         isShooting = true;
@@ -342,22 +363,23 @@ public class PlayerHandler : MonoBehaviour {
 
     private void HandleAttack() 
     {
-        if (Input.GetButtonDown("Basic") && timeBtwAttack <= 0) 
-        {
+        if ((Input.GetButtonDown("Basic") || phoneAttack) && timeBtwAttack <= 0) 
+        {   
             animator.SetTrigger("Attack");
+            phoneAttack = false;
             
             Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, whatIsEnemies);      
 
             for (int i = 0; i < enemiesToDamage.Length; i++)
             {
+                randDir = UnityEngine.Random.Range(1.5f, 4.5f);
                 if (enemiesToDamage[i].gameObject.CompareTag("EnemyRanged")) 
                 {
                     EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
                     enemy.GetHealthSystem().Damage(basicAtkDmg); 
                     enemy.KnockBack(200000);
                     
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + basicAtkDmg);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
 
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -367,8 +389,7 @@ public class PlayerHandler : MonoBehaviour {
                     enemy.GetHealthSystem().Damage(basicAtkDmg);
                     enemy.KnockBack(200000);
 
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + basicAtkDmg);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
 
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -378,8 +399,7 @@ public class PlayerHandler : MonoBehaviour {
                     enemy.GetHealthSystem().Damage(basicAtkDmg);
                     enemy.KnockBack(200000);
                     
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + basicAtkDmg);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
 
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 } else if (enemiesToDamage[i].gameObject.CompareTag("Boss"))
@@ -387,17 +407,16 @@ public class PlayerHandler : MonoBehaviour {
                     BossHandler boss = enemiesToDamage[i].GetComponent<BossHandler>();  
                     boss.GetHealthSystem().Damage(basicAtkDmg);
                     
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + basicAtkDmg);
+                    CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
 
                     if (boss.GetHealthSystem().GetHealthPercent() < 0.1) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 } 
             }
-
-            timeBtwAttack = startTimeBtwAttack;
+                timeBtwAttack = startTimeBtwAttack;
 
         } else
-        {    
+        { 
+        phoneAttack = false;
         timeBtwAttack -= Time.deltaTime;
 
         }
@@ -405,11 +424,15 @@ public class PlayerHandler : MonoBehaviour {
 
     private void HandleAoe() 
     {
-        if (Input.GetButtonDown("AoE") && aoe == false) StartCoroutine(AoE());     
+        if ((Input.GetButtonDown("AoE") || phoneAoe) && aoe == false) 
+            StartCoroutine(AoE());     
+        else 
+            phoneAoe = false;
     }
 
     IEnumerator AoE() 
     {
+        phoneAoe = false;
         aoe = true;
         Transform tempAoe = Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
         StartCoroutine(FadeToF(aoeCd, aoeFire.GetComponent<Image>().color));
@@ -482,12 +505,16 @@ public class PlayerHandler : MonoBehaviour {
 
     private void HandleHealing()
     {
-        if (Input.GetButtonDown("Heal") && !healing) StartCoroutine(Healing());
+        if ((Input.GetButtonDown("Heal") || phoneHeal) && !healing) 
+            StartCoroutine(Healing());
+        else
+            phoneHeal = false;
     }
 
 
     IEnumerator Healing()
 	{	
+        phoneHeal = false;
         healing = true;
         healthSystem.Heal(healingAmount);
         randDir = UnityEngine.Random.Range(1.5f, 4.5f);

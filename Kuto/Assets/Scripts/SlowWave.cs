@@ -16,7 +16,7 @@ public class SlowWave : MonoBehaviour {
 		rb.velocity = transform.right * speed;
 	}
 
-	void Update()
+	void FixedUpdate()
 	{
 		this.transform.localScale += new Vector3(.1f, .1f, .1f);
 	}

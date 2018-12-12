@@ -145,7 +145,7 @@ public class GameControl : MonoBehaviour {
 			if(sceneName == "town")
 				InventoryManager.im.Fill();
 			
-			InventoryManager.im.inventory.RefreshUI();
+			if (InventoryManager.im.inventory != null) InventoryManager.im.inventory.RefreshUI();
 		}
 		else{
 			Debug.Log("Failed to load");

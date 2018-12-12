@@ -68,7 +68,7 @@ public class Menu : MonoBehaviour {
 			inventory.transform.localPosition = new Vector3(1500f, 0, 0);
 			inventoryVisible = false;
 			InventoryManager.im.SaveInventory();
-			shopPanel.SetActive(true);
+			shopPanel.SetActive(false);
 		}
 		else
 		{

@@ -11,6 +11,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 
 	public event Action<Item> OnRightClickEvent;
 	public event Action<Item> OnLeftClickEvent;
+	public event Action<Item> OnMobileClickedEvent;
 
 	private Item _item;
 	public Item Item{
@@ -28,6 +29,8 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log(Application.platform);
+
 		if(eventData != null && eventData.button == PointerEventData.InputButton.Right)
 		{
 			if(Item != null && OnRightClickEvent != null)
@@ -35,13 +38,20 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 				OnRightClickEvent(Item);
 				tooltip.HideToolTip();
 			}
+            Debug.Log("Right Touch");
 		}else if(eventData != null && eventData.button == PointerEventData.InputButton.Left)
 		{
+            Debug.Log("Left Touch");
 			if(Item != null && OnLeftClickEvent != null)
 			{
 				OnLeftClickEvent(Item);
 				tooltip.HideToolTip();
 			}
+			
+		} else if(eventData != null && eventData.button != PointerEventData.InputButton.Middle){ //
+			OnMobileClickedEvent(Item);
+			tooltip.HideToolTip();
+            Debug.Log("Mobile Touch");
 		}
     }
 

@@ -13,6 +13,7 @@ public class Inventory : MonoBehaviour {
 
 	public event Action<Item> OnItemRightClickedEvent;
 	public event Action<Item> OnItemLeftClickedEvent;
+	public event Action<Item> OnItemMobileClickedEvent;
 
 	private void Awake()
 	{
@@ -20,6 +21,7 @@ public class Inventory : MonoBehaviour {
 		{
 			itemSlots[i].OnRightClickEvent += OnItemRightClickedEvent;
 			itemSlots[i].OnLeftClickEvent += OnItemLeftClickedEvent;
+			itemSlots[i].OnMobileClickedEvent += OnItemMobileClickedEvent;
 		}
 	}
 

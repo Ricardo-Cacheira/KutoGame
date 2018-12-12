@@ -41,17 +41,25 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
             Debug.Log("Right Touch");
 		}else if(eventData != null && eventData.button == PointerEventData.InputButton.Left)
 		{
-            Debug.Log("Left Touch");
 			if(Item != null && OnLeftClickEvent != null)
 			{
-				OnLeftClickEvent(Item);
-				tooltip.HideToolTip();
+				#if UNITY_EDITOR
+					#if UNITY_ANDROID
+						OnMobileClickedEvent(Item);
+						Debug.Log("Mobile Touch");
+					#endif
+				#endif
+				if(Application.platform == RuntimePlatform.Android)
+				{
+					OnMobileClickedEvent(Item);
+					Debug.Log("Mobile Touch");
+				}else{
+		            Debug.Log("Left Touch");
+					OnLeftClickEvent(Item);
+				}
+					tooltip.HideToolTip();
 			}
 			
-		} else if(eventData != null && eventData.button != PointerEventData.InputButton.Middle){ //
-			OnMobileClickedEvent(Item);
-			tooltip.HideToolTip();
-            Debug.Log("Mobile Touch");
 		}
     }
 

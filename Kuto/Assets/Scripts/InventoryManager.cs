@@ -15,6 +15,7 @@ public class InventoryManager : MonoBehaviour {
 		inventory.OnItemRightClickedEvent += EquipFromInventory;
 		inventory.OnItemLeftClickedEvent += Shop.instance.Click;
 		inventory.OnItemMobileClickedEvent += MobileTouch;
+		equipmentPanel.OnItemLeftClickedEvent += MobileTouch;
 		equipmentPanel.OnItemRightClickedEvent += unequipFromEquipmentPanel;
 	}
 
@@ -59,6 +60,7 @@ public class InventoryManager : MonoBehaviour {
 		{
 			case 0:
 				EquipFromInventory(item);
+				// unequipFromEquipmentPanel(item);
 				break;
 			case 1:
 				Shop.instance.Upgrade(item);

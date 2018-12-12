@@ -12,13 +12,14 @@ public class EquipmentPanel : MonoBehaviour {
 	}
 
 	public event Action<Item> OnItemRightClickedEvent;
+	public event Action<Item> OnItemLeftClickedEvent;
 
 	private void Awake()
 	{
 		for (int i = 0; i < equipmentSlots.Length; i++)
 		{
 			equipmentSlots[i].OnRightClickEvent += OnItemRightClickedEvent;
-			equipmentSlots[i].OnMobileClickedEvent += OnItemRightClickedEvent;
+			equipmentSlots[i].OnLeftClickEvent += OnItemLeftClickedEvent;
 		}
 	}
 

@@ -13,6 +13,7 @@ public class EquipmentPanel : MonoBehaviour {
 
 	public event Action<Item> OnItemRightClickedEvent;
 	public event Action<Item> OnItemLeftClickedEvent;
+	public event Action<Item> OnItemMobileClickedEvent;
 
 	private void Awake()
 	{
@@ -20,6 +21,7 @@ public class EquipmentPanel : MonoBehaviour {
 		{
 			equipmentSlots[i].OnRightClickEvent += OnItemRightClickedEvent;
 			equipmentSlots[i].OnLeftClickEvent += OnItemLeftClickedEvent;
+			equipmentSlots[i].OnMobileClickedEvent += OnItemRightClickedEvent;
 		}
 	}
 

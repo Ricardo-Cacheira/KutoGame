@@ -122,13 +122,13 @@ public class BossHandler : MonoBehaviour {
 	{
 		firstPhase = true;
 		state = State.Normal;
-		yield return new WaitForSeconds(7);
+		yield return new WaitForSeconds(5);
 		state = State.Charging;
 		yield return new WaitForSeconds(20);
 		state = State.Normal;
-		yield return new WaitForSeconds(10);
+		yield return new WaitForSeconds(5);
 		state = State.Shooting;
-		yield return new WaitForSeconds(10);
+		yield return new WaitForSeconds(12);
 		firstPhase = false;
 	}
 	
@@ -138,28 +138,28 @@ public class BossHandler : MonoBehaviour {
 		state = State.Aoe;
 		yield return new WaitForSeconds(41);
 		state = State.Normal;
-		yield return new WaitForSeconds(7);
+		yield return new WaitForSeconds(4);
 		state = State.Shooting;
 		yield return new WaitForSeconds(14);
 		state = State.Normal;
-		yield return new WaitForSeconds(7);
+		yield return new WaitForSeconds(5);
 		state = State.Charging;
 		yield return new WaitForSeconds(20);
 		state = State.Normal;
-		yield return new WaitForSeconds(5);
+		yield return new WaitForSeconds(7);
 		secondPhase = false;
 	}
 
 	private void HandleMovement()
 	{
-		if (!trigger) {
-			transform.position = new Vector3(transform.position.x + .1f, transform.position.y, transform.position.z);
-			if (transform.position.x > 5) trigger = true;
-		} else if (trigger)
-		{
-			transform.position = new Vector3(transform.position.x - .1f, transform.position.y, transform.position.z);
-			if (transform.position.x < -5) trigger = false;
-		}
+		// if (!trigger) {
+		// 	transform.position = new Vector3(transform.position.x + .1f, transform.position.y, transform.position.z);
+		// 	if (transform.position.x > 5) trigger = true;
+		// } else if (trigger)
+		// {
+		// 	transform.position = new Vector3(transform.position.x - .1f, transform.position.y, transform.position.z);
+		// 	if (transform.position.x < -5) trigger = false;
+		// }
 	}
 
 	//rotating+shooting randomly

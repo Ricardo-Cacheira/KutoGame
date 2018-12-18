@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -70,8 +70,8 @@ public class PlayerHandler : MonoBehaviour {
     Color potionColor;
 
     Image aoeFire;
-
     Image bullet;
+    Image dash;
 
     //upgradable values
     int basicAtkDmg = 20;
@@ -127,6 +127,7 @@ public class PlayerHandler : MonoBehaviour {
         aoeFire = GameAssets.i.aoeFire;
         bullet = GameAssets.i.bullet;
         potion = GameAssets.i.potion;
+        dash = GameAssets.i.dash;
     }
 
     void Start()
@@ -271,8 +272,10 @@ public class PlayerHandler : MonoBehaviour {
 
             if(movement == Vector2.zero) animator.SetBool("isWalking", false);
 
-			if((Input.GetButtonDown("Dash") || phoneDash) && timeStamp <= Time.time) 
+			if((Input.GetButtonDown("Dash") || phoneDash) && timeStamp <= Time.time) {
                 dashing = true;
+                StartCoroutine(FadeToD(2, dash.GetComponent<Image>().color));
+            }
             else
                 phoneDash = false;
 
@@ -309,6 +312,26 @@ public class PlayerHandler : MonoBehaviour {
         this.GetComponent<SpriteRenderer>().color = tmp;
         gameObject.layer = 1;
 	}
+
+    IEnumerator FadeToD(float aTime, Color cooldownColor)
+    {
+        StartCoroutine(DashCdColor());
+        float alpha = cooldownColor.a;
+
+        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
+        {
+            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(0f, alpha,t));
+            dash.GetComponent<Image>().color = newColor;
+            yield return null;
+        }
+    }
+
+    IEnumerator DashCdColor()
+    {
+        yield return new WaitForSeconds(2);
+        dash.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+    }
+
 
 	IEnumerator Leap()
 	{	

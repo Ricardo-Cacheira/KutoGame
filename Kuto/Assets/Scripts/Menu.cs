@@ -42,6 +42,16 @@ public class Menu : MonoBehaviour {
 		else 
 			bossButton.gameObject.SetActive(false);
 	}
+
+	void Update()
+	{
+		if (Input.GetKeyDown("f"))
+			SceneManager.LoadScene("Prototype");
+		if (Input.GetKeyDown("b"))
+			SceneManager.LoadScene("BeachScene");
+		if (Input.GetKeyDown("m"))
+			SceneManager.LoadScene("BossScene");
+	}
 	
 	public void Junk()
 	{

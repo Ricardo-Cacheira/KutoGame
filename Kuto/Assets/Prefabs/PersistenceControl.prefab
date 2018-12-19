@@ -52,6 +52,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemDatabase: {fileID: 11400000, guid: 94a713270cd00b7439227d9ea8f5a427, type: 2}
+  abilities:
+  - ID: 0
+    name: Null
+    description: Null
+  - ID: 1
+    name: Heal
+    description: Recover health on use
+  - ID: 2
+    name: Fire Blast
+    description: Creates a fire explosion in an area around you
+  - ID: 3
+    name: Fire Bullet
+    description: Shoots a fire bullet in the direction you are looking
   inventoryItems:
   - {fileID: 11400000, guid: 9a57668866e70724d836cc3af10aba69, type: 2}
   equippedItems:

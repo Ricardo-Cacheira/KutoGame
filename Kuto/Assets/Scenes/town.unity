@@ -580,11 +580,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 114253082009901400, guid: bb814dee88fb0fb43af828baa9a582ff,
-        type: 2}
-      propertyPath: inventoryItems.Array.size
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 4659638570486946, guid: bb814dee88fb0fb43af828baa9a582ff, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -617,36 +612,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114253082009901400, guid: bb814dee88fb0fb43af828baa9a582ff,
-        type: 2}
-      propertyPath: inventoryItems.Array.data[0]
-      value: 
-      objectReference: {fileID: 11400000, guid: 6cebde1ab2c92814dadc7de4046f13b5,
-        type: 2}
-    - target: {fileID: 114253082009901400, guid: bb814dee88fb0fb43af828baa9a582ff,
-        type: 2}
-      propertyPath: inventoryItems.Array.data[1]
-      value: 
-      objectReference: {fileID: 11400000, guid: 68b507f1fd0cca2419a5b1895e4acada,
-        type: 2}
-    - target: {fileID: 114253082009901400, guid: bb814dee88fb0fb43af828baa9a582ff,
-        type: 2}
-      propertyPath: inventoryItems.Array.data[2]
-      value: 
-      objectReference: {fileID: 11400000, guid: 9a57668866e70724d836cc3af10aba69,
-        type: 2}
-    - target: {fileID: 114253082009901400, guid: bb814dee88fb0fb43af828baa9a582ff,
-        type: 2}
-      propertyPath: inventoryItems.Array.data[3]
-      value: 
-      objectReference: {fileID: 11400000, guid: 3d8faaac94d4aca4d9d13f19c7f6baf8,
-        type: 2}
-    - target: {fileID: 114253082009901400, guid: bb814dee88fb0fb43af828baa9a582ff,
-        type: 2}
-      propertyPath: inventoryItems.Array.data[4]
-      value: 
-      objectReference: {fileID: 11400000, guid: 26b59d42b17ce52408c5bdd0dedfbdaf,
-        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bb814dee88fb0fb43af828baa9a582ff, type: 2}
   m_IsPrefabAsset: 0

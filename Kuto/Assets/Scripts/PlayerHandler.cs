@@ -36,6 +36,8 @@ public class PlayerHandler : MonoBehaviour {
 	public event EventHandler OnDead;
     public Transform attackPoint;
 
+    bool dropped;
+
     public Rigidbody2D rb2d;
 	public float attackRange;
 	public int damage;
@@ -132,7 +134,6 @@ public class PlayerHandler : MonoBehaviour {
 
     void Start()
     {
-
         goldTextObject =  GameObject.Find("CurrentGold");
         goldText = goldTextObject.GetComponent<Text>();
 
@@ -621,11 +622,15 @@ public class PlayerHandler : MonoBehaviour {
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Intel") && GameHandler.noEnemies)
+        if (col.gameObject.CompareTag("Intel") && GameHandler.noEnemies && !dropped)
         {
+            var reward = GameObject.FindWithTag("reward");
+            Sprite item = GameControl.control.DropItem().icon;
+            reward.GetComponent<SpriteRenderer>().sprite = item;
             GetRewards(1000, 0);
             SaveRewards();
-			StartCoroutine(GameHandler.WinMessage());
+            StartCoroutine(GameHandler.WinMessage());
+            dropped = true;
         }
     }
 

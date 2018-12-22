@@ -53,7 +53,7 @@ public class Menu : MonoBehaviour {
 			SceneManager.LoadScene("BossScene");
 		if (Input.GetKeyDown("i"))
 		{
-			GameControl.control.DropItem();
+			// GameControl.control.DropItem();
 		}
 	}
 	

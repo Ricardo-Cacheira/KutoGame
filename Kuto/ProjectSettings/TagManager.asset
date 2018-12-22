@@ -19,6 +19,7 @@ TagManager:
   - Intel
   - RoomClosed
   - Boss
+  - reward
   layers:
   - Default
   - TransparentFX

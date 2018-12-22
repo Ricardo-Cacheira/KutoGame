@@ -78,12 +78,13 @@ public class GameControl : MonoBehaviour {
 		}
 	}
 
-	public void DropItem()
+	public Item DropItem()
 	{
 		Item item = itemDatabase.GetItemCopy(itemDatabase.RandomID());
 		item.level = 1;
 		inventoryItems.Add(item);
 
+		return item;
 		// InventoryManager.im.Fill();
 			
 		// InventoryManager.im.inventory.RefreshUI();

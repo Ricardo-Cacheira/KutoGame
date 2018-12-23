@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: boots
   m_EditorClassIdentifier: 
   id: 6cebde1ab2c92814dadc7de4046f13b5
-  name: boots
-  icon: {fileID: 21300064, guid: 63d2a355ab163f6489bb8b2b167e76da, type: 3}
+  icon: {fileID: 21300000, guid: a2b3ae06156bd754a8ee9b0fab51d0db, type: 3}
   level: 0
   skillID: 1
   equipmentType: 3

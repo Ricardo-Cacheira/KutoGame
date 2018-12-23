@@ -16,6 +16,7 @@ public class RoomTemplates : MonoBehaviour {
 	public float waitTime;
 	public bool spawnedBoss;
 	public GameObject boss;
+	public GameObject reward;
 
 	void Update()
 	{
@@ -30,6 +31,7 @@ public class RoomTemplates : MonoBehaviour {
 						rooms.RemoveAt(i);
 					} else {
 						Instantiate(boss, rooms[i].transform.position, Quaternion.identity);
+						Instantiate(reward, rooms[i].transform.position + (Vector3.right * 1.2f), Quaternion.identity);
 						spawnedBoss = true;
 					}
 				}

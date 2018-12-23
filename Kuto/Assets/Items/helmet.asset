@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: helmet
   m_EditorClassIdentifier: 
   id: 26b59d42b17ce52408c5bdd0dedfbdaf
-  name: Helmet
-  icon: {fileID: 21300066, guid: 63d2a355ab163f6489bb8b2b167e76da, type: 3}
+  icon: {fileID: 21300000, guid: bdfa215af74aba6489ded3b843b3e558, type: 3}
   level: 0
   skillID: 3
   equipmentType: 0

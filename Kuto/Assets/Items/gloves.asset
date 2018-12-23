@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: gloves
   m_EditorClassIdentifier: 
   id: 3d8faaac94d4aca4d9d13f19c7f6baf8
-  name: gloves
-  icon: {fileID: 21300062, guid: 63d2a355ab163f6489bb8b2b167e76da, type: 3}
+  icon: {fileID: 21300000, guid: a9ec068a844db494da488fa725b39425, type: 3}
   level: 0
   skillID: 2
   equipmentType: 2

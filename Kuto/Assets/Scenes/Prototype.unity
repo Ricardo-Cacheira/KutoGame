@@ -3122,6 +3122,7 @@ MonoBehaviour:
   waitTime: 5
   spawnedBoss: 0
   boss: {fileID: 1325563005719426, guid: 21cd5ec54a55d3c4593b98cd044342be, type: 2}
+  reward: {fileID: 1325563005719426, guid: 5ea32e2fc81fc71418b8fea44e6458bd, type: 2}
 --- !u!1 &847133566
 GameObject:
   m_ObjectHideFlags: 0

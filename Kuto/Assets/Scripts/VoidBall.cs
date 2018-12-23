@@ -13,6 +13,7 @@ public class VoidBall : MonoBehaviour {
 	{
 		rb = GetComponent<Rigidbody2D>();
 		rb.velocity = transform.right * speed;
+		FindObjectOfType<AudioManager>().Play("Woosh");
 	}
 
 	void OnBecameInvisible()

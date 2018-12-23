@@ -7,8 +7,6 @@ using UnityEditor;
 public class ItemDatabase : ScriptableObject
 {
 	[SerializeField] Item[] items;
-	
-	private static System.Random rnd = new System.Random();
 
 	public Item GetItemReference(string itemID)
 	{
@@ -26,12 +24,6 @@ public class ItemDatabase : ScriptableObject
 	{
 		Item item = GetItemReference(itemID);
 		return item != null ? item.GetCopy() : null;
-	}
-
-	public string RandomID()
-	{
-		int r = rnd.Next(items.Length);
-		return items[r].ID;
 	}
 
 	#if UNITY_EDITOR

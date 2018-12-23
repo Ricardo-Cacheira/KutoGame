@@ -150,17 +150,7 @@ public class BossHandler : MonoBehaviour {
 		secondPhase = false;
 	}
 
-	private void HandleMovement()
-	{
-		// if (!trigger) {
-		// 	transform.position = new Vector3(transform.position.x + .1f, transform.position.y, transform.position.z);
-		// 	if (transform.position.x > 5) trigger = true;
-		// } else if (trigger)
-		// {
-		// 	transform.position = new Vector3(transform.position.x - .1f, transform.position.y, transform.position.z);
-		// 	if (transform.position.x < -5) trigger = false;
-		// }
-	}
+	private void HandleMovement() {}
 
 	//rotating+shooting randomly
 	private void StartRotating()
@@ -173,7 +163,6 @@ public class BossHandler : MonoBehaviour {
 			moveDir = (EnemySpawnerBoss.roomCenter - transform.position).normalized;
 			transform.position = transform.position + moveDir * speed * Time.deltaTime;
 		} else {
-
 			StartCoroutine(RotationAttack());
 		}
 	}
@@ -287,10 +276,6 @@ public class BossHandler : MonoBehaviour {
             float ranDir = UnityEngine.Random.Range(1.5f, 4.5f);
             PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(-1, ranDir), "-" + 30);
 		}
-
-		if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
-            GameHandler.Restart();
-        }
 
 		waitingCharge = true;
 	}

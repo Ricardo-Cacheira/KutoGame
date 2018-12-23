@@ -7,20 +7,16 @@ public class ItemToolTip : MonoBehaviour {
 	[SerializeField] Text itemSlot;
 	[SerializeField] Text itemSkill;
 
-	private GameControl c;
-
 	void Awake()
 	{
 		HideToolTip();
-		c = GameControl.control;
 	}
 
 	public void ShowToolTip(EquippableItem item)
 	{
-		itemName.text = item.name.Substring(0,item.name.Length-7);
+		itemName.text = item.name;
 		itemSlot.text = item.equipmentType.ToString();
-		// itemSkill.text = "SkillId: "+ item.skillID.ToString()+ " at Level "+item.level+"\nIt does stuff";
-		itemSkill.text = "<color=#23b2ff>Lvl. "+ item.level + "</color> " + c.abilities[item.skillID].name +"\n"+ c.abilities[item.skillID].description;
+		itemSkill.text = "SkillId: "+ item.skillID.ToString()+ " at Level "+item.level+"\nIt does stuff";
 
 		gameObject.SetActive(true);
 	}

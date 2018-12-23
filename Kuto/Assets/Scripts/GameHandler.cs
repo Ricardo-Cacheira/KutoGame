@@ -5,6 +5,7 @@ using CodeMonkey.Utils;
 using CodeMonkey;
 using System;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameHandler : MonoBehaviour {
 
@@ -28,6 +29,8 @@ public class GameHandler : MonoBehaviour {
 
 	public int numOfSpawners;
 	public static bool noEnemies;
+	bool asPlayed;
+	bool asDied;
 
 	private void Start() 
 	{
@@ -36,6 +39,7 @@ public class GameHandler : MonoBehaviour {
 		enemySlowerHandlerList = new List<EnemySlowerHandler>();
 
 		playerHandler = PlayerHandler.CreatePlayer();
+		playerHandler.OnDead += PlayerHandler_OnDead;
 
 		cameraFollow.Setup(playerHandler.GetPosition);
 
@@ -47,7 +51,6 @@ public class GameHandler : MonoBehaviour {
 
 	private void Update()
 	{
-		// Debug.Log("N. of rooms: " + numOfSpawners);
 		if (!asStarted) 
 		{
 			loading -= Time.deltaTime;
@@ -56,41 +59,31 @@ public class GameHandler : MonoBehaviour {
 		} else if (asStarted)
 		{
 			for(int i = enemyMeleeHandlerList.Count - 1; i > -1; i--)
- 			{
     			if (enemyMeleeHandlerList[i] == null) enemyMeleeHandlerList.RemoveAt(i);
- 			}
+ 			
 			for(int i = enemyRangedHandlerList.Count - 1; i > -1; i--)
-			{
 				if (enemyRangedHandlerList[i] == null)	enemyRangedHandlerList.RemoveAt(i);
-			}
-			for(int i = enemySlowerHandlerList.Count - 1; i > -1; i--)
-			{
-				if (enemySlowerHandlerList[i] == null)	enemySlowerHandlerList.RemoveAt(i);
-			}
 
-			if (enemyMeleeHandlerList.Count == 0 && enemyRangedHandlerList.Count == 0 && 
-				enemySlowerHandlerList.Count == 0) 
+			for(int i = enemySlowerHandlerList.Count - 1; i > -1; i--)
+				if (enemySlowerHandlerList[i] == null)	enemySlowerHandlerList.RemoveAt(i);
+
+			if (enemyMeleeHandlerList.Count == 0 && enemyRangedHandlerList.Count == 0 && enemySlowerHandlerList.Count == 0) 
 			{
 				noEnemies = true;
-				if (numOfSpawners == 0 || enemySpawnerBeach == null) {
+				if (numOfSpawners == 0 || enemySpawnerBeach == null) 
+				{
 					playerHandler.SaveRewards();
-					StartCoroutine(WinMessage());
+					if (!asPlayed) 
+					{
+						StartCoroutine(WinMessage());
+						asPlayed = true;
+					}
 				}
 			} else 
 			{
 				noEnemies = false;
 			}
 		}
-	}
-
-	public static IEnumerator WinMessage()
-	{
-		GameObject objectWinText = GameObject.Find("WinText");
-		Text WinText = objectWinText.GetComponent<Text>();
-		WinText.enabled = true;
-		yield return new WaitForSeconds(5);
-		WinText.enabled = false;
-		Restart();	
 	}
 
 	public void SpawnMeleeEnemy() 
@@ -113,7 +106,7 @@ public class GameHandler : MonoBehaviour {
 	{
 		for (int i = 0; i < 30; i++)
 		{
-			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(3, 5f); 
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2.5f, 3f); 
 			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
 			if (colliders.Length == 0)
 			{
@@ -129,7 +122,7 @@ public class GameHandler : MonoBehaviour {
 	{
 		for (int i = 0; i < 30; i++)
 		{
-			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(3, 5f); 
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2f, 2.5f); 
 			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
 			if (colliders.Length == 0)
 			{
@@ -147,9 +140,16 @@ public class GameHandler : MonoBehaviour {
 		bossHandler.OnDead += BossHandler_OnDead;
 	}
 
+	private void PlayerHandler_OnDead(object sender, System.EventArgs e) 
+	{
+		PlayerHandler playerHandler = sender as PlayerHandler;
+		Restart();
+	}
+
 	private void EnemyHandler_OnDead(object sender, System.EventArgs e) 
 	{
 		EnemyHandler enemyMeleeHandler = sender as EnemyHandler;
+		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemyMeleeHandlerList.Remove(enemyMeleeHandler);
 		playerHandler.GetRewards(20, 10);
 	}
@@ -157,6 +157,7 @@ public class GameHandler : MonoBehaviour {
 	private void EnemyRangedHandler_OnDead(object sender, System.EventArgs e) 
 	{
 		EnemyRangedHandler enemyRangedHandler = sender as EnemyRangedHandler;
+		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemyRangedHandlerList.Remove(enemyRangedHandler);
 		playerHandler.GetRewards(30, 7);
 	}
@@ -164,6 +165,7 @@ public class GameHandler : MonoBehaviour {
 	private void EnemySlowerHandler_OnDead(object sender, System.EventArgs e) 
 	{
 		EnemySlowerHandler enemySlowerHandler = sender as EnemySlowerHandler;
+		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemySlowerHandlerList.Remove(enemySlowerHandler);
 		playerHandler.GetRewards(10, 15);
 	}
@@ -177,6 +179,12 @@ public class GameHandler : MonoBehaviour {
 		GameControl.control.CalculateLevel();
 		GameControl.control.Save();
 		StartCoroutine(WinMessage());
+		FindObjectOfType<AudioManager>().Play("MissionSuccess");
+		bool asPlayed = false;
+		if (!asPlayed){
+			StartCoroutine(PlayGuessYouWin());
+			asPlayed = true;
+		}
 	}
 
 	private EnemyHandler GetClosestEnemyHandler(Vector3 playerPosition) 
@@ -225,9 +233,40 @@ public class GameHandler : MonoBehaviour {
 		return closest;
 	}
 
-	public static void Restart() 
+	private void Restart() 
 	{
 		PlayerHandler.playerHandler.SaveRewards();
-		UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+		if (!asDied) StartCoroutine(LoseMessage());
 	}
-}
+
+	public IEnumerator WinMessage()
+	{
+		GameObject objectWinText = GameObject.Find("WinText");
+		Text WinText = objectWinText.GetComponent<Text>();
+		WinText.enabled = true;
+		FindObjectOfType<AudioManager>().Play("MissionSuccess");
+		yield return new WaitForSeconds(6.5f);
+		WinText.enabled = false;
+		PlayerHandler.playerHandler.SaveRewards();
+		SceneManager.LoadScene(0);
+	}
+	
+	private IEnumerator PlayGuessYouWin()
+	{
+		yield return new WaitForSeconds(.7f);
+		FindObjectOfType<AudioManager>().Play("GuessYouWin");
+	}
+
+	private IEnumerator LoseMessage()
+	{
+		asDied = true;
+		GameObject objectLoseText = GameObject.Find("LoseText");
+		Text LoseText = objectLoseText.GetComponent<Text>();
+		LoseText.enabled = true;
+		FindObjectOfType<AudioManager>().Play("MissionFail");
+		yield return new WaitForSeconds(3.5f);
+		LoseText.enabled = false;
+		SceneManager.LoadScene(0);
+
+	}
+}	

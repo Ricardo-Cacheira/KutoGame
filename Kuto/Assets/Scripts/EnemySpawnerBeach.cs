@@ -21,7 +21,7 @@ public class EnemySpawnerBeach : MonoBehaviour {
 		gameHandle = GameObject.Find("GameManager");
 		gameHandler = gameHandle.GetComponent<GameHandler>();
 
-		timeCounter = 80;
+		timeCounter = 5;
 
 		gameHandler.numOfSpawners++;
 

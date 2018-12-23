@@ -51,10 +51,6 @@ public class Menu : MonoBehaviour {
 			SceneManager.LoadScene("BeachScene");
 		if (Input.GetKeyDown("m"))
 			SceneManager.LoadScene("BossScene");
-		if (Input.GetKeyDown("i"))
-		{
-			GameControl.control.DropItem();
-		}
 	}
 	
 	public void Junk()

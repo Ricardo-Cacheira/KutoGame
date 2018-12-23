@@ -18,7 +18,6 @@ public class EnemySpawn : MonoBehaviour {
 	private float randMelee, randRanged, randSlower, randSpawnTime;
 	private int randNumBomb, randNumMissile;
 
-
 	void Start () {
 		gameHandle = GameObject.Find("GameManager");
 		gameHandler = gameHandle.GetComponent<GameHandler>();
@@ -39,6 +38,7 @@ public class EnemySpawn : MonoBehaviour {
 	void Update()
 	{
 		if (finishedSpawning && GameHandler.noEnemies) {
+			// FindObjectOfType<AudioManager>().Play("Jungle");		
 			doorRenderer.enabled = false;
 			doorCollider.enabled = false;
 		}
@@ -48,6 +48,7 @@ public class EnemySpawn : MonoBehaviour {
 	{
 		if (other.gameObject.CompareTag("Player") && !wasActivated)
 		{
+			FindObjectOfType<AudioManager>().Stop("Jungle");
 			doorRenderer.enabled = true;
 			doorCollider.enabled = true;
 			
@@ -92,11 +93,12 @@ public class EnemySpawn : MonoBehaviour {
 
 	IEnumerator ShakeScreen()
 	{
+		FindObjectOfType<AudioManager>().Play("Rumble");
 		cameraFollow.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -1);
-		cameraShaker.shakeDuration = 1f;
+		cameraShaker.shakeDuration = 1.5f;
 		cameraShaker.enabled = true;
 		gameHandler.playerHandler.speed = 0;
-		yield return new WaitForSeconds(1);
+		yield return new WaitForSeconds(1.5f);
 		gameHandler.playerHandler.speed = 6f;
 		cameraShaker.enabled = false;
 	}

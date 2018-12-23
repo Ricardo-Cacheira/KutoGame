@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class EnemySpawnerBoss : MonoBehaviour {
 
@@ -11,6 +12,7 @@ public class EnemySpawnerBoss : MonoBehaviour {
 	public static Vector3 roomCenter;
 	GameObject gameHandle;
 	GameHandler gameHandler;
+	public GameObject door;
 
 	void Start () {
 		gameHandle = GameObject.Find("GameManager");
@@ -31,6 +33,9 @@ public class EnemySpawnerBoss : MonoBehaviour {
 
 	private IEnumerator ShakeScreen()
 	{
+		FindObjectOfType<AudioManager>().Play("Rumble");
+		door.GetComponent<TilemapRenderer>().enabled = true;
+		door.GetComponent<TilemapCollider2D>().enabled = true;
 		started = true;
 		cameraFollow.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, -1);
 		cameraShaker.shakeDuration = 1f;

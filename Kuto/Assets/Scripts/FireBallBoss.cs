@@ -31,10 +31,6 @@ public class FireBallBoss : MonoBehaviour {
 			PlayerHandler.playerHandler.GetHealthSystem().Damage(BossHandler.dmgShooting);
 			PlayerHandler.playerHandler.KnockBack(1500, this.transform.position);
 
-			if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
-            	GameHandler.Restart();
-        	}
-
 			Destroy(gameObject);
 			CreateText();
 		} 

@@ -11,11 +11,6 @@ public class CombatText : MonoBehaviour {
 	private Vector3 direction;
 	private float fadeTime;
 
-	void Update()
-	{
-		float translation = speed * Time.deltaTime;
-		transform.Translate(direction * translation);
-	}
 
 	public void Initialize(float speed, string damageMessage, Vector3 direction)
 	{
@@ -23,6 +18,11 @@ public class CombatText : MonoBehaviour {
 		this.direction = direction;
 		combatText.text = damageMessage;
 		StartCoroutine(FadeOut());
+	}
+	void Update()
+	{
+		float translation = speed * Time.deltaTime;
+		transform.Translate(direction * translation);
 	}
 
 	IEnumerator FadeOut()

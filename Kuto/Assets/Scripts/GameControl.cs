@@ -11,9 +11,7 @@ public class GameControl : MonoBehaviour {
 	public static GameControl control;
 	
 	[SerializeField] ItemDatabase itemDatabase;
-	[Space]
-	public List<Ability> abilities = new List<Ability>();
-	[Space]
+	
 	public List<Item> inventoryItems = new List<Item>();
 	[Space]
 	public List<EquippableItem> equippedItems = new List<EquippableItem>();
@@ -76,17 +74,6 @@ public class GameControl : MonoBehaviour {
 			else 
 				lastReqXp += currReqXp;
 		}
-	}
-
-	public void DropItem()
-	{
-		Item item = itemDatabase.GetItemCopy(itemDatabase.RandomID());
-		item.level = 1;
-		inventoryItems.Add(item);
-
-		// InventoryManager.im.Fill();
-			
-		// InventoryManager.im.inventory.RefreshUI();
 	}
 
 	public void Save() {

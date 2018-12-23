@@ -15,8 +15,7 @@ public class InventoryManager : MonoBehaviour {
 		inventory.OnItemRightClickedEvent += EquipFromInventory;
 		inventory.OnItemLeftClickedEvent += Shop.instance.Click;
 		inventory.OnItemMobileClickedEvent += MobileTouch;
-		equipmentPanel.OnItemMobileClickedEvent += unequipFromEquipmentPanel;
-		equipmentPanel.OnItemLeftClickedEvent += unequipFromEquipmentPanel;
+		equipmentPanel.OnItemLeftClickedEvent += MobileTouch;
 		equipmentPanel.OnItemRightClickedEvent += unequipFromEquipmentPanel;
 	}
 

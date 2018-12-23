@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using UnityEngine.SceneManagement;
 
 public class PlayerHandler : MonoBehaviour {
     public static PlayerHandler CreatePlayer() 
@@ -65,6 +66,7 @@ public class PlayerHandler : MonoBehaviour {
     private bool healing = false;
     private bool aoe = false;
     private bool isShooting = false;
+    private bool asFoundIntel = false;
 
     Image potion;
     Color potionColor;
@@ -110,6 +112,12 @@ public class PlayerHandler : MonoBehaviour {
     public static bool phoneAttack = false;
     public static bool phoneShooting, phoneAoe, phoneHeal, phoneDash;
     public Input input;
+
+    //Audio
+    public AudioSource hitSuccess;
+    public AudioSource hitFail;
+
+    public AudioManager audioManager;
 
     #endregion
 
@@ -163,7 +171,7 @@ public class PlayerHandler : MonoBehaviour {
         shootingDmg += GameControl.control.lvl * 2;
 
         joystick = GameObject.Find("WalkingJoystick").GetComponent<Joystick>();
-        
+       
     }
 
     private void Setup(HealthSystem healthSystem, ExperienceSystem experienceSystem) 
@@ -180,8 +188,11 @@ public class PlayerHandler : MonoBehaviour {
         }
         SetupSkillIcons();
 
+        audioManager = FindObjectOfType<AudioManager>();
 
-        attackPoint.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.2f);
+        Scene currScene = SceneManager.GetActiveScene();
+        if (currScene.name == "Prototype") audioManager.Play("Jungle");
+        if (currScene.name == "BeachScene") audioManager.Play("Beach");   
     }
 
     private void SetupSkillIcons()
@@ -223,6 +234,9 @@ public class PlayerHandler : MonoBehaviour {
 
     void Update() 
     {
+        //TESTING PURPOSES//
+		if (Input.GetKeyDown("p")) basicAtkDmg = 100;
+
         switch (state) 
         {
         case State.Normal:
@@ -237,14 +251,12 @@ public class PlayerHandler : MonoBehaviour {
             HandleAttack();
             break;
         case State.Dead:
-            GameHandler.Restart();
             break;
         }
     }
 
     private void HandleMovement() 
     {
-
         float x = Input.GetAxisRaw("Horizontal");
 		float y = Input.GetAxisRaw("Vertical");
 
@@ -260,11 +272,6 @@ public class PlayerHandler : MonoBehaviour {
 		if (dashing)
 		{
 			StartCoroutine(Dash());
-			
-		} else if(leaping)
-		{
-			StartCoroutine(Leap());
-
 		} else
 		{
 			movement = new Vector2(x, y).normalized;
@@ -274,6 +281,8 @@ public class PlayerHandler : MonoBehaviour {
 
 			if((Input.GetButtonDown("Dash") || phoneDash) && timeStamp <= Time.time) {
                 dashing = true;
+                audioManager.Play("Dash");
+
                 StartCoroutine(FadeToD(2, dash.GetComponent<Image>().color));
             }
             else
@@ -292,7 +301,6 @@ public class PlayerHandler : MonoBehaviour {
 	    	lastY = y;  
         }
 	}
-
 
 	IEnumerator Dash()
 	{   
@@ -331,22 +339,6 @@ public class PlayerHandler : MonoBehaviour {
         yield return new WaitForSeconds(2);
         dash.GetComponent<Image>().color = new Color(1, 1, 1, 1);
     }
-
-
-	IEnumerator Leap()
-	{	
-		if(movement == Vector2.zero) movement = new Vector2(lastX, lastY).normalized;
-        animator.speed = 0;
-		timeStamp = Time.time + recoveryTime;
-		rb2d.velocity = (movement * -1) * dashSpeed * 1.5f;
-        this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 0.35f);
-        gameObject.layer = 15;
-		yield return new WaitForSeconds(dashTime);
-		animator.speed = 1;
-        leaping = false;
-        this.GetComponent<SpriteRenderer>().color = new Color (1f, 1f, 1f, 1f);
-        gameObject.layer = 1;
-	}
     
     private void HandleShooting() 
     {
@@ -359,6 +351,7 @@ public class PlayerHandler : MonoBehaviour {
 
     IEnumerator Shooting()
     {
+        audioManager.Play("Bullet");
         phoneShooting = false;
         StartCoroutine(FadeToS(0f, shootingCd, bullet.GetComponent<Image>().color));
         Instantiate(GameAssets.i.pfFireBall, player.transform.position, Quaternion.identity);
@@ -392,51 +385,59 @@ public class PlayerHandler : MonoBehaviour {
             phoneAttack = false;
             
             Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, whatIsEnemies);      
-
-            for (int i = 0; i < enemiesToDamage.Length; i++)
+            if (enemiesToDamage.Length > 0) 
             {
-                randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                if (enemiesToDamage[i].gameObject.CompareTag("EnemyRanged")) 
+        
+                audioManager.Play("SlashSuccess");
+                
+                for (int i = 0; i < enemiesToDamage.Length; i++)
                 {
-                    EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
-                    enemy.GetHealthSystem().Damage(basicAtkDmg); 
-                    enemy.KnockBack(200000);
-                    
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
+                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
+                    if (enemiesToDamage[i].gameObject.CompareTag("EnemyRanged")) 
+                    {
+                        EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
+                        enemy.GetHealthSystem().Damage(basicAtkDmg); 
+                        enemy.KnockBack(200000);
+                        
+                        CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
 
-                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                        if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
-                } else if (enemiesToDamage[i].gameObject.CompareTag("Enemy"))
-                {
-                    EnemyHandler enemy = enemiesToDamage[i].GetComponent<EnemyHandler>();  
-                    enemy.GetHealthSystem().Damage(basicAtkDmg);
-                    enemy.KnockBack(200000);
+                    } else if (enemiesToDamage[i].gameObject.CompareTag("Enemy"))
+                    {
+                        EnemyHandler enemy = enemiesToDamage[i].GetComponent<EnemyHandler>();  
+                        enemy.GetHealthSystem().Damage(basicAtkDmg);
+                        enemy.KnockBack(200000);
 
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
+                        CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
 
-                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                        if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
-                } else if (enemiesToDamage[i].gameObject.CompareTag("EnemySlower"))
-                {
-                    EnemySlowerHandler enemy = enemiesToDamage[i].GetComponent<EnemySlowerHandler>();  
-                    enemy.GetHealthSystem().Damage(basicAtkDmg);
-                    enemy.KnockBack(200000);
-                    
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
+                    } else if (enemiesToDamage[i].gameObject.CompareTag("EnemySlower"))
+                    {
+                        EnemySlowerHandler enemy = enemiesToDamage[i].GetComponent<EnemySlowerHandler>();  
+                        enemy.GetHealthSystem().Damage(basicAtkDmg);
+                        enemy.KnockBack(200000);
+                        
+                        CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
 
-                    if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
-                } else if (enemiesToDamage[i].gameObject.CompareTag("Boss"))
-                {
-                    BossHandler boss = enemiesToDamage[i].GetComponent<BossHandler>();  
-                    boss.GetHealthSystem().Damage(basicAtkDmg);
-                    
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
+                        if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                    } else if (enemiesToDamage[i].gameObject.CompareTag("Boss"))
+                    {
+                        BossHandler boss = enemiesToDamage[i].GetComponent<BossHandler>();  
+                        boss.GetHealthSystem().Damage(basicAtkDmg);
+                        
+                        CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
 
-                    if (boss.GetHealthSystem().GetHealthPercent() < 0.1) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                        if (boss.GetHealthSystem().GetHealthPercent() < 0.1) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+                    }
                 } 
+            } else 
+            {
+                audioManager.Play("SlashFail");
+
             }
                 timeBtwAttack = startTimeBtwAttack;
-
         } else
         { 
         phoneAttack = false;
@@ -457,6 +458,8 @@ public class PlayerHandler : MonoBehaviour {
     {
         phoneAoe = false;
         aoe = true;
+        audioManager.Play("Explosion");
+
         Transform tempAoe = Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
         StartCoroutine(FadeToF(aoeCd, aoeFire.GetComponent<Image>().color));
 
@@ -507,6 +510,7 @@ public class PlayerHandler : MonoBehaviour {
         aoe = false;
 
     }
+
     IEnumerator FadeToF(float aTime, Color cooldownColor)
     {
         StartCoroutine(AoeCdColor());
@@ -534,9 +538,9 @@ public class PlayerHandler : MonoBehaviour {
             phoneHeal = false;
     }
 
-
     IEnumerator Healing()
-	{	
+	{
+        audioManager.Play("Potion");
         phoneHeal = false;
         healing = true;
         healthSystem.Heal(healingAmount);
@@ -582,50 +586,36 @@ public class PlayerHandler : MonoBehaviour {
     private void OnTriggerEnter2D(Collider2D hitInfo)
 	{
 		if(hitInfo.gameObject.CompareTag("Bomb")) 
-		{
-			this.GetHealthSystem().Damage(50);
-			this.rb2d.AddForce(1000 * -movement * speed); //wth
-            hitInfo.GetComponent<ParticleSystem>().Play();
-
-            hitInfo.GetComponent<SpriteRenderer>().enabled = false;
-            hitInfo.GetComponent<CircleCollider2D>().enabled = false;
-
-            CreateText(Color.red, transform.position, new Vector2(-1, 4.5f), "-" + 50);
-
-            if (this.GetHealthSystem().GetHealthPercent() <= 0) {
-                GameHandler.Restart();
-            }
-
-			Destroy(hitInfo.gameObject, 1f);
+        {
+			Explosion(hitInfo, 50);
+            CreateText(Color.red, transform.position, new Vector2(-1, 4.5f), "-" + 50);	
 		}
-
         
 		if (hitInfo.gameObject.CompareTag("Circle"))
 		{
-			this.GetHealthSystem().Damage(BossHandler.dmgAoe);;
-			this.rb2d.AddForce(900 * -movement * speed); //wth
-            hitInfo.GetComponent<ParticleSystem>().Play();
-
-            hitInfo.GetComponent<SpriteRenderer>().enabled = false;
-            hitInfo.GetComponent<CircleCollider2D>().enabled = false;
-
+            Explosion(hitInfo, BossHandler.dmgAoe);
             CreateText(Color.red, transform.position, new Vector2(-1, 3.5f), "-" + BossHandler.dmgAoe);
-
-            if (this.GetHealthSystem().GetHealthPercent() <= 0) {
-                GameHandler.Restart();
-            }
-            
-			Destroy(hitInfo.gameObject, 1f);
 		}
 	}
 
+    private void Explosion(Collider2D col, int dmg)
+    {
+        this.GetHealthSystem().Damage(dmg);
+		this.rb2d.AddForce(900 * -movement * speed);
+        col.GetComponent<ParticleSystem>().Play();
+        col.GetComponent<SpriteRenderer>().enabled = false;
+        col.GetComponent<CircleCollider2D>().enabled = false;
+        Destroy(col.gameObject, 1f);
+    }
+
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Intel") && GameHandler.noEnemies)
+        if (col.gameObject.CompareTag("Intel") && GameHandler.noEnemies && !asFoundIntel)
         {
             GetRewards(1000, 0);
             SaveRewards();
-			StartCoroutine(GameHandler.WinMessage());
+			StartCoroutine(GameObject.Find("GameManager").GetComponent<GameHandler>().WinMessage());
+            asFoundIntel = true;
         }
     }
 
@@ -633,10 +623,8 @@ public class PlayerHandler : MonoBehaviour {
     {
         gold += newGold;
         goldText.text = gold.ToString();
-        
         experienceSystem.WinXp(newXp);
         float tempPercentage = (experienceSystem.GetXpPercent() * 100.0f);
-
             
         if (GameControl.control.isXpMax == false) {
             xp += newXp;
@@ -646,11 +634,8 @@ public class PlayerHandler : MonoBehaviour {
         {
             xpText.text = GameControl.control.xp.ToString();
             xpPercentageText.text = Math.Round((tempPercentage), 1) + "%";
-
-        }
-        
+        }       
     }
-
     public void SaveRewards()
     {
         GameControl.control.xp = xp;

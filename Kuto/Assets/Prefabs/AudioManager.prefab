@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1453563319743956}
+  m_IsPrefabAsset: 1
+--- !u!1 &1453563319743956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4743343283188164}
+  - component: {fileID: 114598838737199090}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4743343283188164
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1453563319743956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -124.897995, y: 308.7775, z: -7.797377}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114598838737199090
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1453563319743956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c365da0d4d70ff544b5fd77c667c013c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: SlashSuccess
+    clip: {fileID: 8300000, guid: f5843b7af09db354b97e1d940cc40762, type: 3}
+    volume: 0.094
+    pitch: 0.1
+    source: {fileID: 0}
+  - name: SlashFail
+    clip: {fileID: 8300000, guid: 4c6936c2e27a94543b5c1044980851e2, type: 3}
+    volume: 0.148
+    pitch: 0
+    source: {fileID: 0}
+  - name: Hit
+    clip: {fileID: 8300000, guid: 85dc297ff325898439913679d7276cd6, type: 3}
+    volume: 0.3
+    pitch: 0
+    source: {fileID: 0}
+  - name: SlashEnemy
+    clip: {fileID: 8300000, guid: bf2d82c13b2871b4eb9d92874f7715bb, type: 3}
+    volume: 0.592
+    pitch: 0
+    source: {fileID: 0}
+  - name: SlashEnemyKill
+    clip: {fileID: 8300000, guid: e44c99dece50b5c428db52379122c9ae, type: 3}
+    volume: 0.041
+    pitch: 0
+    source: {fileID: 0}
+  - name: Rumble
+    clip: {fileID: 8300000, guid: 774c1c58b886f44479a677abb05e7d82, type: 3}
+    volume: 0.565
+    pitch: 0
+    source: {fileID: 0}
+  - name: Woosh
+    clip: {fileID: 8300000, guid: 8048dd676da35c5449f751032da09cce, type: 3}
+    volume: 0.195
+    pitch: 0.63
+    source: {fileID: 0}
+  - name: Dash
+    clip: {fileID: 8300000, guid: 009dd63f9b6c4e84780feebae1dd893d, type: 3}
+    volume: 0.195
+    pitch: 1.98
+    source: {fileID: 0}

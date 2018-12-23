@@ -63,13 +63,13 @@ public class EnemyHandler : MonoBehaviour {
     {
         switch (state) 
         {
-        case State.Normal: 
+            case State.Normal: 
                 HandleMovement();
                 HandleAttack();
-            break;
-        case State.Busy:
-            HandleAttack();
-            break;
+                break;
+            case State.Busy:
+                HandleAttack();
+                break;
         }
     }
 
@@ -100,19 +100,14 @@ public class EnemyHandler : MonoBehaviour {
         StartCoroutine(ChargeAttack(1, 1f, attackPoint.GetComponent<SpriteRenderer>().color));
         yield return new WaitForSeconds(1f);
         animator.SetTrigger("Attack");
-        attackPoint.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.2f);
+        FindObjectOfType<AudioManager>().Play("SlashEnemy");
         SetStateNormal();
         Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 0.7f, whatIsPlayer);
         if (player != null) {
             PlayerHandler.playerHandler.GetHealthSystem().Damage(dmg);
             ranDir = UnityEngine.Random.Range(1.5f, 4.5f);
             playerHandler.CreateText(Color.red, playerHandler.transform.position, new Vector2(-1, ranDir), "-" + dmg);
-        }
-        
-        if (PlayerHandler.playerHandler.GetHealthSystem().GetHealthPercent() <= 0) {
-            GameHandler.Restart();
-        }
-        
+        }     
         yield return new WaitForSeconds(0.2f);
     }
 

@@ -239,7 +239,7 @@ public class GameHandler : MonoBehaviour {
 		if (!asDied) StartCoroutine(LoseMessage());
 	}
 
-	public IEnumerator WinMessage()
+	public static IEnumerator WinMessage()
 	{
 		GameObject objectWinText = GameObject.Find("WinText");
 		Text WinText = objectWinText.GetComponent<Text>();

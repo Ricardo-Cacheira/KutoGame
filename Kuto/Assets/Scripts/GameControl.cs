@@ -11,7 +11,9 @@ public class GameControl : MonoBehaviour {
 	public static GameControl control;
 	
 	[SerializeField] ItemDatabase itemDatabase;
-	
+	[Space]
+	public List<Ability> abilities = new List<Ability>();
+	[Space]
 	public List<Item> inventoryItems = new List<Item>();
 	[Space]
 	public List<EquippableItem> equippedItems = new List<EquippableItem>();

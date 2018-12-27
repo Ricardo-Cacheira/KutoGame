@@ -122,6 +122,11 @@ public class Menu : MonoBehaviour {
 		GameControl.control.Load();
 	}
 
+	public void Reset()
+	{
+		GameControl.control.Reset();
+	}
+
 	public void Save()
 	{
 		InventoryManager.im.SaveInventory();
@@ -158,6 +163,7 @@ public class Menu : MonoBehaviour {
 
 	public void QuitGame()
 	{
+		GameControl.control.Save();
 		Application.Quit();
 	}
 

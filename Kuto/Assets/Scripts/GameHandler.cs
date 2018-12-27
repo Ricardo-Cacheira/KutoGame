@@ -172,6 +172,7 @@ public class GameHandler : MonoBehaviour {
 
 	private void BossHandler_OnDead(object sender, System.EventArgs e) 
 	{
+		FindObjectOfType<AudioManager>().Stop("Boss");
 		playerHandler.GetRewards(5000, 0);
 		GameControl.control.isXpMax = false;
 		playerHandler.xp++;
@@ -241,6 +242,7 @@ public class GameHandler : MonoBehaviour {
 
 	public static IEnumerator WinMessage()
 	{
+		if (SceneManager.GetActiveScene().name == "BeachScene") FindObjectOfType<AudioManager>().Stop("Beach");
 		GameObject objectWinText = GameObject.Find("WinText");
 		Text WinText = objectWinText.GetComponent<Text>();
 		WinText.enabled = true;
@@ -259,6 +261,9 @@ public class GameHandler : MonoBehaviour {
 
 	private IEnumerator LoseMessage()
 	{
+		if (SceneManager.GetActiveScene().name == "BeachScene") FindObjectOfType<AudioManager>().Stop("Beach");
+		if (SceneManager.GetActiveScene().name == "BossScene") FindObjectOfType<AudioManager>().Stop("Boss");
+		if (SceneManager.GetActiveScene().name == "Prototype") FindObjectOfType<AudioManager>().Stop("JungleFight");
 		asDied = true;
 		GameObject objectLoseText = GameObject.Find("LoseText");
 		Text LoseText = objectLoseText.GetComponent<Text>();

@@ -89,6 +89,8 @@ public class PlayerHandler : MonoBehaviour {
     int shootingDmg = 40;
     float shootingCd = 2;
 
+    float stunCd = 2;
+
     private float randDir;
 
     //rewards values
@@ -181,6 +183,7 @@ public class PlayerHandler : MonoBehaviour {
         this.experienceSystem = experienceSystem;
 
         healthSystem.OnDead += HealthSystem_OnDead;
+        healthSystem.OnHealthDecrease += HealthSystem_OnHealthDecrease;
 
         SetupSkills();
         for (int i = 0; i < GameControl.control.equippedItems.Count; i++)
@@ -192,8 +195,19 @@ public class PlayerHandler : MonoBehaviour {
         audioManager = FindObjectOfType<AudioManager>();
 
         Scene currScene = SceneManager.GetActiveScene();
-        if (currScene.name == "Prototype") audioManager.Play("Jungle");
-        if (currScene.name == "BeachScene") audioManager.Play("Beach");   
+        if (currScene.name == "Prototype") audioManager.Play("Jungle", true);
+        if (currScene.name == "BeachScene") audioManager.Play("Beach", true);   
+    }
+
+    private void HealthSystem_OnHealthDecrease(object sender, EventArgs e)
+    {
+        audioManager.Play("Hurt");
+    }
+    private void HealthSystem_OnDead(object sender, EventArgs e) 
+    {
+        state = State.Dead;
+        gameObject.SetActive(false);
+        if (OnDead != null) OnDead(this, EventArgs.Empty);
     }
 
     private void SetupSkillIcons()
@@ -226,17 +240,12 @@ public class PlayerHandler : MonoBehaviour {
     void None()
     {return;}
 
-    private void HealthSystem_OnDead(object sender, EventArgs e) 
-    {
-        state = State.Dead;
-        gameObject.SetActive(false);
-        if (OnDead != null) OnDead(this, EventArgs.Empty);
-    }
 
     void Update() 
     {
         //TESTING PURPOSES//
 		if (Input.GetKeyDown("p")) basicAtkDmg = 100;
+        if (Input.GetKeyDown("n")) GetRewards(0, 100);
 
         switch (state) 
         {
@@ -530,6 +539,17 @@ public class PlayerHandler : MonoBehaviour {
         yield return new WaitForSeconds(aoeCd);
         aoeFire.GetComponent<Image>().color = new Color(1, 1, 1, 1);
     }
+
+    private void Stun()
+    {
+        if(Input.GetKeyDown("m") && stunCd < 0)
+        {
+            stunCd = 2;
+
+        } else
+            stunCd -= Time.deltaTime;
+    }
+
 
     private void HandleHealing()
     {

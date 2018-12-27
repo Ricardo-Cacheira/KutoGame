@@ -19,10 +19,11 @@ public class AudioManager : MonoBehaviour {
 		}
 	}
 
-	public void Play (string name)
+	public void Play (string name, bool looping = false)
 	{
 		Sound s = Array.Find(sounds, sound => sound.name == name);
 		s.source.Play();
+		s.source.loop = looping;
 	}
 
 	public void Stop (string name)

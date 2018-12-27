@@ -44,7 +44,8 @@ public class EnemySpawnerBoss : MonoBehaviour {
 		yield return new WaitForSeconds(1);
 		gameHandler.SpawnBoss();
 		cameraShaker.shakeAmount = 0;
-		yield return new WaitForSeconds(3);
+		yield return new WaitForSeconds(1.5f);
+		FindObjectOfType<AudioManager>().Play("Boss", true);
 		PlayerHandler.playerHandler.speed = 6f;
 		cameraShaker.enabled = false;
 		Destroy(gameObject);

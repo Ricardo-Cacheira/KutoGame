@@ -38,10 +38,19 @@ public class EnemySpawn : MonoBehaviour {
 	void Update()
 	{
 		if (finishedSpawning && GameHandler.noEnemies) {
-			// FindObjectOfType<AudioManager>().Play("Jungle");		
 			doorRenderer.enabled = false;
 			doorCollider.enabled = false;
+			
+			FindObjectOfType<AudioManager>().Stop("JungleFight");	
+			StartCoroutine(SwitchSong("Jungle"));	
+			finishedSpawning = false;
 		}
+	}
+
+	private IEnumerator SwitchSong(string song)
+	{
+		yield return new WaitForSeconds(1);
+		FindObjectOfType<AudioManager>().Play(song, true);	
 	}
 	
 	void OnTriggerEnter2D(Collider2D other)
@@ -49,6 +58,7 @@ public class EnemySpawn : MonoBehaviour {
 		if (other.gameObject.CompareTag("Player") && !wasActivated)
 		{
 			FindObjectOfType<AudioManager>().Stop("Jungle");
+			StartCoroutine(SwitchSong("JungleFight"));
 			doorRenderer.enabled = true;
 			doorCollider.enabled = true;
 			

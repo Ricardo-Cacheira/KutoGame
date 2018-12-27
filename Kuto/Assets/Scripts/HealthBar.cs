@@ -10,10 +10,15 @@ public class HealthBar : MonoBehaviour {
 		this.healthSystem = healthSystem;
 
 		healthSystem.OnHealthChanged += HealthSystem_OnHealthChanged;
+		
+		healthSystem.OnHealthDecrease += HealthSystem_OnHealthDecrease;
 		UpdateHealthBar();
 	}
 
 	private void HealthSystem_OnHealthChanged(object sender, System.EventArgs e) {
+		UpdateHealthBar();
+	}
+	private void HealthSystem_OnHealthDecrease(object sender, System.EventArgs e) {
 		UpdateHealthBar();
 	}
 	private void UpdateHealthBar() {

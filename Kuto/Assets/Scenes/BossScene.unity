@@ -4231,7 +4231,7 @@ Prefab:
     - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
         type: 2}
       propertyPath: sounds.Array.size
-      value: 14
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 4743343283188164, guid: 742531173e4d33542a09aa9374345af9, type: 2}
       propertyPath: m_LocalPosition.x
@@ -4303,7 +4303,7 @@ Prefab:
     - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
         type: 2}
       propertyPath: sounds.Array.data[7].volume
-      value: 1
+      value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
         type: 2}
@@ -4378,7 +4378,7 @@ Prefab:
     - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
         type: 2}
       propertyPath: sounds.Array.data[11].volume
-      value: 1
+      value: 0.65
       objectReference: {fileID: 0}
     - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
         type: 2}
@@ -4424,6 +4424,46 @@ Prefab:
         type: 2}
       propertyPath: sounds.Array.data[13].pitch
       value: 1.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
+        type: 2}
+      propertyPath: sounds.Array.data[14].name
+      value: Boss
+      objectReference: {fileID: 0}
+    - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
+        type: 2}
+      propertyPath: sounds.Array.data[14].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: d6ca328600fe89048b42938c9eff1ca7, type: 3}
+    - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
+        type: 2}
+      propertyPath: sounds.Array.data[14].volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
+        type: 2}
+      propertyPath: sounds.Array.data[14].pitch
+      value: 1.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
+        type: 2}
+      propertyPath: sounds.Array.data[15].name
+      value: Hurt
+      objectReference: {fileID: 0}
+    - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
+        type: 2}
+      propertyPath: sounds.Array.data[15].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 7af3c9ef2cb49124fb25bcf4dd7ba9dc, type: 3}
+    - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
+        type: 2}
+      propertyPath: sounds.Array.data[15].volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114598838737199090, guid: 742531173e4d33542a09aa9374345af9,
+        type: 2}
+      propertyPath: sounds.Array.data[15].pitch
+      value: 1.41
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 742531173e4d33542a09aa9374345af9, type: 2}

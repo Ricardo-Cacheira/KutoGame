@@ -67,12 +67,14 @@ public class Menu : MonoBehaviour {
 			InventoryManager.im.SaveInventory();
 			
 			shopPanel.SetActive(false);
+			blur.SetActive(false);
 		}
 		else
 		{
 			inventory.transform.localPosition = new Vector3(0, 0, 0);
 			inventoryVisible = true;
 			shopPanel.SetActive(true);
+			blur.SetActive(true);
 		}
 	}
 

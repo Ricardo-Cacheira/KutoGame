@@ -238,6 +238,7 @@ public class PlayerHandler : MonoBehaviour {
         skills.Add(1, HandleHealing);
         skills.Add(2, HandleAoe);
         skills.Add(3, HandleShooting);
+        skills.Add(4, Stun);
     }
 
     void None()
@@ -260,7 +261,6 @@ public class PlayerHandler : MonoBehaviour {
             skills[itemSkills[1]]();
             skills[itemSkills[2]]();
             skills[itemSkills[3]]();
-            Stun();
             break;
         case State.Busy:
             HandleAttack();

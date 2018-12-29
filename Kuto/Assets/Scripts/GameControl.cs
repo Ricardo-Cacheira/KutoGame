@@ -104,14 +104,12 @@ public class GameControl : MonoBehaviour {
 
 		foreach (var item in inventoryItems)
 		{
-			if(item.level <= 0) item.level++;
 			ItemData itemData = new ItemData(item.ID, item.level);
 			data.inventoryItems.Add(itemData);
 		}
 
 		foreach (var item in equippedItems)
 		{
-			if(item.level <= 0) item.level++;
 			ItemData itemData = new ItemData(item.ID, item.level);
 			data.equippedItems.Add(itemData);
 		}

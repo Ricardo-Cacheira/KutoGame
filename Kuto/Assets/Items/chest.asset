@@ -13,6 +13,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 68b507f1fd0cca2419a5b1895e4acada
   icon: {fileID: 21300000, guid: 6b94964d7ffa3da4f9d6637db4c43474, type: 3}
-  level: 0
+  level: 1
   skillID: 1
   equipmentType: 1

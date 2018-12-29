@@ -12,7 +12,7 @@ public class BossHandler : MonoBehaviour {
 
         HealthSystem healthSystem = new HealthSystem((1500 * GameControl.control.lvl));
 
-        HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 3.5f), Quaternion.identity, bossTransform).GetComponent<HealthBar>();
+        HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 1.5f), Quaternion.identity, bossTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
         bossHandler.Setup(healthSystem);
@@ -35,9 +35,10 @@ public class BossHandler : MonoBehaviour {
 	private List<Transform> ice;
 	private bool firstPhase, secondPhase;
 	public static int dmgAoe, dmgCharge, dmgShooting;
+	private Animator animator;
 
 	private Coroutine firstPhaseRoutine;
-
+	public Sprite right, upright, up, upleft, left, leftdown, down, rightdown;
 	int chargeCount;
 	bool waitingCharge, waitingAttack, canAttack;
 
@@ -61,6 +62,8 @@ public class BossHandler : MonoBehaviour {
 	void Start () 
 	{
 		state = State.Normal;
+
+		animator = GetComponent<Animator>();
 		ice = new List<Transform>();
 		firstPhaseRoutine = StartCoroutine(FirstPhase());
 		
@@ -122,13 +125,15 @@ public class BossHandler : MonoBehaviour {
 	{
 		firstPhase = true;
 		state = State.Normal;
-		yield return new WaitForSeconds(5);
+		yield return new WaitForSeconds(2);
 		state = State.Charging;
 		yield return new WaitForSeconds(20);
 		state = State.Normal;
 		yield return new WaitForSeconds(5);
+		animator.SetBool("shooting", true);
 		state = State.Shooting;
 		yield return new WaitForSeconds(12);
+		animator.SetBool("shooting", false);
 		firstPhase = false;
 	}
 	
@@ -139,8 +144,10 @@ public class BossHandler : MonoBehaviour {
 		yield return new WaitForSeconds(41);
 		state = State.Normal;
 		yield return new WaitForSeconds(4);
+		animator.SetBool("shooting", true);	
 		state = State.Shooting;
 		yield return new WaitForSeconds(14);
+		animator.SetBool("shooting", false);
 		state = State.Normal;
 		yield return new WaitForSeconds(5);
 		state = State.Charging;
@@ -151,6 +158,93 @@ public class BossHandler : MonoBehaviour {
 	}
 
 	private void HandleMovement() {}
+	//charge attack
+	private void ChargeAttack() 
+	{
+		this.GetComponent<SpriteRenderer>().sprite = upleft;
+		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, .5f, .5f, 1);
+		moveDir = (PlayerHandler.playerHandler.GetPosition() - this.transform.position);
+		Vector3 tmpDir = moveDir.normalized;
+		Debug.Log(moveDir.normalized);
+		if (tmpDir != Vector3.zero) {
+            if (tmpDir.y >= 0.5f && tmpDir.x <= -0.5f)
+                gameObject.GetComponent<SpriteRenderer>().sprite = upleft;
+ 
+            if (tmpDir.y >= 0.5f && tmpDir.x >= 0.5f)
+                gameObject.GetComponent<SpriteRenderer>().sprite = upright;
+ 
+            if (tmpDir.y >= 0.5f && tmpDir.x <= -0.5f)
+                gameObject.GetComponent<SpriteRenderer>().sprite = leftdown;
+ 
+            if (tmpDir.y >= 0.5f && tmpDir.x <= 1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = rightdown;
+        }
+ 
+        else
+        {
+            //left/right/up/down
+            if (tmpDir.x == -1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = left;
+ 
+            if (tmpDir.x == 1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = right;
+ 
+            if (tmpDir.y == 1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = up;
+ 
+            if (tmpDir.y == -1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = down;
+        }
+
+		if (moveDir.magnitude > 2.3f)
+		{
+			if (!waitingAttack)
+				StartCoroutine(WaitBtwnAttack());
+			else if (canAttack)
+				transform.position = transform.position + moveDir.normalized * (speed * 6) * Time.deltaTime;
+		} 
+		else 
+		{
+			if (state == State.Charging && chargeCount > 0) 
+			{
+				chargeCount--;
+				state = State.Busy;
+				waitingAttack = false;
+				canAttack = false;
+				StartCoroutine(Attack());
+			} else {
+				state = State.Normal;
+			}
+		}
+	}
+
+	private IEnumerator Attack() 
+	{
+		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, .1f, 1, 1);
+		yield return new WaitForSeconds(.18f);
+		Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 1f, whatIsPlayer);
+        if (player != null) {
+            PlayerHandler.playerHandler.GetHealthSystem().Damage(dmgCharge);
+            float ranDir = UnityEngine.Random.Range(1.5f, 4.5f);
+            PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(-1, ranDir), "-" + 30);
+		}
+
+		waitingCharge = true;
+	}
+
+	private IEnumerator WaitBtwnAttack()
+	{
+		waitingAttack = true;
+		yield return new WaitForSeconds(.5f);
+		canAttack = true;
+	}
+
+	private IEnumerator WaitBtwnCharge()
+	{	waitingCharge = false;
+		yield return new WaitForSeconds(.7f);
+		state = State.Charging;
+	}
+	//end of charge
 
 	//rotating+shooting randomly
 	private void StartRotating()
@@ -169,8 +263,6 @@ public class BossHandler : MonoBehaviour {
 
 	private IEnumerator RotationAttack()
 	{
-		transform.Rotate(new Vector3(0, 0, 6));
-
 		while (!shooting)
 			StartCoroutine(Shooting());
 
@@ -181,7 +273,7 @@ public class BossHandler : MonoBehaviour {
 	{
 		shooting = true;
 		Instantiate(GameAssets.i.pfFireBallBoss, transform.position, Quaternion.identity);
-		yield return new WaitForSeconds(.07f);
+		yield return new WaitForSeconds(.05f);
 		shooting = false;
 	}
 	//end of shooting
@@ -235,64 +327,6 @@ public class BossHandler : MonoBehaviour {
 	}
 	//end of aoe
 
-	//charge attack
-	private void ChargeAttack() 
-	{
-		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, .5f, .5f, 1);
-		moveDir = (PlayerHandler.playerHandler.GetPosition() - this.transform.position);
-
-		if (moveDir.magnitude > 2.3f)
-		{
-			if (!waitingAttack)
-				StartCoroutine(WaitBtwnAttack());
-			else if (canAttack)
-				transform.position = transform.position + moveDir.normalized * (speed * 6) * Time.deltaTime;
-		} 
-		else 
-		{
-			if (state == State.Charging && chargeCount > 0) 
-			{
-				chargeCount--;
-				state = State.Busy;
-				waitingAttack = false;
-				canAttack = false;
-				StartCoroutine(Attack());
-			} else {
-				state = State.Normal;
-			}
-		}
-	}
-
-	private IEnumerator Attack() 
-	{
-		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, .1f, 1, 1);
-		Vector3 difference = PlayerHandler.playerHandler.GetPosition() - transform.position;
- 		float rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg + 90;
-		yield return new WaitForSeconds(.18f);
-		transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotationZ);
-		Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 1f, whatIsPlayer);
-        if (player != null) {
-            PlayerHandler.playerHandler.GetHealthSystem().Damage(dmgCharge);
-            float ranDir = UnityEngine.Random.Range(1.5f, 4.5f);
-            PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(-1, ranDir), "-" + 30);
-		}
-
-		waitingCharge = true;
-	}
-
-	private IEnumerator WaitBtwnAttack()
-	{
-		waitingAttack = true;
-		yield return new WaitForSeconds(.5f);
-		canAttack = true;
-	}
-
-	private IEnumerator WaitBtwnCharge()
-	{	waitingCharge = false;
-		yield return new WaitForSeconds(.7f);
-		state = State.Charging;
-	}
-	//end of charge
 
 	public HealthSystem GetHealthSystem() 
     {

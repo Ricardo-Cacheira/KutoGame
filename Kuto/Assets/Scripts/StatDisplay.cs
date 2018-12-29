@@ -6,7 +6,6 @@ public class StatDisplay : MonoBehaviour {
 	public Text NameText;
 	public Text ValueText;
 
-
 	private void OnValidate()
 	{
 		Text[] texts = GetComponentsInChildren<Text>();

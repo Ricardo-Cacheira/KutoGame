@@ -72267,7 +72267,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &112550178
 RectTransform:
   m_ObjectHideFlags: 0
@@ -72479,7 +72479,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 1769ac16a7a64274eb0a1569787eb934, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 41eea0819bb182a428e560a477e73e12, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -73175,7 +73175,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &505569743
 RectTransform:
   m_ObjectHideFlags: 0
@@ -73783,7 +73783,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &877827837
 RectTransform:
   m_ObjectHideFlags: 0
@@ -74491,11 +74491,11 @@ GameObject:
   - component: {fileID: 1131974524}
   m_Layer: 0
   m_Name: CanvasMobile
-  m_TagString: Untagged
+  m_TagString: CanvasMobile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1131974523
 RectTransform:
   m_ObjectHideFlags: 0
@@ -75090,7 +75090,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 1769ac16a7a64274eb0a1569787eb934, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 41eea0819bb182a428e560a477e73e12, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -75125,7 +75125,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1463239901
 RectTransform:
   m_ObjectHideFlags: 0
@@ -75379,7 +75379,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1541179160
 RectTransform:
   m_ObjectHideFlags: 0
@@ -142336,7 +142336,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2025747811
 RectTransform:
   m_ObjectHideFlags: 0

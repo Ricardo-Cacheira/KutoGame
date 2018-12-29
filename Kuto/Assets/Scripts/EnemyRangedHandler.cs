@@ -26,15 +26,26 @@ public class EnemyRangedHandler : MonoBehaviour {
 
     private PlayerHandler playerHandler;
     private HealthSystem healthSystem;
-    private Vector3 lastMoveDir;
 	public Vector3 moveDir;
     private State state;
-	public Transform attackPoint;
-	public LayerMask whatIsPlayer;
+    public bool switched;
+    private Coroutine attack;
 
     private enum State {
         Normal,
         Busy,
+    }
+
+    public IEnumerator SwapState(float stunDuration)
+    {
+        switched = true;
+        StopCoroutine(attack); 
+        state = State.Busy;
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(.2f, .2f, .2f);
+        yield return new WaitForSeconds(stunDuration);
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+        state = State.Normal;
+        switched = false;
     }
 
     private void Setup(PlayerHandler playerHandler, HealthSystem healthSystem) 
@@ -75,14 +86,13 @@ public class EnemyRangedHandler : MonoBehaviour {
 		moveDir = (PlayerHandler.playerHandler.GetPosition() - GetPosition()).normalized;
 
 		if (distanceToPlayer > 8) 
-		{
         	transform.position = transform.position + moveDir * speed * Time.deltaTime;
-		} else if (distanceToPlayer <= 6) {
+		else if (distanceToPlayer <= 6)
 			transform.position = transform.position + (-moveDir) * (speed/2) * Time.deltaTime;
-		} else 
+		else 
 		{
 			SetStateBusy();
-			StartCoroutine(Attack());
+			attack = StartCoroutine(Attack());
 		}
     }
 
@@ -92,12 +102,6 @@ public class EnemyRangedHandler : MonoBehaviour {
         SetStateNormal();
         Instantiate(GameAssets.i.pfVoidBall, GetPosition(), Quaternion.AngleAxis(Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg, Vector3.forward));
     }
-
-	void OnDrawGizmosSelected()
-	{
-		Gizmos.color = Color.red;
-		Gizmos.DrawWireSphere(moveDir, 1);
-	}
 
     public void KnockBack(float force)
     {   

@@ -36,17 +36,14 @@ public class PlayerHandler : MonoBehaviour {
 
 	public event EventHandler OnDead;
     public Transform attackPoint;
-
-    bool dropped;
+    public Transform stunPoint;
 
     public Rigidbody2D rb2d;
 	public float attackRange;
-	public int damage;
     public LayerMask whatIsEnemies;
 
     private HealthSystem healthSystem;
     private ExperienceSystem experienceSystem;
-    private Vector3 lastMoveDir;
     private State state;
 
 	public Vector2 movement;
@@ -71,8 +68,6 @@ public class PlayerHandler : MonoBehaviour {
     private bool hasFoundIntel = false;
 
     Image potion;
-    Color potionColor;
-
     Image aoeFire;
     Image bullet;
     Image dash;
@@ -90,8 +85,6 @@ public class PlayerHandler : MonoBehaviour {
     float shootingCd = 2;
 
     float stunCd = 2;
-
-    private float randDir;
 
     //rewards values
     private int gold;
@@ -118,10 +111,11 @@ public class PlayerHandler : MonoBehaviour {
     public Input input;
 
     //Audio
-    public AudioSource hitSuccess;
-    public AudioSource hitFail;
 
     public AudioManager audioManager;
+    Animator animatorStun;
+    private bool moving;
+    Camera cam;
 
     #endregion
 
@@ -173,7 +167,16 @@ public class PlayerHandler : MonoBehaviour {
         aoeDmg += GameControl.control.lvl * 2;
         shootingDmg += GameControl.control.lvl * 2;
 
-        joystick = GameObject.Find("WalkingJoystick").GetComponent<Joystick>();
+        stunPoint.GetComponent<StunCollider>().enabled = false;
+        stunPoint.GetComponent<BoxCollider2D>().enabled = false;
+
+        animatorStun = GetComponentInChildren<Animator>();
+        moving = true;
+
+        cam = FindObjectOfType<Camera>();
+
+        if (FindObjectOfType<Joystick>() != null) joystick = GameObject.Find("WalkingJoystick").GetComponent<Joystick>();
+
        
     }
 
@@ -246,6 +249,7 @@ public class PlayerHandler : MonoBehaviour {
         //TESTING PURPOSES//
 		if (Input.GetKeyDown("p")) basicAtkDmg = 100;
         if (Input.GetKeyDown("n")) GetRewards(0, 100);
+        //---------------//
 
         switch (state) 
         {
@@ -256,6 +260,7 @@ public class PlayerHandler : MonoBehaviour {
             skills[itemSkills[1]]();
             skills[itemSkills[2]]();
             skills[itemSkills[3]]();
+            Stun();
             break;
         case State.Busy:
             HandleAttack();
@@ -282,7 +287,9 @@ public class PlayerHandler : MonoBehaviour {
 		if (dashing)
 		{
 			StartCoroutine(Dash());
-		} else
+            movement = new Vector2(x, y).normalized;
+
+		} else if(moving)
 		{
 			movement = new Vector2(x, y).normalized;
 			rb2d.velocity = movement * speed;
@@ -301,7 +308,8 @@ public class PlayerHandler : MonoBehaviour {
 			if(Input.GetButtonDown("Leap") && timeStamp <= Time.time) leaping = true;
 
 			if (movement != new Vector2(lastX, lastY) && movement != Vector2.zero)
-                attackPoint.position = transform.position + (Vector3)(movement);	
+                attackPoint.position = transform.position + (Vector3)(movement);	  
+
 		}
 
 		if(movement != Vector2.zero)
@@ -309,14 +317,14 @@ public class PlayerHandler : MonoBehaviour {
             animator.SetBool("isWalking", true);
 		    lastX = x;
 	    	lastY = y;  
-        }
+        } 
 	}
 
 	IEnumerator Dash()
 	{   
         phoneDash = false;
 		if(movement == Vector2.zero) movement = new Vector2(lastX, lastY).normalized;
-        animator.speed = 5;
+            animator.speed = 5;
 		timeStamp = Time.time + recoveryTime;
 		rb2d.velocity = movement * dashSpeed;
         Color tmp = this.GetComponent<SpriteRenderer>().color;
@@ -391,6 +399,7 @@ public class PlayerHandler : MonoBehaviour {
     {
         if ((Input.GetButtonDown("Basic") || phoneAttack) && timeBtwAttack <= 0) 
         {   
+            StartCoroutine(TmpBusy(0.1f));
             animator.SetTrigger("Attack");
             phoneAttack = false;
             
@@ -402,14 +411,13 @@ public class PlayerHandler : MonoBehaviour {
                 
                 for (int i = 0; i < enemiesToDamage.Length; i++)
                 {
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
                     if (enemiesToDamage[i].gameObject.CompareTag("EnemyRanged")) 
                     {
                         EnemyRangedHandler enemy = enemiesToDamage[i].GetComponent<EnemyRangedHandler>();
                         enemy.GetHealthSystem().Damage(basicAtkDmg); 
                         enemy.KnockBack(200000);
                         
-                        CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
+                        CreateText(Color.grey, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1), new Vector2(0, 5), "-" + basicAtkDmg);
 
                         if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -419,7 +427,7 @@ public class PlayerHandler : MonoBehaviour {
                         enemy.GetHealthSystem().Damage(basicAtkDmg);
                         enemy.KnockBack(200000);
 
-                        CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
+                        CreateText(Color.grey, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1), new Vector2(0, 5), "-" + basicAtkDmg);
 
                         if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -429,7 +437,7 @@ public class PlayerHandler : MonoBehaviour {
                         enemy.GetHealthSystem().Damage(basicAtkDmg);
                         enemy.KnockBack(200000);
                         
-                        CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
+                        CreateText(Color.grey, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1), new Vector2(0, 5), "-" + basicAtkDmg);
 
                         if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                     } else if (enemiesToDamage[i].gameObject.CompareTag("Boss"))
@@ -437,7 +445,7 @@ public class PlayerHandler : MonoBehaviour {
                         BossHandler boss = enemiesToDamage[i].GetComponent<BossHandler>();  
                         boss.GetHealthSystem().Damage(basicAtkDmg);
                         
-                        CreateText(Color.green, playerHandler.transform.position, new Vector2(randDir, randDir), "-" + basicAtkDmg);
+                        CreateText(Color.grey, new Vector3(boss.transform.position.x, boss.transform.position.y + 1), new Vector2(0, 5), "-" + basicAtkDmg);
 
                         if (boss.GetHealthSystem().GetHealthPercent() < 0.1) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                     }
@@ -483,8 +491,7 @@ public class PlayerHandler : MonoBehaviour {
                     enemy.GetHealthSystem().Damage(aoeDmg);
                     enemy.KnockBack(1000000);
 
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + aoeDmg);
+                    CreateText(Color.grey, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1), new Vector2(0, 5), "-" + aoeDmg);
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
                 } else if (enemiesToDamage[i].gameObject.CompareTag("Enemy"))
@@ -493,8 +500,7 @@ public class PlayerHandler : MonoBehaviour {
                     enemy.GetHealthSystem().Damage(aoeDmg);
                     enemy.KnockBack(1000000);
 
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + aoeDmg);
+                    CreateText(Color.grey, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1), new Vector2(0, 5), "-" + aoeDmg);
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 } else if (enemiesToDamage[i].gameObject.CompareTag("EnemySlower"))
                 {
@@ -502,16 +508,14 @@ public class PlayerHandler : MonoBehaviour {
                     enemy.GetHealthSystem().Damage(aoeDmg);
                     enemy.KnockBack(1000000);
                     
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + aoeDmg);
+                    CreateText(Color.grey, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1), new Vector2(0, 5), "-" + aoeDmg);
                     if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 } else if (enemiesToDamage[i].gameObject.CompareTag("Boss"))
                 {
                     BossHandler boss = enemiesToDamage[i].GetComponent<BossHandler>();  
                     boss.GetHealthSystem().Damage(aoeDmg);
                     
-                    randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-                    CreateText(Color.green, playerHandler.transform.position, new Vector2(1, randDir), "-" + aoeDmg);
+                    CreateText(Color.grey, new Vector3(boss.transform.position.x, boss.transform.position.y + 1), new Vector2(0, 5), "-" + aoeDmg);
                     if (boss.GetHealthSystem().GetHealthPercent() < 0.25) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
@@ -542,14 +546,43 @@ public class PlayerHandler : MonoBehaviour {
 
     private void Stun()
     {
-        if(Input.GetKeyDown("m") && stunCd < 0)
+        if(Input.GetKeyDown("m") && stunCd <= 0)
         {
+            stunPoint.GetComponent<BoxCollider2D>().enabled = true;
+            stunPoint.GetComponent<Animator>().SetTrigger("Stun");
             stunCd = 2;
+            stunPoint.position = transform.position + (new Vector3(lastX, lastY,0)) * 3.5f;
+            float rot_z = Mathf.Atan2(lastY, lastX) * Mathf.Rad2Deg;
+            stunPoint.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
+
+            StartCoroutine(TmpBusy(0.3f));
+            StartCoroutine(FadeCrack());
 
         } else
             stunCd -= Time.deltaTime;
     }
 
+    private IEnumerator TmpBusy(float time)
+    {
+        rb2d.velocity = Vector3.zero;
+        moving = false;
+        yield return new WaitForSeconds(time);
+        speed = 6;
+        moving = true;
+    }
+
+    private IEnumerator FadeCrack()
+    {
+        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / 1)
+        {
+            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(2, 0, t));
+            stunPoint.GetComponent<SpriteRenderer>().color = newColor;
+            yield return null;
+        }
+
+        stunPoint.GetComponent<BoxCollider2D>().enabled = false;
+
+    }
 
     private void HandleHealing()
     {
@@ -565,8 +598,7 @@ public class PlayerHandler : MonoBehaviour {
         phoneHeal = false;
         healing = true;
         healthSystem.Heal(healingAmount);
-        randDir = UnityEngine.Random.Range(1.5f, 4.5f);
-        CreateText(Color.green, playerHandler.transform.position, new Vector2(1f, randDir),"+" + healingAmount);
+        CreateText(Color.green, new Vector3(transform.position.x, transform.position.y + 1), new Vector2(0, 5f),"+" + healingAmount);
         StartCoroutine(FadeTo(healingCd, potion.GetComponent<Image>().color));
 		yield return new WaitForSeconds(healingCd);
         healing = false;
@@ -609,14 +641,14 @@ public class PlayerHandler : MonoBehaviour {
 		if(hitInfo.gameObject.CompareTag("Bomb")) 
         {
 			Explosion(hitInfo, 50);
-            CreateText(Color.red, transform.position, new Vector2(-1, 4.5f), "-" + 50);	
+            CreateText(Color.grey, new Vector3(transform.position.x, transform.position.y + 1), new Vector2(0, 5f), "-" + 50);	
 		}
         
 		if (hitInfo.gameObject.CompareTag("Circle"))
 		{
             Explosion(hitInfo, BossHandler.dmgAoe);
-            CreateText(Color.red, transform.position, new Vector2(-1, 3.5f), "-" + BossHandler.dmgAoe);
-		}
+            CreateText(Color.grey, new Vector3(transform.position.x, transform.position.y + 1), new Vector2(0, 5f), "-" + BossHandler.dmgAoe);
+        }
 	}
 
     private void Explosion(Collider2D col, int dmg)
@@ -660,6 +692,7 @@ public class PlayerHandler : MonoBehaviour {
             xpPercentageText.text = Math.Round((tempPercentage), 1) + "%";
         }       
     }
+
     public void SaveRewards()
     {
         GameControl.control.xp = xp;
@@ -668,12 +701,13 @@ public class PlayerHandler : MonoBehaviour {
     }
 
     public void CreateText(Color color, Vector3 pos, Vector2 dir, String displayDmg)
-    {
-        canvasObj = GameObject.FindGameObjectWithTag("Canvas");
-        tempTextBox = Instantiate(GameAssets.i.combatText, new Vector3(pos.x, pos.y + 30, 0), transform.rotation);
+    { 
+        canvasObj = GameObject.FindGameObjectWithTag("CanvasMobile");
+        tempTextBox = Instantiate(GameAssets.i.combatText, pos, transform.rotation);
         tempTextBox.transform.SetParent(canvasObj.transform, false);
+        tempTextBox.transform.position = RectTransformUtility.WorldToScreenPoint(cam, pos);
         tempTextBox.GetComponent<Text>().color = color;
-        tempTextBox.GetComponent<CombatText>().Initialize(2, displayDmg, dir);
+        tempTextBox.GetComponent<CombatText>().Initialize(2, displayDmg, dir * 12);
     }
 
     public void KnockBack(float force, Vector3 pos)

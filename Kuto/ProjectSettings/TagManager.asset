@@ -20,6 +20,7 @@ TagManager:
   - RoomClosed
   - Boss
   - reward
+  - CanvasMobile
   layers:
   - Default
   - TransparentFX

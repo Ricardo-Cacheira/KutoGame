@@ -8,7 +8,6 @@ public class SlowWave : MonoBehaviour {
 	Rigidbody2D rb;
 	public GameObject enemy;
 	private int dmg = 10;
-	private float ranDir;
 
 	void Start () 
 	{
@@ -33,8 +32,7 @@ public class SlowWave : MonoBehaviour {
 				PlayerHandler player = hitInfo.GetComponent<PlayerHandler>();
 				player.GetHealthSystem().Damage(dmg);
 				player.SlowPlayer();
-				ranDir = Random.Range(1.5f, 4.5f);
-				player.CreateText(Color.red, player.transform.position, new Vector2(-1, ranDir),"-" + dmg);
+				player.CreateText(Color.red, new Vector3(player.transform.position.x, player.transform.position.y + 1), new Vector2(0, 5f),"-" + dmg);
 				Destroy(gameObject);
 		}
 	}

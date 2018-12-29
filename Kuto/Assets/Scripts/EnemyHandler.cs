@@ -20,27 +20,37 @@ public class EnemyHandler : MonoBehaviour {
     }
 
     public event EventHandler OnDead;
-
     private const float speed = 3f;
-
     private PlayerHandler playerHandler;
     private HealthSystem healthSystem;
-    private Vector3 lastMoveDir;
     private State state;
-
     public Transform attackPoint;
-    bool attacking;
     private Vector3 moveDir;
     public LayerMask whatIsPlayer;
     private int dmg;
-    private float ranDir;
+    public bool switched;
 
     Animator animator;
+
+    Coroutine attack;
 
 
     private enum State {
         Normal,
         Busy,
+        TooBusy,
+    }
+
+    public IEnumerator SwapState(float stunDuration)
+    {
+        switched = true;
+        StopCoroutine(attack);
+        state = State.TooBusy;        
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(.2f, .2f, .2f);
+        yield return new WaitForSeconds(stunDuration);
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+        state = State.Normal;
+        switched = false;
     }
 
     private void Setup(PlayerHandler playerHandler, HealthSystem healthSystem) 
@@ -70,6 +80,8 @@ public class EnemyHandler : MonoBehaviour {
             case State.Busy:
                 HandleAttack();
                 break;
+            case State.TooBusy:
+                break;
         }
     }
 
@@ -89,7 +101,7 @@ public class EnemyHandler : MonoBehaviour {
             if (state == State.Normal) 
             {
                 SetStateBusy();
-                StartCoroutine(Attack());
+                attack = StartCoroutine(Attack());
             } 
         }
     }
@@ -105,8 +117,7 @@ public class EnemyHandler : MonoBehaviour {
         Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 0.7f, whatIsPlayer);
         if (player != null) {
             PlayerHandler.playerHandler.GetHealthSystem().Damage(dmg);
-            ranDir = UnityEngine.Random.Range(1.5f, 4.5f);
-            playerHandler.CreateText(Color.red, playerHandler.transform.position, new Vector2(-1, ranDir), "-" + dmg);
+            playerHandler.CreateText(Color.red, new Vector3(playerHandler.transform.position.x, playerHandler.transform.position.y + 1), new Vector2(0, 5f), "-" + dmg);
         }     
         yield return new WaitForSeconds(0.2f);
     }

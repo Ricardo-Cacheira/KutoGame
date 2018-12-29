@@ -20,7 +20,7 @@ public class RoomSpawner : MonoBehaviour {
 	{
 		Destroy(gameObject, waitTime);
 		templates = GameObject.FindGameObjectWithTag("Rooms").GetComponent<RoomTemplates>();
-		Invoke("Spawn", 0.2f);
+		Invoke("Spawn", 0.25f);
 	}
 
 	void Spawn()

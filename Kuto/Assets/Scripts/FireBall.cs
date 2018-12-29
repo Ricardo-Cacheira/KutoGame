@@ -16,6 +16,7 @@ public class FireBall : MonoBehaviour {
 		dir = new Vector2(playerHandler.lastX, playerHandler.lastY).normalized;
 		rb = GetComponent<Rigidbody2D>();
 		rb.velocity = dir * speed;
+		Destroy(gameObject, 2);
 	}
 
 	void OnBecameInvisible()
@@ -30,29 +31,29 @@ public class FireBall : MonoBehaviour {
 			EnemyHandler enemy = hitInfo.GetComponent<EnemyHandler>();
 			enemy.GetHealthSystem().Damage(dmg);
 			enemy.KnockBack(400000);
-			CreateText();
+			CreateText(hitInfo.transform.position);
 		} else if (hitInfo.CompareTag("EnemyRanged"))
 		{
 			EnemyRangedHandler enemy = hitInfo.GetComponent<EnemyRangedHandler>();
 			enemy.GetHealthSystem().Damage(dmg);
 			enemy.KnockBack(400000);
-			CreateText();		
+			CreateText(hitInfo.transform.position);		
 		} else if (hitInfo.CompareTag("EnemySlower"))
 		{
 			EnemySlowerHandler enemy = hitInfo.GetComponent<EnemySlowerHandler>();
 			enemy.GetHealthSystem().Damage(dmg);
 			enemy.KnockBack(400000);
-			CreateText();
+			CreateText(hitInfo.transform.position);
 		} else if (hitInfo.CompareTag("Boss"))
 		{
 			BossHandler boss = hitInfo.GetComponent<BossHandler>();
 			boss.GetHealthSystem().Damage(dmg);
-			CreateText();
+			CreateText(hitInfo.transform.position);
 		}
 	}
 
-	void CreateText()
+	void CreateText(Vector3 pos)
 	{
-		playerHandler.CreateText(Color.green, this.gameObject.transform.position, new Vector2(1, 2.5f),"-" + dmg);
+		playerHandler.CreateText(Color.gray, pos, new Vector2(0, 1f),"-" + dmg);
 	}	
 }

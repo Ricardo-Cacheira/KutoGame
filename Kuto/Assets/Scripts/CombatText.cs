@@ -6,11 +6,8 @@ using UnityEngine.UI;
 public class CombatText : MonoBehaviour {
 	public Text combatText;
     public float guiTime = 1.5f;
-
 	private float speed;
 	private Vector3 direction;
-	private float fadeTime;
-
 
 	public void Initialize(float speed, string damageMessage, Vector3 direction)
 	{
@@ -19,6 +16,7 @@ public class CombatText : MonoBehaviour {
 		combatText.text = damageMessage;
 		StartCoroutine(FadeOut());
 	}
+	
 	void Update()
 	{
 		float translation = speed * Time.deltaTime;

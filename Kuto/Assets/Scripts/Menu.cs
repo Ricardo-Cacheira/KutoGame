@@ -26,6 +26,7 @@ public class Menu : MonoBehaviour {
 	bool missionsVisible;
 	public bool isBeach, isTemple;
 	public GameObject blur;
+	public GameObject cooldowns;
 
 	void Awake () {
 		menu = this;
@@ -87,12 +88,14 @@ public class Menu : MonoBehaviour {
 			InventoryManager.im.SaveInventory();
 			shopPanel.SetActive(false);
 			blur.SetActive(false);
+			cooldowns.SetActive(false);
 		}
 		else
 		{
 			inventory.transform.localPosition = new Vector3(0, 0, 0);
 			inventoryVisible = true;
 			blur.SetActive(true);
+			cooldowns.SetActive(true);
 			shopPanel.SetActive(false);
 		}
 	}

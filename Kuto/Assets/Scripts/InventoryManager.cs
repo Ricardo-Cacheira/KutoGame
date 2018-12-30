@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class InventoryManager : MonoBehaviour {
 
@@ -8,6 +9,9 @@ public class InventoryManager : MonoBehaviour {
 	public Inventory inventory;
 	public EquipmentPanel equipmentPanel;
 	[SerializeField] List<StatDisplay> stats;
+	public GameObject cooldownParent;
+	private List<Image> cooldowns = new List<Image>();
+	[SerializeField] List<Sprite> icons;
 
 	private void Awake()
 	{
@@ -21,7 +25,12 @@ public class InventoryManager : MonoBehaviour {
 
 	void Start()
 	{
+		foreach (Transform child in cooldownParent.transform)
+		{
+			cooldowns.Add(child.GetComponent<Image>());
+		}
 		Fill();
+		RefreshCooldowns();
 	}
 
 	public void Fill()
@@ -81,7 +90,9 @@ public class InventoryManager : MonoBehaviour {
 			if(item.Item != null)
 				equipped.Add((EquippableItem)item.Item);
 		}
-		GameControl.control.equippedItems = equipped;		
+		GameControl.control.equippedItems = equipped;	
+
+		RefreshCooldowns();	
 	}
 
 	public void EquipFromInventory(Item item)
@@ -89,6 +100,10 @@ public class InventoryManager : MonoBehaviour {
 		if(item is EquippableItem)
 		{
 			Equip((EquippableItem)item);
+			if (GameControl.control.loaded)
+			{		
+				RefreshCooldowns();
+			}
 		}
 	}
 
@@ -97,6 +112,10 @@ public class InventoryManager : MonoBehaviour {
 		if(item is EquippableItem)
 		{
 			Unequip((EquippableItem)item);
+			if (GameControl.control.loaded)
+			{		
+				RefreshCooldowns();
+			}
 		}
 	}
 
@@ -125,6 +144,31 @@ public class InventoryManager : MonoBehaviour {
 		{
 			inventory.AddItem(item);
 		}
+	}
+
+	public void RefreshCooldowns()
+	{
+		for (int i = 0; i < equipmentPanel.equipmentSlots.Length -1; i++)
+		{
+			EquippableItem item = (EquippableItem)equipmentPanel.equipmentSlots[i].Item;
+			if (item == null)
+			{
+				cooldowns[i].sprite = null;
+				cooldowns[i].GetComponent<Cooldown>().skill = 0;
+
+				Color newColor = new Color(.35f, .35f, .35f, 0);
+            	cooldowns[i].GetComponent<Image>().color = newColor;
+			}
+			else
+			{
+				cooldowns[i].sprite = icons[item.skillID];
+				cooldowns[i].GetComponent<Cooldown>().skill = item.skillID;
+
+				Color newColor = new Color(255f, 255f, 255f, 255f);
+            	cooldowns[i].GetComponent<Image>().color = newColor;
+			}
+		}
+		GameControl.control.SaveCooldowns();
 	}
 
 }

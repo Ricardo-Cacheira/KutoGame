@@ -215,21 +215,34 @@ public class PlayerHandler : MonoBehaviour {
 
     private void SetupSkillIcons()
     {
-        if (Array.IndexOf(itemSkills, 1) > -1)
-            potion.enabled = true;
-        else
-            potion.enabled = false;
+        potion.enabled = false;
+        bullet.enabled = false;
+        aoeFire.enabled = false;
+        for (int i = 0; i < GameControl.control.cooldowns.Length; i++)
+        {
+            switch(GameControl.control.cooldowns[i])
+            {
+                case 0:
+                    break;
+                case 1:
+                    potion.enabled = true;
+                    potion.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
+                    break;
+                case 2:
+                    aoeFire.enabled = true;
+                    aoeFire.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
+                    break;
+                case 3:
+                    bullet.enabled = true;
+                    bullet.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
+                    break;
+                case 4:
+                    //stun
+                    break;
+                default: break;
+            }
 
-        if (Array.IndexOf(itemSkills, 2) > -1)
-            aoeFire.enabled = true;
-        else
-            aoeFire.enabled = false;
-            
-        if (Array.IndexOf(itemSkills, 3) > -1)
-            bullet.enabled = true;
-        else
-            bullet.enabled = false;
-        
+        }
     }
 
     private void SetupSkills()
@@ -257,6 +270,7 @@ public class PlayerHandler : MonoBehaviour {
         case State.Normal:
             HandleMovement();
             HandleAttack();
+            
             skills[itemSkills[0]]();
             skills[itemSkills[1]]();
             skills[itemSkills[2]]();

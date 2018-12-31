@@ -90,7 +90,7 @@ public class GameHandler : MonoBehaviour {
 	{
 		for (int i = 0; i < 30; i++)
 		{
-			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2.5f, 3.5f); 
+			Vector3 spawnPosition = playerHandler.GetPosition() + UtilsClass.GetRandomDir() * UnityEngine.Random.Range(2f, 3f); 
 			Collider2D[] colliders = Physics2D.OverlapCircleAll(spawnPosition, 1, wallLayer);
 			if (colliders.Length == 0)
 			{

@@ -116,6 +116,7 @@ public class PlayerHandler : MonoBehaviour {
     Animator animatorStun;
     private bool moving;
     Camera cam;
+    AnimatorClipInfo[] m_CurrentClipInfo;
 
     #endregion
 
@@ -170,7 +171,6 @@ public class PlayerHandler : MonoBehaviour {
         stunPoint.GetComponent<StunCollider>().enabled = false;
         stunPoint.GetComponent<BoxCollider2D>().enabled = false;
 
-        animatorStun = GetComponentInChildren<Animator>();
         moving = true;
 
         cam = FindObjectOfType<Camera>();
@@ -215,21 +215,34 @@ public class PlayerHandler : MonoBehaviour {
 
     private void SetupSkillIcons()
     {
-        if (Array.IndexOf(itemSkills, 1) > -1)
-            potion.enabled = true;
-        else
-            potion.enabled = false;
+        potion.enabled = false;
+        bullet.enabled = false;
+        aoeFire.enabled = false;
+        for (int i = 0; i < GameControl.control.cooldowns.Length; i++)
+        {
+            switch(GameControl.control.cooldowns[i])
+            {
+                case 0:
+                    break;
+                case 1:
+                    potion.enabled = true;
+                    potion.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
+                    break;
+                case 2:
+                    aoeFire.enabled = true;
+                    aoeFire.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
+                    break;
+                case 3:
+                    bullet.enabled = true;
+                    bullet.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
+                    break;
+                case 4:
+                    //stun
+                    break;
+                default: break;
+            }
 
-        if (Array.IndexOf(itemSkills, 2) > -1)
-            aoeFire.enabled = true;
-        else
-            aoeFire.enabled = false;
-            
-        if (Array.IndexOf(itemSkills, 3) > -1)
-            bullet.enabled = true;
-        else
-            bullet.enabled = false;
-        
+        }
     }
 
     private void SetupSkills()
@@ -238,6 +251,7 @@ public class PlayerHandler : MonoBehaviour {
         skills.Add(1, HandleHealing);
         skills.Add(2, HandleAoe);
         skills.Add(3, HandleShooting);
+        skills.Add(4, Stun);
     }
 
     void None()
@@ -256,11 +270,11 @@ public class PlayerHandler : MonoBehaviour {
         case State.Normal:
             HandleMovement();
             HandleAttack();
+            
             skills[itemSkills[0]]();
             skills[itemSkills[1]]();
             skills[itemSkills[2]]();
             skills[itemSkills[3]]();
-            Stun();
             break;
         case State.Busy:
             HandleAttack();
@@ -278,10 +292,7 @@ public class PlayerHandler : MonoBehaviour {
         if (joystick != null && joystick.Direction != Vector2.zero) {
             x = joystick.Horizontal;
             y = joystick.Vertical;
-        }
-
-        animator.SetFloat("WalkingH", x);
-        animator.SetFloat("WalkingV", y);
+        }  
 
         //stop colliding with enemies
 		if (dashing)
@@ -294,7 +305,7 @@ public class PlayerHandler : MonoBehaviour {
 			movement = new Vector2(x, y).normalized;
 			rb2d.velocity = movement * speed;
 
-            if(movement == Vector2.zero) animator.SetBool("isWalking", false);
+            // if(movement == Vector2.zero) animator.SetBool("isWalking", false);
 
 			if((Input.GetButtonDown("Dash") || phoneDash) && timeStamp <= Time.time) {
                 dashing = true;
@@ -315,10 +326,19 @@ public class PlayerHandler : MonoBehaviour {
 		if(movement != Vector2.zero)
 		{
             animator.SetBool("isWalking", true);
+            animator.speed = 1;
+            animator.SetFloat("WalkingH", x);
+            animator.SetFloat("WalkingV", y);
+            m_CurrentClipInfo = this.animator.GetCurrentAnimatorClipInfo(0);
+            // Debug.Log(m_CurrentClipInfo[0].clip.name);
 		    lastX = x;
 	    	lastY = y;  
-        } 
+        } else {
+            m_CurrentClipInfo = this.animator.GetCurrentAnimatorClipInfo(0);
+            GetAnimation(m_CurrentClipInfo[0].clip.name);
+        }
 	}
+
 
 	IEnumerator Dash()
 	{   
@@ -477,6 +497,7 @@ public class PlayerHandler : MonoBehaviour {
         phoneAoe = false;
         aoe = true;
         audioManager.Play("Explosion");
+        gameObject.GetComponent<ParticleSystem>().Play();
 
         Transform tempAoe = Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
         StartCoroutine(FadeToF(aoeCd, aoeFire.GetComponent<Image>().color));
@@ -575,7 +596,7 @@ public class PlayerHandler : MonoBehaviour {
     {
         for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / 1)
         {
-            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(2, 0, t));
+            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(2.5f, 0, t));
             stunPoint.GetComponent<SpriteRenderer>().color = newColor;
             yield return null;
         }
@@ -714,6 +735,51 @@ public class PlayerHandler : MonoBehaviour {
     {   
         Vector2 knock = (this.transform.position - pos).normalized;
         gameObject.GetComponent<Rigidbody2D>().AddForce(knock * force);
+    }
+    
+    private void GetAnimation(string name)
+    {
+        switch (name)
+        {
+            case "WalkingLeft":
+                animator.speed = 0;
+                animator.Play("WalkingLeft", -1, 0f);
+                break;
+            case "WalkingRight":
+                animator.speed = 0;
+                animator.Play("WalkingRight", -1, 0f);
+                break;
+            case "WalkingUp":
+                animator.speed = 0;
+                animator.Play("WalkingUp", -1, 0f);
+                break;
+            case "WalkingDown":
+                animator.speed = 0;
+                animator.Play("WalkingDown", -1, 0f);
+                break;
+            case "WalkingDownLeft":
+                animator.speed = 0;
+                animator.Play("WalkingDownLeft", -1, 0f);
+                break;
+            case "WalkingDownRight":
+                animator.speed = 0;
+                animator.Play("WalkingDownRight", -1, 0f);
+                break;
+            case "WalkingUpLeft":
+                animator.speed = 0;
+                animator.Play("WalkingUpLeft", -1, 0f);
+                break;
+            case "WalkingUpRight":
+                animator.speed = 0;
+                animator.Play("WalkingUpRight", -1, 0f);
+                break;
+            case "AttackingRight":
+                animator.speed = 1;
+                animator.Play("AttackingRight", -1, 0f);
+                break;
+            default:
+                break;
+        }
     }
 
     private void SetStateBusy() 

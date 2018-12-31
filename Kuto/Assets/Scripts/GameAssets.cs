@@ -31,4 +31,6 @@ public class GameAssets : MonoBehaviour {
     public Transform pfMissile;  
     public RectTransform combatText;
     public Transform pfBoss;
+    public GameObject testi;
+
 }

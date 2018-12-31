@@ -18,7 +18,8 @@ public class GameControl : MonoBehaviour {
 	[Space]
 	public List<EquippableItem> equippedItems = new List<EquippableItem>();
 	[Space]
-
+	public int[] cooldowns = new int[3];
+	[Space]
 	public int gold;
 	public int shards;
 	public float vitality = 100;
@@ -29,6 +30,7 @@ public class GameControl : MonoBehaviour {
 	public int lastReqXp;
 	public int tempXp;
 	public bool isXpMax;
+	public bool loaded;
 
 	void Awake()
 	{
@@ -77,6 +79,16 @@ public class GameControl : MonoBehaviour {
 				lastReqXp += currReqXp;
 		}
 	}
+
+	public void SaveCooldowns()
+	{
+		int i = 0;
+		foreach (Transform child in InventoryManager.im.cooldownParent.transform)
+		{
+			cooldowns[i] = child.GetComponent<Cooldown>().skill;
+			i++;
+		}
+	}
 	
 	public Item DropItem()
 	{
@@ -104,14 +116,12 @@ public class GameControl : MonoBehaviour {
 
 		foreach (var item in inventoryItems)
 		{
-			if(item.level <= 0) item.level++;
 			ItemData itemData = new ItemData(item.ID, item.level);
 			data.inventoryItems.Add(itemData);
 		}
 
 		foreach (var item in equippedItems)
 		{
-			if(item.level <= 0) item.level++;
 			ItemData itemData = new ItemData(item.ID, item.level);
 			data.equippedItems.Add(itemData);
 		}
@@ -127,6 +137,7 @@ public class GameControl : MonoBehaviour {
 	//keep in mind that this is jsut a way to do it
 	public void Load()
 	{
+		loaded = false;
 		if(File.Exists(Application.persistentDataPath + "/playerInfo.json"))
 		{
 			string json = File.ReadAllText(Application.persistentDataPath + "/playerInfo.json", System.Text.Encoding.Unicode);
@@ -162,11 +173,12 @@ public class GameControl : MonoBehaviour {
 				InventoryManager.im.Fill();
 			
 			if (InventoryManager.im.inventory != null) InventoryManager.im.inventory.RefreshUI();
+
 		}
 		else{
 			Debug.Log("Failed to load");
 		}
-
+		loaded = true;
 	}
 
     public void Reset()

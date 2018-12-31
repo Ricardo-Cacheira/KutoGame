@@ -38,6 +38,6 @@ public class FireBallBoss : MonoBehaviour {
 
 	void CreateText()
 	{
-		PlayerHandler.playerHandler.CreateText(Color.red, this.gameObject.transform.position, new Vector2(-1, 2.5f),"-" + BossHandler.dmgShooting);
+		PlayerHandler.playerHandler.CreateText(Color.red, this.gameObject.transform.position, new Vector2(0, 5f),"-" + BossHandler.dmgShooting);
 	}
 }

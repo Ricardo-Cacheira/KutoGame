@@ -12,7 +12,7 @@ public class BossHandler : MonoBehaviour {
 
         HealthSystem healthSystem = new HealthSystem((1500 * GameControl.control.lvl));
 
-        HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 1.5f), Quaternion.identity, bossTransform).GetComponent<HealthBar>();
+        HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 2.2f), Quaternion.identity, bossTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
         bossHandler.Setup(healthSystem);
@@ -39,8 +39,10 @@ public class BossHandler : MonoBehaviour {
 
 	private Coroutine firstPhaseRoutine;
 	public Sprite right, upright, up, upleft, left, leftdown, down, rightdown;
+	private SpriteRenderer spriteRenderer;
 	int chargeCount;
 	bool waitingCharge, waitingAttack, canAttack;
+	Vector3 diff;
 
 	private void Setup(HealthSystem healthSystem) 
     {
@@ -70,6 +72,9 @@ public class BossHandler : MonoBehaviour {
 		dmgCharge = 30;
 		dmgAoe = 45;
 		dmgShooting = 25;
+
+		spriteRenderer = GetComponent<SpriteRenderer>();
+
 	}
 
 	void FixedUpdate () 
@@ -88,6 +93,7 @@ public class BossHandler : MonoBehaviour {
 
 		switch (state) {
 			case State.Normal:
+			spriteRenderer.sprite = leftdown;
 				HandleMovement();
 
 				gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
@@ -161,40 +167,10 @@ public class BossHandler : MonoBehaviour {
 	//charge attack
 	private void ChargeAttack() 
 	{
-		this.GetComponent<SpriteRenderer>().sprite = upleft;
+		animator.enabled = false;
 		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, .5f, .5f, 1);
 		moveDir = (PlayerHandler.playerHandler.GetPosition() - this.transform.position);
 		Vector3 tmpDir = moveDir.normalized;
-		Debug.Log(moveDir.normalized);
-		if (tmpDir != Vector3.zero) {
-            if (tmpDir.y >= 0.5f && tmpDir.x <= -0.5f)
-                gameObject.GetComponent<SpriteRenderer>().sprite = upleft;
- 
-            if (tmpDir.y >= 0.5f && tmpDir.x >= 0.5f)
-                gameObject.GetComponent<SpriteRenderer>().sprite = upright;
- 
-            if (tmpDir.y >= 0.5f && tmpDir.x <= -0.5f)
-                gameObject.GetComponent<SpriteRenderer>().sprite = leftdown;
- 
-            if (tmpDir.y >= 0.5f && tmpDir.x <= 1)
-                gameObject.GetComponent<SpriteRenderer>().sprite = rightdown;
-        }
- 
-        else
-        {
-            //left/right/up/down
-            if (tmpDir.x == -1)
-                gameObject.GetComponent<SpriteRenderer>().sprite = left;
- 
-            if (tmpDir.x == 1)
-                gameObject.GetComponent<SpriteRenderer>().sprite = right;
- 
-            if (tmpDir.y == 1)
-                gameObject.GetComponent<SpriteRenderer>().sprite = up;
- 
-            if (tmpDir.y == -1)
-                gameObject.GetComponent<SpriteRenderer>().sprite = down;
-        }
 
 		if (moveDir.magnitude > 2.3f)
 		{
@@ -221,12 +197,58 @@ public class BossHandler : MonoBehaviour {
 	private IEnumerator Attack() 
 	{
 		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, .1f, 1, 1);
+		moveDir = (PlayerHandler.playerHandler.GetPosition() - this.transform.position);
+		attackPoint.position = transform.position + (Vector3) moveDir.normalized;
+
 		yield return new WaitForSeconds(.18f);
+		Vector3 tmpDir = moveDir.normalized;
+		// diff = playerHandler.transform.position - this.transform.position;
+
+		if (tmpDir != Vector3.zero) {
+			
+			// transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position-PlayerHandler.playerHandler.GetPosition());
+			// Debug.Log(transform.rotation);
+			
+			//  transform.right = PlayerHandler.playerHandler.transform.position - transform.position;
+
+			//  Debug.Log(rot_z);
+
+            if (tmpDir.y >= 0.5f && tmpDir.x <= -0.5f) {
+                gameObject.GetComponent<SpriteRenderer>().sprite = upleft;
+			}
+ 
+            if (tmpDir.y >= 0.5f && tmpDir.x >= 0.5f) {
+                gameObject.GetComponent<SpriteRenderer>().sprite = upright;
+			}
+ 
+            if (tmpDir.y >= 0.5f && tmpDir.x <= -0.5f) {
+                gameObject.GetComponent<SpriteRenderer>().sprite = leftdown;
+			}
+ 
+            if (tmpDir.y >= 0.5f && tmpDir.x <= 1) {
+                gameObject.GetComponent<SpriteRenderer>().sprite = rightdown;
+			}
+        }
+ 
+        else
+        {
+            //left/right/up/down
+            if (tmpDir.x == -1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = left;
+ 
+            if (tmpDir.x == 1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = right;
+ 
+            if (tmpDir.y == 1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = up;
+ 
+            if (tmpDir.y == -1)
+                gameObject.GetComponent<SpriteRenderer>().sprite = down;
+        }
 		Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 1f, whatIsPlayer);
         if (player != null) {
             PlayerHandler.playerHandler.GetHealthSystem().Damage(dmgCharge);
-            float ranDir = UnityEngine.Random.Range(1.5f, 4.5f);
-            PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(-1, ranDir), "-" + 30);
+            PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(0, 5f), "-" + 30);
 		}
 
 		waitingCharge = true;
@@ -249,6 +271,7 @@ public class BossHandler : MonoBehaviour {
 	//rotating+shooting randomly
 	private void StartRotating()
 	{
+		animator.enabled = true;
 		gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 0.5f, .5f, 1);
 		float distanceToCenter = Vector3.Distance(EnemySpawnerBoss.roomCenter, transform.position);
 
@@ -304,8 +327,7 @@ public class BossHandler : MonoBehaviour {
 		Collider2D player = Physics2D.OverlapCircle(aoeObj.position, 4f, whatIsPlayer);
         if (player != null) {
             PlayerHandler.playerHandler.GetHealthSystem().Damage(dmgCharge);
-            float ranDir = UnityEngine.Random.Range(1.5f, 4.5f);
-            PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(-1, ranDir), "-" + 30);
+            PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(0, 5f), "-" + 30);
 		}
 
 		aoe = false;

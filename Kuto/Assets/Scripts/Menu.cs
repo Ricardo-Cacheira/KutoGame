@@ -121,7 +121,7 @@ public class Menu : MonoBehaviour {
 			foreach (Transform child in missionPanel.transform) {
 				GameObject.Destroy(child.gameObject);
 			}
-			GenerateMission((MissionType)Random.Range(0, 2),(MissionLocation)Random.Range(0, 2),Random.Range(5, 16));
+			GenerateMission((MissionLocation)Random.Range(0, 2));
 		}
 	}
 
@@ -141,31 +141,25 @@ public class Menu : MonoBehaviour {
 		GameControl.control.Save();
 	}
 
-	private void GenerateMission(MissionType missionType, MissionLocation missionLocation, int ammount){
+	private void GenerateMission(MissionLocation missionLocation){
 		GameObject newMission = Instantiate(missionPrefab,new Vector3(0,0,0) , Quaternion.identity);
  		newMission.transform.SetParent(missionPanel.transform);
 		newMission.transform.localPosition = new Vector3(0, 0, 0);
 		newMission.transform.localScale = new Vector3(1, 1, 1);
 
-		string location;
-
 		if(missionLocation == MissionLocation.Beach)
 		{
 			newMission.transform.Find("Location").GetComponent<Image>().sprite = beach;
-			location = "Head down by the beach ";
+			newMission.transform.Find("Text").GetComponent<Text>().text = "Head to the beach and survive.";
 			isBeach = true;
+
 		}
 		else
 		{
 			newMission.transform.Find("Location").GetComponent<Image>().sprite = temple;
-			location = "Travel to the forest temple ";
+			newMission.transform.Find("Text").GetComponent<Text>().text = "Travel to the forest temple and find the Intel.";
 			isTemple = true;
 		}
-
-		if(missionType == MissionType.Kill)
-			newMission.transform.Find("Text").GetComponent<Text>().text = location + "and assassinate " + ammount +" targets.";
-		else
-			newMission.transform.Find("Text").GetComponent<Text>().text = location + "and survive for " + ammount +" minutes.";
 		
 	}
 

@@ -45,7 +45,7 @@ public class EnemySlowerHandler : MonoBehaviour {
 
     public IEnumerator SwapState(float stunDuration)
     {
-        StopCoroutine(attack);
+        if (attack != null) StopCoroutine(attack);
         attacked = false;
         switched = true;
         state = State.Busy;

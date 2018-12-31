@@ -5530,6 +5530,7 @@ MonoBehaviour:
   combatText: {fileID: 224028678680310062, guid: 23c021d2b8dac004c8092ec97f4b17ba,
     type: 2}
   pfBoss: {fileID: 4468486734695176, guid: fe7a433c67028414aaf0e29ac7a0191f, type: 2}
+  testi: {fileID: 0}
 --- !u!1 &1056894311
 GameObject:
   m_ObjectHideFlags: 0

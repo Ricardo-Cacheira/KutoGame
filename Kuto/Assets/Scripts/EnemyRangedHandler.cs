@@ -39,7 +39,7 @@ public class EnemyRangedHandler : MonoBehaviour {
     public IEnumerator SwapState(float stunDuration)
     {
         switched = true;
-        StopCoroutine(attack); 
+        if (attack != null) StopCoroutine(attack); 
         state = State.Busy;
         gameObject.GetComponent<SpriteRenderer>().color = new Color(.2f, .2f, .2f);
         yield return new WaitForSeconds(stunDuration);

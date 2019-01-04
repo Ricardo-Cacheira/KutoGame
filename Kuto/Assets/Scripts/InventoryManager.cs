@@ -56,7 +56,7 @@ public class InventoryManager : MonoBehaviour {
 
 	public void StatDisplay()
 	{
-		stats[0].ValueText.text = GameControl.control.GetLevel().ToString();
+		stats[0].ValueText.text = GameControl.control.lvl.ToString();
 		stats[1].ValueText.text = GameControl.control.vitality.ToString();
 		stats[2].ValueText.text = GameControl.control.strength.ToString();
 		stats[3].ValueText.text = GameControl.control.gold.ToString();

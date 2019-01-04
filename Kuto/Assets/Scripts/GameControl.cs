@@ -6,10 +6,27 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Driver.Builders;
+using MongoDB.Driver.GridFS;
+using MongoDB.Driver.Linq;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Attributes;
+
 public class GameControl : MonoBehaviour {
 
 	public static GameControl control;
-	
+
+	#region Mongo
+	// string connectionString = "mongodb://localhost:27017";
+	string connectionString = "mongodb://kuto:GAD2019@ds147734.mlab.com:47734/kuto";
+	MongoClient client;
+	MongoServer server; 
+	MongoDatabase database;
+	MongoCollection<BsonDocument> playercollection;
+	#endregion
+
 	[SerializeField] ItemDatabase itemDatabase;
 	[Space]
 	public List<Ability> abilities = new List<Ability>();
@@ -20,6 +37,7 @@ public class GameControl : MonoBehaviour {
 	[Space]
 	public int[] cooldowns = new int[3];
 	[Space]
+	public string username;
 	public int gold;
 	public int shards;
 	public float vitality = 100;
@@ -38,6 +56,7 @@ public class GameControl : MonoBehaviour {
 		{
 			DontDestroyOnLoad(gameObject);
 			control = this;
+			SceneManager.sceneLoaded += OnSceneLoaded;
 		}else if(control != this)
 		{
 			Destroy(gameObject);
@@ -46,16 +65,27 @@ public class GameControl : MonoBehaviour {
 
 	void Start()
 	{
-		Load();
 		CalculateLevel();
 	}
 
+	void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+		Connect();
+        Debug.Log("OnSceneLoaded: " + scene.name);
+        Debug.Log(mode);
 
-	public int GetLevel()
+		if(!loaded)
+			Load();
+    }
+
+	public void Connect()
 	{
-		int number = (int)(xp / 1000) + 1;
+		client = new MongoClient(connectionString);
+		server = client.GetServer(); 
+		database = server.GetDatabase("kuto");
+		playercollection= database.GetCollection<BsonDocument>("accounts");
+		Debug.Log ("1. ESTABLISHED CONNECTION");	
 
-		return number;
 	}
 
 	public void CalculateLevel()
@@ -108,6 +138,7 @@ public class GameControl : MonoBehaviour {
 
 		PlayerData data = new PlayerData();
 
+		data.username = username;
 		data.gold = gold;
 		data.shards = shards;
 		data.vitality = vitality;
@@ -129,7 +160,19 @@ public class GameControl : MonoBehaviour {
 		string json = JsonUtility.ToJson(data, true);
 		byte[] bytes = System.Text.Encoding.Unicode.GetBytes(json);
 		file.Write(bytes, 0, bytes.Length);
+		
+		var bsonDocument = data.ToBsonDocument();
 
+		var query = Query.EQ("username", username);
+		BsonDocument result = playercollection.FindOne(query);
+		if (result != null)
+		{
+			result["data"] = bsonDocument;
+			playercollection.Save(result);
+			// playercollection.Remove(Query.EQ("username", username));		
+		}else
+		// playercollection.Insert(bsonDocument);			
+		
 		file.Close();
 	}
 
@@ -141,8 +184,17 @@ public class GameControl : MonoBehaviour {
 		if(File.Exists(Application.persistentDataPath + "/playerInfo.json"))
 		{
 			string json = File.ReadAllText(Application.persistentDataPath + "/playerInfo.json", System.Text.Encoding.Unicode);
-			PlayerData data = JsonUtility.FromJson<PlayerData>(json);
+			PlayerData data = new PlayerData();
+			
+			var query = new QueryDocument("username", "kuto");
+			foreach (var document in playercollection.Find(query)) {			
+				username = document["username"].ToString();
+				data = BsonSerializer.Deserialize<PlayerData>(document["data"].ToBson());
+			}
 
+			// if(data != null)
+			// data = JsonUtility.FromJson<PlayerData>(json);
+			
 			gold = data.gold;
 			shards = data.shards;
 			vitality = data.vitality;
@@ -173,12 +225,12 @@ public class GameControl : MonoBehaviour {
 				InventoryManager.im.Fill();
 			
 			if (InventoryManager.im.inventory != null) InventoryManager.im.inventory.RefreshUI();
-
+			
+			loaded = true;
 		}
 		else{
 			Debug.Log("Failed to load");
 		}
-		loaded = true;
 	}
 
     public void Reset()
@@ -195,9 +247,10 @@ public class GameControl : MonoBehaviour {
 }
 
 
-[Serializable] //in a nutshell this makes it so that you can save it to a file
+[BsonIgnoreExtraElements][Serializable] //in a nutshell this makes it so that you can save it to a file
 class PlayerData
 {
+	public string username;
 	public int gold;
 	public int shards;
 	public float vitality;

@@ -275,17 +275,27 @@ public class PlayerHandler : MonoBehaviour {
 		if (Input.GetKeyDown("p")) basicAtkDmg = 1000;
         if (Input.GetKeyDown("n")) GetRewards(0, 100);
         //---------------//
-
+        
         switch (state) 
         {
         case State.Normal:
             HandleMovement();
             HandleAttack();
             
-            skills[itemSkills[0]]();
-            skills[itemSkills[1]]();
-            skills[itemSkills[2]]();
-            skills[itemSkills[3]]();
+            if((Input.GetButtonDown("Fire") || Input.GetAxisRaw("FireController") == 1 || phoneShooting))
+                {skills[GameControl.control.cooldowns[0]](); phoneShooting = false;}
+            else
+                phoneShooting = false;
+
+            if(Input.GetButtonDown("AoE") || phoneAoe)
+                {skills[GameControl.control.cooldowns[1]](); phoneAoe=false;}
+            else 
+                phoneAoe = false;
+                
+            if (Input.GetButtonDown("Heal") || phoneHeal)
+                {skills[GameControl.control.cooldowns[2]](); phoneHeal=false;}
+            else
+                phoneHeal = false;
             break;
         case State.Busy:
             HandleAttack();
@@ -384,17 +394,14 @@ public class PlayerHandler : MonoBehaviour {
     
     private void HandleShooting() 
     {
-        if ((Input.GetButtonDown("Fire") || Input.GetAxisRaw("FireController") == 1 || phoneShooting) && !isShooting)
-            StartCoroutine(Shooting());
-        else 
-            phoneShooting = false;
-            
+        if (!isShooting)
+            StartCoroutine(Shooting());   
     }
 
     IEnumerator Shooting()
     {
         audioManager.Play("Bullet");
-        phoneShooting = false;
+        // phoneShooting = false;
         StartCoroutine(FadeToS(0f, shootingCd, bullet.GetComponent<Image>().color));
         Instantiate(GameAssets.i.pfFireBall, player.transform.position, Quaternion.identity);
         isShooting = true;
@@ -490,15 +497,14 @@ public class PlayerHandler : MonoBehaviour {
 
     private void HandleAoe() 
     {
-        if ((Input.GetButtonDown("AoE") || phoneAoe) && aoe == false) 
-            StartCoroutine(AoE());     
-        else 
-            phoneAoe = false;
+        if (aoe == false) 
+            StartCoroutine(AoE());
+        
     }
 
     IEnumerator AoE() 
     {
-        phoneAoe = false;
+        // phoneAoe = false;
         aoe = true;
         audioManager.Play("Explosion");
         gameObject.GetComponent<ParticleSystem>().Play();
@@ -612,16 +618,14 @@ public class PlayerHandler : MonoBehaviour {
 
     private void HandleHealing()
     {
-        if ((Input.GetButtonDown("Heal") || phoneHeal) && !healing) 
+        if (!healing) 
             StartCoroutine(Healing());
-        else
-            phoneHeal = false;
     }
 
     IEnumerator Healing()
 	{
         audioManager.Play("Potion");
-        phoneHeal = false;
+        // phoneHeal = false;
         healing = true;
         healthSystem.Heal(healingAmount);
         CreateText(Color.green, new Vector3(transform.position.x, transform.position.y + 1), new Vector2(0, 5f),"+" + healingAmount);

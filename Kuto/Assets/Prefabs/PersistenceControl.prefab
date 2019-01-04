@@ -75,6 +75,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 68b507f1fd0cca2419a5b1895e4acada, type: 2}
   - {fileID: 11400000, guid: 3d8faaac94d4aca4d9d13f19c7f6baf8, type: 2}
   - {fileID: 11400000, guid: 26b59d42b17ce52408c5bdd0dedfbdaf, type: 2}
+  cooldowns: 000000000000000000000000
+  username: kuto
   gold: 200
   shards: 0
   vitality: 100
@@ -85,3 +87,4 @@ MonoBehaviour:
   lastReqXp: 0
   tempXp: 0
   isXpMax: 0
+  loaded: 0

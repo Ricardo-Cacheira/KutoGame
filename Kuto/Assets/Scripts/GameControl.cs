@@ -183,7 +183,7 @@ public class GameControl : MonoBehaviour {
 			playercollection.Save(result);
 			// playercollection.Remove(Query.EQ("username", username));		
 		}else
-		// playercollection.Insert(bsonDocument);			
+			playercollection.Insert(bsonDocument);			
 		
 		file.Close();
 	}

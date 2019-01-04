@@ -10,7 +10,7 @@ public class EnemySlowerHandler : MonoBehaviour {
         Transform enemyTransform = Instantiate(GameAssets.i.pfEnemySlowerTransform, spawnPosition, Quaternion.identity);
         EnemySlowerHandler enemySlowerHandler = enemyTransform.GetComponent<EnemySlowerHandler>();
 
-        HealthSystem healthSystem = new HealthSystem(115);
+        HealthSystem healthSystem = new HealthSystem(90 + (GameControl.control.lvl * 9));
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 1.5f), Quaternion.identity, enemyTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 

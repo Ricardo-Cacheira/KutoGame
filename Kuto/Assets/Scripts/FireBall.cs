@@ -6,7 +6,7 @@ public class FireBall : MonoBehaviour {
 
 	public float speed = 20f;
 	public Rigidbody2D rb;
-	private int dmg = 35;
+	private int dmg;
 	PlayerHandler playerHandler;
 	public Vector2 dir;
 
@@ -16,6 +16,7 @@ public class FireBall : MonoBehaviour {
 		dir = new Vector2(playerHandler.lastX, playerHandler.lastY).normalized;
 		rb = GetComponent<Rigidbody2D>();
 		rb.velocity = dir * speed;
+		dmg = playerHandler.shootingDmg;
 		Destroy(gameObject, 2);
 	}
 

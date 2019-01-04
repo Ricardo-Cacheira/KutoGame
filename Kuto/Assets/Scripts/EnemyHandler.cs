@@ -10,7 +10,7 @@ public class EnemyHandler : MonoBehaviour {
         Transform enemyTransform = Instantiate(GameAssets.i.pfEnemyTransform, spawnPosition, Quaternion.identity);
         EnemyHandler enemyHandler = enemyTransform.GetComponent<EnemyHandler>();
 
-        HealthSystem healthSystem = new HealthSystem(200);
+        HealthSystem healthSystem = new HealthSystem(150 + (GameControl.control.lvl * 10));
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 1.5f), Quaternion.identity, enemyTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
@@ -41,17 +41,6 @@ public class EnemyHandler : MonoBehaviour {
         TooBusy,
     }
 
-    public IEnumerator SwapState(float stunDuration)
-    {
-        switched = true;
-        if (attack != null) StopCoroutine(attack);
-        state = State.TooBusy;        
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(.2f, .2f, .2f);
-        yield return new WaitForSeconds(stunDuration);
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
-        state = State.Normal;
-        switched = false;
-    }
 
     private void Setup(PlayerHandler playerHandler, HealthSystem healthSystem) 
     {
@@ -66,7 +55,7 @@ public class EnemyHandler : MonoBehaviour {
         state = State.Normal;
         animator = gameObject.GetComponent<Animator>();
         attackPoint.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.2f);
-        dmg = 15;
+        dmg = 15 + (GameControl.control.lvl * 2);
     }
 
     private void Update() 
@@ -83,6 +72,18 @@ public class EnemyHandler : MonoBehaviour {
             case State.TooBusy:
                 break;
         }
+    }
+
+    public IEnumerator SwapState(float stunDuration)
+    {
+        switched = true;
+        if (attack != null) StopCoroutine(attack);
+        state = State.TooBusy;        
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(.2f, .2f, .2f);
+        yield return new WaitForSeconds(stunDuration);
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1);
+        state = State.Normal;
+        switched = false;
     }
 
     private void HandleMovement() 

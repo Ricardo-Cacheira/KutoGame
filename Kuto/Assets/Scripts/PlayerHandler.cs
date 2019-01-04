@@ -10,7 +10,7 @@ public class PlayerHandler : MonoBehaviour {
     {
         Transform playerTransform = Instantiate(GameAssets.i.pfPlayerTransform, new Vector3(0, 0), Quaternion.identity);
         
-        HealthSystem healthSystem = new HealthSystem(200);
+        HealthSystem healthSystem = new HealthSystem(150 + (GameControl.control.lvl * 2));
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, new Vector3(0, 1.5f), Quaternion.identity, playerTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 
@@ -74,17 +74,15 @@ public class PlayerHandler : MonoBehaviour {
 
     //upgradable values
     int basicAtkDmg = 20;
-
-    int healingAmount = 45;
-    float healingCd = 3;
-
-    int aoeDmg = 49;
-    float aoeCd = 7;
-
-    int shootingDmg = 40;
+    int healingAmount = 30;
+    float healingCd = 5;
+    int aoeDmg = 36;
+    float aoeCd = 7.5f;
+    public int shootingDmg = 30;
     float shootingCd = 2;
+    float stunCd = 6;
 
-    float stunCd = 2;
+    int bombDmg = 30;
 
     //rewards values
     private int gold;
@@ -141,32 +139,33 @@ public class PlayerHandler : MonoBehaviour {
     {
         goldTextObject =  GameObject.Find("CurrentGold");
         goldText = goldTextObject.GetComponent<Text>();
-
         xpTextObject =  GameObject.Find("CurrentXp");
         xpText = xpTextObject.GetComponent<Text>();
-
         xpPercentageTextObject = GameObject.Find("XpBarHolder");
         xpPercentageText = xpPercentageTextObject.GetComponent<Text>();
-
         lvlTextObject = GameObject.Find("LvlText");
         lvlText = lvlTextObject.GetComponent<Text>();
         lvlText.text = GameControl.control.lvl.ToString();
 
         xp = GameControl.control.xp;
-
         gold = GameControl.control.gold;
         goldText.text = GameControl.control.gold.ToString(); 
-
         xpText.text = GameControl.control.xp.ToString();
-
         float tempPercentage = experienceSystem.GetXpPercent() * 100;
         xpPercentageText.text = Math.Round((tempPercentage), 1)  + "%";
-
         canvasObj = GameObject.FindGameObjectWithTag("Canvas");
-
-        basicAtkDmg += GameControl.control.lvl * 2;
-        aoeDmg += GameControl.control.lvl * 2;
-        shootingDmg += GameControl.control.lvl * 2;
+        
+        // basicAtkDmg += GameControl.control.lvl;
+        // aoeDmg += GameControl.control.lvl;
+        // shootingDmg += GameControl.control.lvl;
+        // healingAmount += GameControl.control.lvl;
+        float tmpLvl = GameControl.control.lvl;
+        double p = Mathf.Pow(tmpLvl, 0.5f);
+        Debug.Log(p);
+        basicAtkDmg += (int) p * 3;
+        aoeDmg += (int) p;
+        shootingDmg += (int) p;
+        healingAmount += (int) p;
 
         stunPoint.GetComponent<StunCollider>().enabled = false;
         stunPoint.GetComponent<BoxCollider2D>().enabled = false;
@@ -176,8 +175,6 @@ public class PlayerHandler : MonoBehaviour {
         cam = FindObjectOfType<Camera>();
 
         if (FindObjectOfType<Joystick>() != null) joystick = GameObject.Find("WalkingJoystick").GetComponent<Joystick>();
-
-       
     }
 
     private void Setup(HealthSystem healthSystem, ExperienceSystem experienceSystem) 
@@ -260,8 +257,22 @@ public class PlayerHandler : MonoBehaviour {
 
     void Update() 
     {
+        if (Input.GetMouseButton(0))
+        {
+        var mousePos = Input.mousePosition;
+        mousePos.z = 100; // select distance = 10 units from the camera
+        CreateText(Color.green, mousePos, new Vector2(0, 5f), "hello");
+        }
+
+        if (Input.GetMouseButton(1))
+        {
+            var mousePos = Input.mousePosition;
+            mousePos.z = 100; // select distance = 10 units from the camera
+            CreateText(Color.yellow, mousePos, new Vector2(0, 5f), "BITCONNECT");
+        }
+
         //TESTING PURPOSES//
-		if (Input.GetKeyDown("p")) basicAtkDmg = 100;
+		if (Input.GetKeyDown("p")) basicAtkDmg = 1000;
         if (Input.GetKeyDown("n")) GetRewards(0, 100);
         //---------------//
 
@@ -294,7 +305,6 @@ public class PlayerHandler : MonoBehaviour {
             y = joystick.Vertical;
         }  
 
-        //stop colliding with enemies
 		if (dashing)
 		{
 			StartCoroutine(Dash());
@@ -304,8 +314,6 @@ public class PlayerHandler : MonoBehaviour {
 		{
 			movement = new Vector2(x, y).normalized;
 			rb2d.velocity = movement * speed;
-
-            // if(movement == Vector2.zero) animator.SetBool("isWalking", false);
 
 			if((Input.GetButtonDown("Dash") || phoneDash) && timeStamp <= Time.time) {
                 dashing = true;
@@ -326,16 +334,12 @@ public class PlayerHandler : MonoBehaviour {
 		if(movement != Vector2.zero)
 		{
             animator.SetBool("isWalking", true);
-            animator.speed = 1;
             animator.SetFloat("WalkingH", x);
             animator.SetFloat("WalkingV", y);
-            m_CurrentClipInfo = this.animator.GetCurrentAnimatorClipInfo(0);
-            // Debug.Log(m_CurrentClipInfo[0].clip.name);
 		    lastX = x;
 	    	lastY = y;  
-        } else {
-            m_CurrentClipInfo = this.animator.GetCurrentAnimatorClipInfo(0);
-            GetAnimation(m_CurrentClipInfo[0].clip.name);
+        }  else {
+            animator.SetBool("isWalking", false);
         }
 	}
 
@@ -447,7 +451,7 @@ public class PlayerHandler : MonoBehaviour {
                         enemy.GetHealthSystem().Damage(basicAtkDmg);
                         enemy.KnockBack(200000);
 
-                        CreateText(Color.grey, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1), new Vector2(0, 5), "-" + basicAtkDmg);
+                        CreateText(Color.grey, cam.ScreenToWorldPoint(new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1)), new Vector2(0, 5), "-" + basicAtkDmg);
 
                         if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -499,7 +503,8 @@ public class PlayerHandler : MonoBehaviour {
         audioManager.Play("Explosion");
         gameObject.GetComponent<ParticleSystem>().Play();
 
-        Transform tempAoe = Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
+        // Transform tempAoe = Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
+
         StartCoroutine(FadeToF(aoeCd, aoeFire.GetComponent<Image>().color));
 
         Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(transform.position, attackRange * 4, whatIsEnemies);      
@@ -540,7 +545,7 @@ public class PlayerHandler : MonoBehaviour {
                     if (boss.GetHealthSystem().GetHealthPercent() < 0.25) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
-        Destroy(tempAoe.gameObject, 0.3f);
+        // Destroy(tempAoe.gameObject, 0.3f);
         yield return new WaitForSeconds(aoeCd);
         aoe = false;
 
@@ -571,7 +576,7 @@ public class PlayerHandler : MonoBehaviour {
         {
             stunPoint.GetComponent<BoxCollider2D>().enabled = true;
             stunPoint.GetComponent<Animator>().SetTrigger("Stun");
-            stunCd = 2;
+            stunCd = 5;
             stunPoint.position = transform.position + (new Vector3(lastX, lastY,0)) * 3.5f;
             float rot_z = Mathf.Atan2(lastY, lastX) * Mathf.Rad2Deg;
             stunPoint.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
@@ -661,7 +666,7 @@ public class PlayerHandler : MonoBehaviour {
 	{
 		if(hitInfo.gameObject.CompareTag("Bomb")) 
         {
-			Explosion(hitInfo, 50);
+			Explosion(hitInfo, bombDmg + (GameControl.control.lvl * 2));
             CreateText(Color.grey, new Vector3(transform.position.x, transform.position.y + 1), new Vector2(0, 5f), "-" + 50);	
 		}
         
@@ -725,8 +730,9 @@ public class PlayerHandler : MonoBehaviour {
     { 
         canvasObj = GameObject.FindGameObjectWithTag("CanvasMobile");
         tempTextBox = Instantiate(GameAssets.i.combatText, pos, transform.rotation);
-        tempTextBox.transform.SetParent(canvasObj.transform, false);
+        tempTextBox.transform.SetParent(canvasObj.transform, true);
         tempTextBox.transform.position = RectTransformUtility.WorldToScreenPoint(cam, pos);
+        // tempTextBox.transform.position = cam.ScreenToWorldPoint(pos);
         tempTextBox.GetComponent<Text>().color = color;
         tempTextBox.GetComponent<CombatText>().Initialize(2, displayDmg, dir * 12);
     }
@@ -735,51 +741,6 @@ public class PlayerHandler : MonoBehaviour {
     {   
         Vector2 knock = (this.transform.position - pos).normalized;
         gameObject.GetComponent<Rigidbody2D>().AddForce(knock * force);
-    }
-    
-    private void GetAnimation(string name)
-    {
-        switch (name)
-        {
-            case "WalkingLeft":
-                animator.speed = 0;
-                animator.Play("WalkingLeft", -1, 0f);
-                break;
-            case "WalkingRight":
-                animator.speed = 0;
-                animator.Play("WalkingRight", -1, 0f);
-                break;
-            case "WalkingUp":
-                animator.speed = 0;
-                animator.Play("WalkingUp", -1, 0f);
-                break;
-            case "WalkingDown":
-                animator.speed = 0;
-                animator.Play("WalkingDown", -1, 0f);
-                break;
-            case "WalkingDownLeft":
-                animator.speed = 0;
-                animator.Play("WalkingDownLeft", -1, 0f);
-                break;
-            case "WalkingDownRight":
-                animator.speed = 0;
-                animator.Play("WalkingDownRight", -1, 0f);
-                break;
-            case "WalkingUpLeft":
-                animator.speed = 0;
-                animator.Play("WalkingUpLeft", -1, 0f);
-                break;
-            case "WalkingUpRight":
-                animator.speed = 0;
-                animator.Play("WalkingUpRight", -1, 0f);
-                break;
-            case "AttackingRight":
-                animator.speed = 1;
-                animator.Play("AttackingRight", -1, 0f);
-                break;
-            default:
-                break;
-        }
     }
 
     private void SetStateBusy() 

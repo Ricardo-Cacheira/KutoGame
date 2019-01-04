@@ -50,6 +50,18 @@ public class GameControl : MonoBehaviour {
 		CalculateLevel();
 	}
 
+	void Update()
+	{
+		if (Input.GetKeyDown("v")) {
+			xp = 118000;
+			CalculateLevel();
+		}
+		if (Input.GetKeyDown("c")) {
+			xp = 1332000;
+			CalculateLevel();
+		}
+	}
+
 
 	public int GetLevel()
 	{
@@ -66,7 +78,7 @@ public class GameControl : MonoBehaviour {
 
 		for (int i = 1; i < 999; i++)
 		{
-			currReqXp = 200 + (i * i * 10);
+			currReqXp = 120 + (i * i * 10);
 			tempXp += currReqXp;
 
 			if (tempXp >= xp) 

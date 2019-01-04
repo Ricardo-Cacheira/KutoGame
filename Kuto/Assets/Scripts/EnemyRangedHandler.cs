@@ -10,7 +10,7 @@ public class EnemyRangedHandler : MonoBehaviour {
         Transform enemyTransform = Instantiate(GameAssets.i.pfEnemyRangedTransform, spawnPosition, Quaternion.identity);
         EnemyRangedHandler enemyRangedHandler = enemyTransform.GetComponent<EnemyRangedHandler>();
 
-        HealthSystem healthSystem = new HealthSystem(75);
+        HealthSystem healthSystem = new HealthSystem(75 + (GameControl.control.lvl * 9));
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 1.5f), Quaternion.identity, enemyTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
 

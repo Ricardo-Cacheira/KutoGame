@@ -7,12 +7,14 @@ public class SlowWave : MonoBehaviour {
 	public float speed = 10f;
 	Rigidbody2D rb;
 	public GameObject enemy;
-	private int dmg = 10;
+	private int dmg;
 
 	void Start () 
 	{
 		rb = GetComponent<Rigidbody2D>();
 		rb.velocity = transform.right * speed;
+
+		dmg = 10 + (GameControl.control.lvl);
 	}
 
 	void FixedUpdate()

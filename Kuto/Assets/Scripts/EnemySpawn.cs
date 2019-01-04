@@ -27,11 +27,10 @@ public class EnemySpawn : MonoBehaviour {
 		cameraShaker = (CameraShaker) FindObjectOfType(typeof (CameraShaker)); 
 		cameraShaker.enabled = false;
 		
-		if (this != null) {
-			door = this.transform.GetChild(0).gameObject;
-			doorRenderer = door.GetComponent<TilemapRenderer>();
-			doorCollider = door.GetComponent<TilemapCollider2D>();
-		}
+		door = this.transform.GetChild(0).gameObject;
+		doorRenderer = door.GetComponent<TilemapRenderer>();
+		doorCollider = door.GetComponent<TilemapCollider2D>();
+		
 		gameHandler.numOfSpawners++;
 	}
 
@@ -66,16 +65,18 @@ public class EnemySpawn : MonoBehaviour {
 
 			StartCoroutine(ShakeScreen());
 
-			randMelee = Random.Range(6, 10);
-			randRanged = Random.Range(8, 11);
-			randSlower = Random.Range(7.5f, 10);
-			randSpawnTime = Random.Range(16, 27);
+			randMelee = Random.Range(16, 27);
+			randRanged = Random.Range(15, 24);
+			randSlower = Random.Range(17, 25);
 			randNumBomb = Random.Range(2, 4);
 			randNumMissile = Random.Range(1, 3);
+			
+			float tmpLvl = GameControl.control.lvl;
+			randSpawnTime = Random.Range(1, 7.5f);
 
-			InvokeRepeating("MeleeSpawner", 1f, randMelee);
-			InvokeRepeating("RangedSpawner", 6f, randRanged);
-			InvokeRepeating("SlowerSpawner", 4f, randSlower);
+			InvokeRepeating("MeleeSpawner", 1.5f, randMelee - ((randMelee * tmpLvl) * 0.005f));
+			InvokeRepeating("RangedSpawner", 4f, randRanged );
+			InvokeRepeating("SlowerSpawner", 6f, randSlower );
 
 			for (int i = 0; i < randNumBomb; i++)
 			{
@@ -88,7 +89,7 @@ public class EnemySpawn : MonoBehaviour {
 				Instantiate(GameAssets.i.pfMissile, new Vector2(this.transform.position.x + randPos.x, this.transform.position.y + randPos.y), Quaternion.identity);
 			}
 			
-			StartCoroutine(DestroySelf(randSpawnTime));
+			StartCoroutine(DestroySelf((randSpawnTime + (tmpLvl/2f))));
 		}
 	}
 

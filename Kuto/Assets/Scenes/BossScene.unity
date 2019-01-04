@@ -588,7 +588,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1846552373}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!19719996 &254029504
 TilemapCollider2D:
@@ -3225,7 +3225,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1846552373}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!19719996 &400063122
 TilemapCollider2D:
@@ -4074,7 +4074,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 684954910}
-  - component: {fileID: 684954913}
   - component: {fileID: 684954912}
   - component: {fileID: 684954911}
   m_Layer: 10
@@ -4136,17 +4135,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 6.82, y: 12.07}
   m_EdgeRadius: 0
---- !u!114 &684954913
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 684954909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddd606ec53b28a44483a67195954f4db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &693450906
 GameObject:
   m_ObjectHideFlags: 0
@@ -5522,14 +5510,14 @@ MonoBehaviour:
     type: 2}
   pfVoidBall: {fileID: 4098324811796646, guid: 0c1119adee70943459b345e527e4e765, type: 2}
   pfSlowWave: {fileID: 4098324811796646, guid: 45fb48295e6429a4eb3e2e3febea4f5f, type: 2}
-  pfCircle: {fileID: 4234766291747788, guid: a7ff0dda51cf5014689baef9f281cc68, type: 2}
+  pfCircle: {fileID: 4070475656500378, guid: 3749717524811ef40a8137426e435b81, type: 2}
   pfCircleIce: {fileID: 4139396204799514, guid: dd1d487dbe6276d43a7fb81cbb7ebe56,
     type: 2}
   pfBomb: {fileID: 4653551745716920, guid: db9057990af13f34f9c51203e2e0066d, type: 2}
   pfMissile: {fileID: 4007934067688074, guid: 688df658b9a9ff943a8beb2c5466a3ff, type: 2}
   combatText: {fileID: 224028678680310062, guid: 23c021d2b8dac004c8092ec97f4b17ba,
     type: 2}
-  pfBoss: {fileID: 4468486734695176, guid: fe7a433c67028414aaf0e29ac7a0191f, type: 2}
+  pfBoss: {fileID: 4722056054928112, guid: fe7a433c67028414aaf0e29ac7a0191f, type: 2}
   testi: {fileID: 0}
 --- !u!1 &1056894311
 GameObject:
@@ -5660,7 +5648,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1205292905}
-  - component: {fileID: 1205292907}
   - component: {fileID: 1205292906}
   m_Layer: 10
   m_Name: EnemySpawnerBeach
@@ -5709,17 +5696,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1205292907
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1205292904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ddd606ec53b28a44483a67195954f4db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1280194057
 GameObject:
   m_ObjectHideFlags: 0
@@ -6994,6 +6970,7 @@ GameObject:
   - component: {fileID: 1846552373}
   - component: {fileID: 1846552375}
   - component: {fileID: 1846552374}
+  - component: {fileID: 1846552376}
   m_Layer: 0
   m_Name: BossLevel
   m_TagString: Rooms
@@ -7012,9 +6989,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 400063121}
   - {fileID: 1866469441}
   - {fileID: 254029503}
-  - {fileID: 400063121}
   m_Father: {fileID: 2058869426}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7025,7 +7002,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1846552372}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2fc06e50ba348da40bebbaf434dcf456, type: 3}
   m_Name: 
@@ -7042,6 +7019,17 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
+--- !u!114 &1846552376
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1846552372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddd606ec53b28a44483a67195954f4db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1863345020
 GameObject:
   m_ObjectHideFlags: 0
@@ -7126,7 +7114,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1846552373}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!483693784 &1866469442
 TilemapRenderer:

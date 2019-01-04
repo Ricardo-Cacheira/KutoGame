@@ -10,7 +10,7 @@ public class BossHandler : MonoBehaviour {
         Transform bossTransform = Instantiate(GameAssets.i.pfBoss, spawnPosition, Quaternion.identity);
         BossHandler bossHandler = bossTransform.GetComponent<BossHandler>();
 
-        HealthSystem healthSystem = new HealthSystem((1500 * GameControl.control.lvl));
+        HealthSystem healthSystem = new HealthSystem(700 + ((GameControl.control.lvl * GameControl.control.lvl) * 8));
 
         HealthBar healthBar = Instantiate(GameAssets.i.pfHealthBar, spawnPosition + new Vector3(0, 2.2f), Quaternion.identity, bossTransform).GetComponent<HealthBar>();
         healthBar.Setup(healthSystem);
@@ -68,10 +68,10 @@ public class BossHandler : MonoBehaviour {
 		animator = GetComponent<Animator>();
 		ice = new List<Transform>();
 		firstPhaseRoutine = StartCoroutine(FirstPhase());
-		
-		dmgCharge = 30;
-		dmgAoe = 45;
-		dmgShooting = 25;
+		int tmpLvl = GameControl.control.lvl;
+		dmgCharge = 20 + (tmpLvl*3);
+		dmgAoe = 40 + (tmpLvl*3);
+		dmgShooting = 23 + (tmpLvl*3);
 
 		spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -131,7 +131,7 @@ public class BossHandler : MonoBehaviour {
 	{
 		firstPhase = true;
 		state = State.Normal;
-		yield return new WaitForSeconds(2);
+		yield return new WaitForSeconds(3.5f);
 		state = State.Charging;
 		yield return new WaitForSeconds(20);
 		state = State.Normal;
@@ -140,6 +140,8 @@ public class BossHandler : MonoBehaviour {
 		state = State.Shooting;
 		yield return new WaitForSeconds(12);
 		animator.SetBool("shooting", false);
+		state = State.Normal;
+		yield return new WaitForSeconds(3);
 		firstPhase = false;
 	}
 	
@@ -147,7 +149,7 @@ public class BossHandler : MonoBehaviour {
 	{
 		secondPhase = true;
 		state = State.Aoe;
-		yield return new WaitForSeconds(41);
+		yield return new WaitForSeconds(35 + (GameControl.control.lvl * 0.1f));
 		state = State.Normal;
 		yield return new WaitForSeconds(4);
 		animator.SetBool("shooting", true);	
@@ -201,18 +203,11 @@ public class BossHandler : MonoBehaviour {
 		attackPoint.position = transform.position + (Vector3) moveDir.normalized;
 
 		yield return new WaitForSeconds(.18f);
-		Vector3 tmpDir = moveDir.normalized;
-		// diff = playerHandler.transform.position - this.transform.position;
+		attackPoint.GetComponent<ParticleSystem>().Play();
 
+		Vector3 tmpDir = moveDir.normalized;
 		if (tmpDir != Vector3.zero) {
 			
-			// transform.rotation = Quaternion.LookRotation(Vector3.forward, transform.position-PlayerHandler.playerHandler.GetPosition());
-			// Debug.Log(transform.rotation);
-			
-			//  transform.right = PlayerHandler.playerHandler.transform.position - transform.position;
-
-			//  Debug.Log(rot_z);
-
             if (tmpDir.y >= 0.5f && tmpDir.x <= -0.5f) {
                 gameObject.GetComponent<SpriteRenderer>().sprite = upleft;
 			}
@@ -248,7 +243,7 @@ public class BossHandler : MonoBehaviour {
 		Collider2D player = Physics2D.OverlapCircle(attackPoint.position, 1f, whatIsPlayer);
         if (player != null) {
             PlayerHandler.playerHandler.GetHealthSystem().Damage(dmgCharge);
-            PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(0, 5f), "-" + 30);
+            PlayerHandler.playerHandler.CreateText(Color.red, PlayerHandler.playerHandler.transform.position, new Vector2(0, 5f), "-" + dmgCharge);
 		}
 
 		waitingCharge = true;
@@ -316,7 +311,7 @@ public class BossHandler : MonoBehaviour {
 		aoeStarted = true;
 		iceStarted = true;
 		Transform aoeObj = Instantiate(GameAssets.i.pfCircle, PlayerHandler.playerHandler.GetPosition(), Quaternion.identity);		
-		aoeObj.gameObject.GetComponent<SpriteRenderer>().color = new Color(.1f, .1f, 1, .5f);
+		aoeObj.gameObject.GetComponent<SpriteRenderer>().color = new Color(.1f, .1f, 1, .2f);
 
 		if (iceStarted) StartCoroutine(SpawnIce());
 		if (aoeStarted) StartCoroutine(EndAoe(40));

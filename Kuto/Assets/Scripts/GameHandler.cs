@@ -31,6 +31,7 @@ public class GameHandler : MonoBehaviour {
 	public static bool noEnemies;
 	bool asPlayed;
 	bool asDied;
+	int lvl;
 
 	private void Start() 
 	{
@@ -47,6 +48,8 @@ public class GameHandler : MonoBehaviour {
 		enemySpawnerBeach = GameObject.Find("EnemySpawnerBeach");
 
 		numOfSpawners = enemySpawner.Length;
+
+		lvl = GameControl.control.lvl;
 	}
 
 	private void Update()
@@ -151,7 +154,7 @@ public class GameHandler : MonoBehaviour {
 		EnemyHandler enemyMeleeHandler = sender as EnemyHandler;
 		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemyMeleeHandlerList.Remove(enemyMeleeHandler);
-		playerHandler.GetRewards(20, 10);
+		playerHandler.GetRewards(20 + lvl, 10 + lvl);
 	}
 
 	private void EnemyRangedHandler_OnDead(object sender, System.EventArgs e) 
@@ -159,7 +162,7 @@ public class GameHandler : MonoBehaviour {
 		EnemyRangedHandler enemyRangedHandler = sender as EnemyRangedHandler;
 		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemyRangedHandlerList.Remove(enemyRangedHandler);
-		playerHandler.GetRewards(30, 7);
+		playerHandler.GetRewards(30 + lvl, 7 + lvl);
 	}
 
 	private void EnemySlowerHandler_OnDead(object sender, System.EventArgs e) 
@@ -167,13 +170,13 @@ public class GameHandler : MonoBehaviour {
 		EnemySlowerHandler enemySlowerHandler = sender as EnemySlowerHandler;
 		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemySlowerHandlerList.Remove(enemySlowerHandler);
-		playerHandler.GetRewards(10, 15);
+		playerHandler.GetRewards(10 + lvl, 15 + lvl);
 	}
 
 	private void BossHandler_OnDead(object sender, System.EventArgs e) 
 	{
 		FindObjectOfType<AudioManager>().Stop("Boss");
-		playerHandler.GetRewards(5000, 0);
+		playerHandler.GetRewards(500 + (lvl * 10), 0);
 		GameControl.control.isXpMax = false;
 		playerHandler.xp++;
 		playerHandler.SaveRewards();
@@ -261,9 +264,14 @@ public class GameHandler : MonoBehaviour {
 
 	private IEnumerator LoseMessage()
 	{
-		if (SceneManager.GetActiveScene().name == "BeachScene") FindObjectOfType<AudioManager>().Stop("Beach");
-		if (SceneManager.GetActiveScene().name == "BossScene") FindObjectOfType<AudioManager>().Stop("Boss");
-		if (SceneManager.GetActiveScene().name == "Prototype") FindObjectOfType<AudioManager>().Stop("JungleFight");
+		AudioManager am = FindObjectOfType<AudioManager>();
+		if (SceneManager.GetActiveScene().name == "BeachScene") am.Stop("Beach");
+		if (SceneManager.GetActiveScene().name == "BossScene") am.Stop("Boss");
+		if (SceneManager.GetActiveScene().name == "Prototype") 
+		{
+			am.Stop("JungleFight");
+			am.Stop("Jungle");
+		}
 		asDied = true;
 		GameObject objectLoseText = GameObject.Find("LoseText");
 		Text LoseText = objectLoseText.GetComponent<Text>();

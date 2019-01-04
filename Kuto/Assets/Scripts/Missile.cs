@@ -5,9 +5,11 @@ using UnityEngine;
 public class Missile : MonoBehaviour {
     private Rigidbody2D rb2d;
     GameObject player;
+    private int missileDmg;
     void Start() 
     {
         rb2d = GetComponent<Rigidbody2D>();
+        missileDmg = 25 + (GameControl.control.lvl * 2);
     }
 
     void FixedUpdate()

@@ -105,7 +105,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1367204615326668}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 100, y: -100, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 2.5, z: 1}
   m_Children: []
   m_Father: {fileID: 4928605384772228}
@@ -402,6 +402,7 @@ MonoBehaviour:
   animator: {fileID: 95971407172551570}
   timeBtwAttack: 0
   startTimeBtwAttack: 0.4
+  shootingDmg: 30
   xp: 0
   audioManager: {fileID: 0}
 --- !u!198 &198189428214026226

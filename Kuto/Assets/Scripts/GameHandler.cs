@@ -253,7 +253,7 @@ public class GameHandler : MonoBehaviour {
 		yield return new WaitForSeconds(6.5f);
 		WinText.enabled = false;
 		PlayerHandler.playerHandler.SaveRewards();
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene(1);
 	}
 	
 	private IEnumerator PlayGuessYouWin()
@@ -279,7 +279,7 @@ public class GameHandler : MonoBehaviour {
 		FindObjectOfType<AudioManager>().Play("MissionFail");
 		yield return new WaitForSeconds(3.5f);
 		LoseText.enabled = false;
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene(1);
 
 	}
 }	

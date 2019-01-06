@@ -39,6 +39,7 @@ public class GameControl : MonoBehaviour {
 	public int[] cooldowns = new int[3];
 	[Space]
 	public string username;
+	public string password;
 	public int gold;
 	public int shards;
 	public float vitality = 100;
@@ -52,6 +53,8 @@ public class GameControl : MonoBehaviour {
 	public bool loaded;
     public bool hasSave;
 	public GameObject phone;
+	private InputField Iusername;
+	private InputField Ipassword;
 
     void Awake()
 	{
@@ -68,7 +71,15 @@ public class GameControl : MonoBehaviour {
 
 	void Start()
 	{
-		CalculateLevel();
+		if(GameObject.Find("username") != null)
+		{
+			Iusername = GameObject.Find("username").GetComponent<InputField>();
+			Ipassword = GameObject.Find("password").GetComponent<InputField>();
+
+		
+			Iusername.Select();
+			Iusername.ActivateInputField();
+		}
 	}
 
 	void Update()
@@ -81,6 +92,13 @@ public class GameControl : MonoBehaviour {
 			xp = 1332000;
 			CalculateLevel();
 		}
+		if (Input.GetKey(KeyCode.Tab) && Ipassword != null) {
+			Ipassword.Select();
+			Ipassword.ActivateInputField();
+		}
+		if (Input.GetKey(KeyCode.Return) && Ipassword != null) {
+			Login();
+		}
 	}
 
 	void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -89,8 +107,14 @@ public class GameControl : MonoBehaviour {
         Debug.Log("OnSceneLoaded: " + scene.name);
         Debug.Log(mode);
 
-		if(!loaded)
-			Load();
+		if(scene.name == "town")
+		{
+			if(!loaded)
+			{
+				Load();
+				CalculateLevel();
+			}
+		}
     }
 
 	public void Connect()
@@ -146,6 +170,57 @@ public class GameControl : MonoBehaviour {
 		// InventoryManager.im.inventory.RefreshUI();
 	}
 
+	public void Login()
+	{
+		username = Iusername.text;
+		password = Ipassword.text;
+		var user = "";
+		var pass = "";
+		var query = new QueryDocument("username", username);
+		foreach (var document in playercollection.Find(query)) {			
+			user = document["username"].ToString();
+			pass = document["password"].ToString();
+		}
+
+		if(username == user && password == pass)
+			SceneManager.LoadScene ("town");
+	}
+
+	public void Register()
+	{
+		username = Iusername.text;
+		password = Ipassword.text;
+
+		PlayerData data = new PlayerData();
+
+		data.gold = 150;
+		data.shards = 5;
+		data.vitality = 100;
+		data.strength = 20;
+		data.xp = 0;
+
+		var items = itemDatabase.GetAll();
+
+		foreach (var item in items)
+		{
+			ItemData itemData = new ItemData(item.ID, item.level);
+			data.inventoryItems.Add(itemData);
+		}
+
+		data.equippedItems = new List<ItemData>(); 
+
+		var bsonDocument = data.ToBsonDocument();
+
+		playercollection.Insert(new BsonDocument{
+			{ "username", username },
+			{ "password", password },
+			{ "new",  true},
+			{ "data",  bsonDocument}
+		});
+		
+		SceneManager.LoadScene ("town");
+	}
+
 	public void Save() {
 		//Sometimes you'll find them by themselves but often they're with other configuration files like DLL files
 		FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.json");
@@ -196,16 +271,23 @@ public class GameControl : MonoBehaviour {
 	{
 		GameObject tut = GameObject.Find("Tutorial");
 		loaded = false;
-		if(File.Exists(Application.persistentDataPath + "/playerInfo.json"))
+
+		PlayerData data = new PlayerData();
+		
+		bool isNew = false;
+		var query = new QueryDocument("username", username);
+		foreach (var document in playercollection.Find(query)) {			
+			username = document["username"].ToString();
+			isNew = document["new"].ToBoolean();
+			data = BsonSerializer.Deserialize<PlayerData>(document["data"].ToBson());
+		}
+		
+		if(!isNew)
 		{
-			string json = File.ReadAllText(Application.persistentDataPath + "/playerInfo.json", System.Text.Encoding.Unicode);
-			PlayerData data = new PlayerData();
+			string json;
+			if(File.Exists(Application.persistentDataPath + "/playerInfo.json"))
+				json = File.ReadAllText(Application.persistentDataPath + "/playerInfo.json", System.Text.Encoding.Unicode);
 			
-			var query = new QueryDocument("username", "kuto");
-			foreach (var document in playercollection.Find(query)) {			
-				username = document["username"].ToString();
-				data = BsonSerializer.Deserialize<PlayerData>(document["data"].ToBson());
-			}
 
 			// if(data != null)
 			// data = JsonUtility.FromJson<PlayerData>(json);
@@ -245,14 +327,21 @@ public class GameControl : MonoBehaviour {
 			if (InventoryManager.im.inventory != null) InventoryManager.im.inventory.RefreshUI();
 			hasSave = true;
 		} else {
-			Debug.Log("Failed to load");
+			Debug.Log("New");
 			hasSave = false;
 			tut.GetComponent<Image>().enabled = true;
 			tut.GetComponent<Button>().enabled = true;
 			phone = GameObject.Find("Phone");
 			phone.SetActive(false);
+			BsonDocument result = playercollection.FindOne(query);
+			if (result != null)
+			{
+				result["new"] = false;
+				playercollection.Save(result);
+				// playercollection.Remove(Query.EQ("username", username));		
+			}
 		}
-			loaded = true;
+		loaded = true;
 	}
 
     public void Reset()

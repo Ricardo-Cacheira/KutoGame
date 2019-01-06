@@ -113,7 +113,7 @@ public class Shop : MonoBehaviour {
 
 		buttons.SetActive(false);
 
-        text.text = @"Left Click to "+ (mode == 1 ? "upgrade" : "sell") +System.Environment.NewLine+"cursor over item to see " + (mode == 1 ? "cost" : "reward");
+        text.text = @"Left Click to "+ (mode == 1 ? "upgrade." : "sell.") +System.Environment.NewLine+"Cursor over item to see " + (mode == 1 ? "cost" : "reward");
 
 		DefaultText();
 		if(mode == 1)

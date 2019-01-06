@@ -68,19 +68,15 @@ MonoBehaviour:
   - ID: 4
     name: Fissure
     description: Creates a fissure on the ground stunning all enemies in its path
-  inventoryItems:
-  - {fileID: 11400000, guid: 9a57668866e70724d836cc3af10aba69, type: 2}
-  equippedItems:
-  - {fileID: 11400000, guid: 6cebde1ab2c92814dadc7de4046f13b5, type: 2}
-  - {fileID: 11400000, guid: 68b507f1fd0cca2419a5b1895e4acada, type: 2}
-  - {fileID: 11400000, guid: 3d8faaac94d4aca4d9d13f19c7f6baf8, type: 2}
-  - {fileID: 11400000, guid: 26b59d42b17ce52408c5bdd0dedfbdaf, type: 2}
+  inventoryItems: []
+  equippedItems: []
   cooldowns: 000000000000000000000000
   username: kuto
-  gold: 200
+  password: kuto
+  gold: 0
   shards: 0
-  vitality: 100
-  strength: 20
+  vitality: 0
+  strength: 0
   xp: 0
   lvl: 0
   currReqXp: 0
@@ -88,3 +84,5 @@ MonoBehaviour:
   tempXp: 0
   isXpMax: 0
   loaded: 0
+  hasSave: 0
+  phone: {fileID: 0}

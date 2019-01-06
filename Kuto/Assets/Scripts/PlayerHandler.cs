@@ -579,7 +579,7 @@ public class PlayerHandler : MonoBehaviour {
 
     private void Stun()
     {
-        if(Input.GetKeyDown("m") && stunCd <= 0)
+        if(stunCd <= 0)
         {
             stunPoint.GetComponent<BoxCollider2D>().enabled = true;
             stunPoint.GetComponent<Animator>().SetTrigger("Stun");

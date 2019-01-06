@@ -68,6 +68,7 @@ public class Shop : MonoBehaviour {
 		InventoryManager.im.inventory.RefreshUI();
 		DefaultText();
 		DisplayResources();
+		InventoryManager.im.StatDisplay();
 	}
 
 	public void Upgrade(Item itemToUpgrade)
@@ -75,7 +76,7 @@ public class Shop : MonoBehaviour {
 		int goldCost = (int)(goldBase * (itemToUpgrade.level * goldFactor));
 		int shardCost = (int)(shardBase * (itemToUpgrade.level * shardFactor));
 
-		if(GameControl.control.gold - goldCost > 0 && GameControl.control.shards - shardCost > 0)
+		if(GameControl.control.gold - goldCost >= 0 && GameControl.control.shards - shardCost >= 0)
 		{
 			itemToUpgrade.level += 1;
 

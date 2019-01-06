@@ -281,6 +281,7 @@ public class PlayerHandler : MonoBehaviour {
         case State.Normal:
             HandleMovement();
             HandleAttack();
+            Stun();
             
             if((Input.GetButtonDown("Fire") || Input.GetAxisRaw("FireController") == 1 || phoneShooting))
                 {skills[GameControl.control.cooldowns[0]](); phoneShooting = false;}
@@ -458,7 +459,7 @@ public class PlayerHandler : MonoBehaviour {
                         enemy.GetHealthSystem().Damage(basicAtkDmg);
                         enemy.KnockBack(200000);
 
-                        CreateText(Color.grey, cam.ScreenToWorldPoint(new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1)), new Vector2(0, 5), "-" + basicAtkDmg);
+                        CreateText(Color.grey, new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1), new Vector2(0, 5), "-" + basicAtkDmg);
 
                         if (enemy.GetHealthSystem().GetHealthPercent() < 0.25) enemy.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
 
@@ -671,7 +672,7 @@ public class PlayerHandler : MonoBehaviour {
 		if(hitInfo.gameObject.CompareTag("Bomb")) 
         {
 			Explosion(hitInfo, bombDmg + (GameControl.control.lvl * 2));
-            CreateText(Color.grey, new Vector3(transform.position.x, transform.position.y + 1), new Vector2(0, 5f), "-" + 50);	
+            CreateText(Color.grey, new Vector3(transform.position.x, transform.position.y + 1), new Vector2(0, 5f), "-" + bombDmg);	
 		}
         
 		if (hitInfo.gameObject.CompareTag("Circle"))

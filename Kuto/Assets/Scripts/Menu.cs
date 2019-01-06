@@ -27,6 +27,7 @@ public class Menu : MonoBehaviour {
 	public bool isBeach, isTemple;
 	public GameObject blur;
 	public GameObject cooldowns;
+	private int clickCount;
 
 	void Awake () {
 		menu = this;
@@ -43,6 +44,8 @@ public class Menu : MonoBehaviour {
 			bossButton.gameObject.SetActive(true);	
 		else 
 			bossButton.gameObject.SetActive(false);
+
+		clickCount = 1;
 	}
 
 	void Update()
@@ -53,10 +56,6 @@ public class Menu : MonoBehaviour {
 			SceneManager.LoadScene("BeachScene");
 		if (Input.GetKeyDown("m"))
 			SceneManager.LoadScene("BossScene");
-		if (Input.GetKeyDown("i"))
-		{
-			// GameControl.control.DropItem();
-		}
 	}
 	
 	public void Junk()
@@ -118,10 +117,26 @@ public class Menu : MonoBehaviour {
 
 		if(missionsVisible)
 		{
-			foreach (Transform child in missionPanel.transform) {
+			foreach (Transform child in missionPanel.transform) 
 				GameObject.Destroy(child.gameObject);
-			}
+			
 			GenerateMission((MissionLocation)Random.Range(0, 2));
+		}
+	}
+
+	public void OnMouseDown()
+	{
+		clickCount++;
+		GameObject.Find("Tutorial").GetComponent<Animator>().SetInteger("TutInt", clickCount);
+	}
+
+	public void Tutorial()
+	{
+		OnMouseDown();
+		if (clickCount > 9)
+		{
+			GameObject.Find("Tutorial").SetActive(false);
+			GameControl.control.phone.SetActive(true);
 		}
 	}
 

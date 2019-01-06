@@ -13,6 +13,7 @@ using MongoDB.Driver.GridFS;
 using MongoDB.Driver.Linq;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Attributes;
+using UnityEngine.UI;
 
 public class GameControl : MonoBehaviour {
 
@@ -49,8 +50,10 @@ public class GameControl : MonoBehaviour {
 	public int tempXp;
 	public bool isXpMax;
 	public bool loaded;
+    public bool hasSave;
+	public GameObject phone;
 
-	void Awake()
+    void Awake()
 	{
 		if(control == null)
 		{
@@ -97,7 +100,6 @@ public class GameControl : MonoBehaviour {
 		database = server.GetDatabase("kuto");
 		playercollection= database.GetCollection<BsonDocument>("accounts");
 		Debug.Log ("1. ESTABLISHED CONNECTION");	
-
 	}
 
 	public void CalculateLevel()
@@ -192,6 +194,7 @@ public class GameControl : MonoBehaviour {
 	//keep in mind that this is jsut a way to do it
 	public void Load()
 	{
+		GameObject tut = GameObject.Find("Tutorial");
 		loaded = false;
 		if(File.Exists(Application.persistentDataPath + "/playerInfo.json"))
 		{
@@ -233,16 +236,23 @@ public class GameControl : MonoBehaviour {
 			string sceneName;
 			m_Scene = SceneManager.GetActiveScene();
 			sceneName = m_Scene.name;
-			if(sceneName == "town")
+			if(sceneName == "town") {
 				InventoryManager.im.Fill();
+				tut.GetComponent<Image>().enabled = false;
+				tut.GetComponent<Button>().enabled = false;
+			}
 			
 			if (InventoryManager.im.inventory != null) InventoryManager.im.inventory.RefreshUI();
-			
-			loaded = true;
-		}
-		else{
+			hasSave = true;
+		} else {
 			Debug.Log("Failed to load");
+			hasSave = false;
+			tut.GetComponent<Image>().enabled = true;
+			tut.GetComponent<Button>().enabled = true;
+			phone = GameObject.Find("Phone");
+			phone.SetActive(false);
 		}
+			loaded = true;
 	}
 
     public void Reset()

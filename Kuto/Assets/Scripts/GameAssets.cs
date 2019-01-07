@@ -14,6 +14,7 @@ public class GameAssets : MonoBehaviour {
     public Image potion;
     public Image aoeFire;
     public Image bullet;
+    public Image stun;
     public Image dash;
     public Transform pfPlayerTransform;
     public Transform pfEnemyTransform;

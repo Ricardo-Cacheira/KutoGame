@@ -65,11 +65,13 @@ public class PlayerHandler : MonoBehaviour {
     private bool healing = false;
     private bool aoe = false;
     private bool isShooting = false;
+    private bool isStunning = false;
     private bool hasFoundIntel = false;
 
     Image potion;
     Image aoeFire;
     Image bullet;
+    Image stun;
     Image dash;
 
     //upgradable values
@@ -132,6 +134,7 @@ public class PlayerHandler : MonoBehaviour {
         aoeFire = GameAssets.i.aoeFire;
         bullet = GameAssets.i.bullet;
         potion = GameAssets.i.potion;
+        stun = GameAssets.i.stun;
         dash = GameAssets.i.dash;
     }
 
@@ -215,6 +218,7 @@ public class PlayerHandler : MonoBehaviour {
         potion.enabled = false;
         bullet.enabled = false;
         aoeFire.enabled = false;
+        stun.enabled = false;
         for (int i = 0; i < GameControl.control.cooldowns.Length; i++)
         {
             switch(GameControl.control.cooldowns[i])
@@ -234,7 +238,8 @@ public class PlayerHandler : MonoBehaviour {
                     bullet.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
                     break;
                 case 4:
-                    //stun
+                    stun.enabled = true;
+                    stun.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
                     break;
                 default: break;
             }
@@ -248,7 +253,7 @@ public class PlayerHandler : MonoBehaviour {
         skills.Add(1, HandleHealing);
         skills.Add(2, HandleAoe);
         skills.Add(3, HandleShooting);
-        skills.Add(4, Stun);
+        skills.Add(4, HandleStun);
     }
 
     void None()
@@ -330,7 +335,8 @@ public class PlayerHandler : MonoBehaviour {
                 dashing = true;
                 audioManager.Play("Dash");
 
-                StartCoroutine(FadeToD(2, dash.GetComponent<Image>().color));
+                StartCoroutine(FadeTo(2, dash));
+                StartCoroutine(ResetDashColor(2));
             }
             else
                 phoneDash = false;
@@ -373,25 +379,6 @@ public class PlayerHandler : MonoBehaviour {
         this.GetComponent<SpriteRenderer>().color = tmp;
         gameObject.layer = 1;
 	}
-
-    IEnumerator FadeToD(float aTime, Color cooldownColor)
-    {
-        StartCoroutine(DashCdColor());
-        float alpha = cooldownColor.a;
-
-        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
-        {
-            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(0f, alpha,t));
-            dash.GetComponent<Image>().color = newColor;
-            yield return null;
-        }
-    }
-
-    IEnumerator DashCdColor()
-    {
-        yield return new WaitForSeconds(2);
-        dash.GetComponent<Image>().color = new Color(1, 1, 1, 1);
-    }
     
     private void HandleShooting() 
     {
@@ -402,29 +389,12 @@ public class PlayerHandler : MonoBehaviour {
     IEnumerator Shooting()
     {
         audioManager.Play("Bullet");
-        // phoneShooting = false;
-        StartCoroutine(FadeToS(0f, shootingCd, bullet.GetComponent<Image>().color));
+        StartCoroutine(FadeTo(shootingCd, bullet));
         Instantiate(GameAssets.i.pfFireBall, player.transform.position, Quaternion.identity);
         isShooting = true;
         yield return new WaitForSeconds(shootingCd);
+        bullet.color = new Color(1, 1, 1, 1);
         isShooting = false;
-    }
-
-    IEnumerator FadeToS(float aValue, float aTime, Color cooldownColor)
-    {
-        StartCoroutine(BulletCdColor());
-        float alpha = cooldownColor.a;
-        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
-        {
-            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(aValue, alpha,t));
-            bullet.GetComponent<Image>().color = newColor;
-            yield return null;
-        }
-    }
-    IEnumerator BulletCdColor()
-    {
-        yield return new WaitForSeconds(shootingCd);
-        bullet.GetComponent<Image>().color = new Color(1, 1, 1, 1);
     }
 
     private void HandleAttack() 
@@ -505,14 +475,11 @@ public class PlayerHandler : MonoBehaviour {
 
     IEnumerator AoE() 
     {
-        // phoneAoe = false;
         aoe = true;
         audioManager.Play("Explosion");
         gameObject.GetComponent<ParticleSystem>().Play();
 
-        // Transform tempAoe = Instantiate(GameAssets.i.pfCircle, transform.position, Quaternion.identity);
-
-        StartCoroutine(FadeToF(aoeCd, aoeFire.GetComponent<Image>().color));
+        StartCoroutine(FadeTo(aoeCd, aoeFire));
 
         Collider2D[] enemiesToDamage = Physics2D.OverlapCircleAll(transform.position, attackRange * 4, whatIsEnemies);      
 
@@ -552,47 +519,33 @@ public class PlayerHandler : MonoBehaviour {
                     if (boss.GetHealthSystem().GetHealthPercent() < 0.25) boss.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
                 }
             }
-        // Destroy(tempAoe.gameObject, 0.3f);
         yield return new WaitForSeconds(aoeCd);
+        aoeFire.color = new Color(1, 1, 1, 1);
         aoe = false;
 
     }
 
-    IEnumerator FadeToF(float aTime, Color cooldownColor)
+    private void HandleStun() 
     {
-        StartCoroutine(AoeCdColor());
-        float alpha = cooldownColor.a;
-
-        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
-        {
-            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(0f, alpha,t));
-            aoeFire.GetComponent<Image>().color = newColor;
-            yield return null;
-        }
+        if (!isStunning)
+            StartCoroutine(Stun());   
     }
-
-    IEnumerator AoeCdColor()
+    
+    IEnumerator Stun()
     {
-        yield return new WaitForSeconds(aoeCd);
-        aoeFire.GetComponent<Image>().color = new Color(1, 1, 1, 1);
-    }
+        StartCoroutine(FadeTo(stunCd, stun));
+        stunPoint.GetComponent<BoxCollider2D>().enabled = true;
+        stunPoint.GetComponent<Animator>().SetTrigger("Stun");
+        stunPoint.position = transform.position + (new Vector3(lastX, lastY,0)) * 3.5f;
+        float rot_z = Mathf.Atan2(lastY, lastX) * Mathf.Rad2Deg;
+        stunPoint.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
 
-    private void Stun()
-    {
-        if(stunCd <= 0)
-        {
-            stunPoint.GetComponent<BoxCollider2D>().enabled = true;
-            stunPoint.GetComponent<Animator>().SetTrigger("Stun");
-            stunCd = 5;
-            stunPoint.position = transform.position + (new Vector3(lastX, lastY,0)) * 3.5f;
-            float rot_z = Mathf.Atan2(lastY, lastX) * Mathf.Rad2Deg;
-            stunPoint.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
-
-            StartCoroutine(TmpBusy(0.3f));
-            StartCoroutine(FadeCrack());
-
-        } else
-            stunCd -= Time.deltaTime;
+        StartCoroutine(TmpBusy(0.3f));
+        StartCoroutine(FadeCrack());
+        isStunning = true;
+        yield return new WaitForSeconds(stunCd);
+        stun.color = new Color(1, 1, 1, 1);
+        isStunning = false;
     }
 
     private IEnumerator TmpBusy(float time)
@@ -626,32 +579,15 @@ public class PlayerHandler : MonoBehaviour {
     IEnumerator Healing()
 	{
         audioManager.Play("Potion");
-        // phoneHeal = false;
         healing = true;
         healthSystem.Heal(healingAmount);
         CreateText(Color.green, new Vector3(transform.position.x, transform.position.y + 1), new Vector2(0, 5f),"+" + healingAmount);
-        StartCoroutine(FadeTo(healingCd, potion.GetComponent<Image>().color));
+        StartCoroutine(FadeTo(healingCd, potion));
 		yield return new WaitForSeconds(healingCd);
+        potion.color = new Color(1, 1, 1, 1);
         healing = false;
 	}
 
-    IEnumerator FadeTo(float aTime, Color cooldownColor)
-    {
-        StartCoroutine(HealCdColor());
-        float alpha = cooldownColor.a;
-        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
-        {
-            Color newColor = new Color(.35f, .35f, .35f, Mathf.Lerp(0f, alpha,t));
-            potion.GetComponent<Image>().color = newColor;
-            yield return null;
-        }
-    }
-
-    IEnumerator HealCdColor()
-    {
-        yield return new WaitForSeconds(healingCd);
-        potion.GetComponent<Image>().color = new Color(1, 1, 1, 1);
-    }
 
     public void SlowPlayer()
     {
@@ -682,6 +618,23 @@ public class PlayerHandler : MonoBehaviour {
         }
 	}
 
+    IEnumerator FadeTo(float aTime, Image img)
+    {
+        img.fillAmount = 0;
+        img.color = new Color(1, 1, 1, 0.5f);
+        for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / aTime)
+        {
+            img.fillAmount += 1.0f / aTime * Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    IEnumerator ResetDashColor(float cdTime)
+    {
+        yield return new WaitForSeconds(cdTime);
+        dash.color = new Color(1, 1, 1, 1);
+    }
+    
     private void Explosion(Collider2D col, int dmg)
     {
         this.GetHealthSystem().Damage(dmg);

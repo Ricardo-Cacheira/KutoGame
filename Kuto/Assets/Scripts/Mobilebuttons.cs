@@ -5,11 +5,17 @@ using UnityEngine.UI;
 
 public class Mobilebuttons : MonoBehaviour {
 
-	public Sprite aoe, potion, bullet;
+	private Sprite aoe, potion, bullet, stun;
 	public Image k,l,i;
 	
 
 	void Start () {
+
+        aoe = GameAssets.i.aoeFire.sprite;
+        potion = GameAssets.i.potion.sprite;
+        bullet = GameAssets.i.bullet.sprite;
+        stun = GameAssets.i.stun.sprite;
+
 		Image[] buttons = new Image[] { k,l,i };
 		for (int i = 0; i < GameControl.control.cooldowns.Length; i++)
         {
@@ -28,7 +34,7 @@ public class Mobilebuttons : MonoBehaviour {
                     buttons[i].sprite = bullet; 
                     break;
                 case 4:
-                    //stun
+                    buttons[i].sprite = stun; 
                     break;
                 default: break;
             }

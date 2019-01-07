@@ -87,10 +87,12 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown("v")) {
 			xp = 118000;
 			CalculateLevel();
+			InventoryManager.im.StatDisplay();
 		}
 		if (Input.GetKeyDown("c")) {
 			xp = 1332000;
 			CalculateLevel();
+			InventoryManager.im.StatDisplay();
 		}
 		if (Input.GetKey(KeyCode.Tab) && Ipassword != null) {
 			Ipassword.Select();
@@ -165,15 +167,19 @@ public class GameControl : MonoBehaviour {
 		inventoryItems.Add(item);
 
 		return item;
-		// InventoryManager.im.Fill();
-			
-		// InventoryManager.im.inventory.RefreshUI();
 	}
 
 	public void Login()
 	{
 		username = Iusername.text;
 		password = Ipassword.text;
+
+		if (username.Length < 3)
+		{
+			ErrorMsg("Username must have at least 4 characters");
+			return;
+		}
+
 		var user = "";
 		var pass = "";
 		var query = new QueryDocument("username", username);
@@ -184,12 +190,38 @@ public class GameControl : MonoBehaviour {
 
 		if(username == user && password == pass)
 			SceneManager.LoadScene ("town");
+		else
+			ErrorMsg("Invalid username or password!");
+
 	}
+
+	private void ErrorMsg(string text)
+    { 
+        GameObject canvasObj = GameObject.FindGameObjectWithTag("Canvas");
+        RectTransform tempTextBox = Instantiate(GameAssets.i.combatText, new Vector3(Screen.width/2, Screen.height/2 + 50), transform.rotation);
+        tempTextBox.transform.SetParent(canvasObj.transform, true);
+        tempTextBox.GetComponent<Text>().color = Color.red;
+        tempTextBox.GetComponent<CombatText>().Initialize(2, text, new Vector3(0, 25));
+    }
 
 	public void Register()
 	{
+		
 		username = Iusername.text;
 		password = Ipassword.text;
+
+		if (username.Length < 3)
+		{
+			ErrorMsg("Username must have at least 4 characters");
+			return;
+		}
+		var query = Query.EQ("username", username);
+		BsonDocument result = playercollection.FindOne(query);
+		if (result != null)
+		{
+			ErrorMsg("Username already taken!");
+			return;
+		}
 
 		PlayerData data = new PlayerData();
 

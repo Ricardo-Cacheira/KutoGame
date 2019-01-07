@@ -160,6 +160,7 @@ public class GameHandler : MonoBehaviour {
 	private void EnemyRangedHandler_OnDead(object sender, System.EventArgs e) 
 	{
 		EnemyRangedHandler enemyRangedHandler = sender as EnemyRangedHandler;
+		enemyRangedHandler.GetComponent<ParticleSystem>().Play();
 		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemyRangedHandlerList.Remove(enemyRangedHandler);
 		playerHandler.GetRewards(30 + lvl, 7 + lvl);

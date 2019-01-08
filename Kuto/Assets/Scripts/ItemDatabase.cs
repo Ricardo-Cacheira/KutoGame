@@ -22,6 +22,11 @@ public class ItemDatabase : ScriptableObject
 		return null;
 	}
 
+	public Item[] GetAll()
+	{
+		return items;
+	}
+
 	public Item GetItemCopy(string itemID)
 	{
 		Item item = GetItemReference(itemID);

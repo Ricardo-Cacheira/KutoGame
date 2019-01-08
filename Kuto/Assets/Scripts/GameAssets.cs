@@ -14,6 +14,7 @@ public class GameAssets : MonoBehaviour {
     public Image potion;
     public Image aoeFire;
     public Image bullet;
+    public Image stun;
     public Image dash;
     public Transform pfPlayerTransform;
     public Transform pfEnemyTransform;
@@ -32,5 +33,10 @@ public class GameAssets : MonoBehaviour {
     public RectTransform combatText;
     public Transform pfBoss;
     public GameObject testi;
+
+    public ParticleSystem psMelee;
+    public ParticleSystem psRanged;
+    public ParticleSystem psSlow;
+    public ParticleSystem psBoss;
 
 }

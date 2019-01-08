@@ -68,6 +68,8 @@ public class Menu : MonoBehaviour {
 			
 			shopPanel.SetActive(false);
 			blur.SetActive(false);
+			
+			GameControl.control.Save();
 		}
 		else
 		{
@@ -87,10 +89,12 @@ public class Menu : MonoBehaviour {
 			InventoryManager.im.SaveInventory();
 			shopPanel.SetActive(false);
 			blur.SetActive(false);
+			GameControl.control.Save();
 			// cooldowns.SetActive(false);
 		}
 		else
-		{
+		{		
+			InventoryManager.im.StatDisplay();
 			inventory.transform.localPosition = new Vector3(0, 0, 0);
 			inventoryVisible = true;
 			blur.SetActive(true);

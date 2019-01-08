@@ -68,6 +68,7 @@ public class Shop : MonoBehaviour {
 		InventoryManager.im.inventory.RefreshUI();
 		DefaultText();
 		DisplayResources();
+		InventoryManager.im.StatDisplay();
 	}
 
 	public void Upgrade(Item itemToUpgrade)
@@ -75,7 +76,7 @@ public class Shop : MonoBehaviour {
 		int goldCost = (int)(goldBase * (itemToUpgrade.level * goldFactor));
 		int shardCost = (int)(shardBase * (itemToUpgrade.level * shardFactor));
 
-		if(GameControl.control.gold - goldCost > 0 && GameControl.control.shards - shardCost > 0)
+		if(GameControl.control.gold - goldCost >= 0 && GameControl.control.shards - shardCost >= 0)
 		{
 			itemToUpgrade.level += 1;
 
@@ -108,11 +109,11 @@ public class Shop : MonoBehaviour {
     public void Choose(int action)
     {
         mode = action;
-        Debug.Log("mode " + mode);
+        // Debug.Log("mode " + mode);
 
 		buttons.SetActive(false);
 
-        text.text = @"Left Click to "+ (mode == 1 ? "upgrade" : "sell") +System.Environment.NewLine+"cursor over item to see " + (mode == 1 ? "cost" : "reward");
+        text.text = @"Left-click to "+ (mode == 1 ? "upgrade." : "sell.") +System.Environment.NewLine+"Cursor over item to see " + (mode == 1 ? "cost" : "reward");
 
 		DefaultText();
 		if(mode == 1)

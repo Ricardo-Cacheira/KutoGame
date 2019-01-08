@@ -14,5 +14,5 @@ MonoBehaviour:
   id: 9a57668866e70724d836cc3af10aba69
   icon: {fileID: 21300000, guid: 71e1426007dc7c14d901d182a08ab4d3, type: 3}
   level: 1
-  skillID: 2
+  skillID: 4
   equipmentType: 0

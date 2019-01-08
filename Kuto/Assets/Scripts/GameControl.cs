@@ -101,6 +101,13 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKey(KeyCode.Return) && Ipassword != null) {
 			Login();
 		}
+		if (Input.GetKey(KeyCode.Tab) && Ipassword != null) {
+			Ipassword.Select();
+			Ipassword.ActivateInputField();
+		}
+		if (Input.GetKey(KeyCode.Return) && Ipassword != null) {
+			Login();
+		}
 	}
 
 	void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -163,7 +170,12 @@ public class GameControl : MonoBehaviour {
 	public Item DropItem()
 	{
 		Item item = itemDatabase.GetItemCopy(itemDatabase.RandomID());
-		item.level = 1;
+		int itemLevel = UnityEngine.Random.Range(lvl-10, lvl+2);
+		if(itemLevel <= 0)
+			item.level = 1;
+		else
+			item.level = itemLevel;
+		
 		inventoryItems.Add(item);
 
 		return item;

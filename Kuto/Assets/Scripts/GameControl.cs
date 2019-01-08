@@ -87,12 +87,10 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown("v")) {
 			xp = 118000;
 			CalculateLevel();
-			InventoryManager.im.StatDisplay();
 		}
 		if (Input.GetKeyDown("c")) {
 			xp = 1332000;
 			CalculateLevel();
-			InventoryManager.im.StatDisplay();
 		}
 		if (Input.GetKey(KeyCode.Tab) && Ipassword != null) {
 			Ipassword.Select();
@@ -163,7 +161,12 @@ public class GameControl : MonoBehaviour {
 	public Item DropItem()
 	{
 		Item item = itemDatabase.GetItemCopy(itemDatabase.RandomID());
-		item.level = 1;
+		int itemLevel = UnityEngine.Random.Range(lvl-10, lvl+2);
+		if(itemLevel <= 0)
+			item.level = 1;
+		else
+			item.level = itemLevel;
+		
 		inventoryItems.Add(item);
 
 		return item;

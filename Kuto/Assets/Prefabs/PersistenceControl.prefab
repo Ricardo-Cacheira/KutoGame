@@ -68,6 +68,9 @@ MonoBehaviour:
   - ID: 4
     name: Fissure
     description: Creates a fissure on the ground stunning all enemies in its path
+  - ID: 5
+    name: Dash
+    description: Dash through your enemies
   inventoryItems: []
   equippedItems: []
   cooldowns: 000000000000000000000000

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class PlayerHandler : MonoBehaviour {
     public static PlayerHandler CreatePlayer() 
@@ -28,7 +29,7 @@ public class PlayerHandler : MonoBehaviour {
 
     #region VARIABLES
     
-    [SerializeField] int[] itemSkills = new int[4];
+    [SerializeField] int[] skillLevel = new int[3];
     private Dictionary<int, Action> skills = new Dictionary<int, Action>();
 
     public static PlayerHandler playerHandler;
@@ -83,6 +84,7 @@ public class PlayerHandler : MonoBehaviour {
     public int shootingDmg = 30;
     float shootingCd = 2;
     float stunCd = 6;
+    public float stunDuration = 3;
 
     int bombDmg = 30;
 
@@ -189,9 +191,9 @@ public class PlayerHandler : MonoBehaviour {
         healthSystem.OnHealthDecrease += HealthSystem_OnHealthDecrease;
 
         SetupSkills();
-        for (int i = 0; i < GameControl.control.equippedItems.Count; i++)
+        for (int i = 0; i < GameControl.control.cooldowns.Count(); i++)
         {
-            itemSkills[i] = GameControl.control.equippedItems[i].skillID;
+            skillLevel[i] = GameControl.control.equippedItems.First(item => item.skillID == GameControl.control.cooldowns[i]).level;
         }
         SetupSkillIcons();
 
@@ -226,18 +228,22 @@ public class PlayerHandler : MonoBehaviour {
                 case 0:
                     break;
                 case 1:
+                    healingAmount += (int)skillLevel[i]^(1/2);
                     potion.enabled = true;
                     potion.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
                     break;
                 case 2:
+                    aoeDmg += (int)skillLevel[i]^(1/2);
                     aoeFire.enabled = true;
                     aoeFire.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
                     break;
                 case 3:
+                    shootingDmg += (int)skillLevel[i]^(1/2);
                     bullet.enabled = true;
                     bullet.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
                     break;
                 case 4:
+                    stunDuration += (int)skillLevel[i]^(1/2);
                     stun.enabled = true;
                     stun.rectTransform.anchoredPosition = new Vector3(-225 + (100*i),21.5f,0);
                     break;
@@ -372,7 +378,8 @@ public class PlayerHandler : MonoBehaviour {
         tmp.a = .35f;
         this.GetComponent<SpriteRenderer>().color = tmp;
         gameObject.layer = 15;
-		yield return new WaitForSeconds(dashTime);
+        EquippableItem boots = GameControl.control.equippedItems[GameControl.control.equippedItems.Count - 1];
+		yield return new WaitForSeconds(dashTime - (boots.skillID == 5 ? boots.level-1 * 0.1f : 0));
         animator.speed = 1;
 		dashing = false;
         tmp.a = 1f;

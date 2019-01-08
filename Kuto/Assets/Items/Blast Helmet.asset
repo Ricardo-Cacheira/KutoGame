@@ -9,10 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9129fb0533b4758409329c3920ec4b17, type: 3}
-  m_Name: Gasmask
+  m_Name: Blast Helmet
   m_EditorClassIdentifier: 
-  id: 9a57668866e70724d836cc3af10aba69
-  icon: {fileID: 21300000, guid: 71e1426007dc7c14d901d182a08ab4d3, type: 3}
+  id: 2fb5e45d929a2c94b9c23db87d62a82a
+  icon: {fileID: 21300000, guid: 09025f0a02309e64293c28f3a4385edd, type: 3}
   level: 1
-  skillID: 4
+  skillID: 2
   equipmentType: 0

@@ -1211,6 +1211,7 @@ MonoBehaviour:
   potion: {fileID: 0}
   aoeFire: {fileID: 0}
   bullet: {fileID: 0}
+  stun: {fileID: 0}
   dash: {fileID: 0}
   pfPlayerTransform: {fileID: 0}
   pfEnemyTransform: {fileID: 0}

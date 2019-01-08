@@ -9,10 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9129fb0533b4758409329c3920ec4b17, type: 3}
-  m_Name: Gasmask
+  m_Name: Stunning Gloves
   m_EditorClassIdentifier: 
-  id: 9a57668866e70724d836cc3af10aba69
-  icon: {fileID: 21300000, guid: 71e1426007dc7c14d901d182a08ab4d3, type: 3}
+  id: 68a40a94176d90f4d99b6801b0a46605
+  icon: {fileID: 21300000, guid: e7c7635cad31d2b47824df768d02bd0e, type: 3}
   level: 1
   skillID: 4
-  equipmentType: 0
+  equipmentType: 2

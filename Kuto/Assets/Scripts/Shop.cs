@@ -60,12 +60,12 @@ public class Shop : MonoBehaviour {
 
 	public void Sell(Item itemToSell)
 	{
-		int goldMult;
-		int shardMult;
+		float goldMult = 1f;
+		float shardMult = 1f;
 		for (int i = 0; i < itemToSell.level; i++)
 		{
-			goldCost = (int)(goldBase * (itemToSell.level * goldFactor));
-			shardCost = (int)(shardBase * (itemToSell.level * shardFactor));
+			goldMult += (itemToSell.level * goldFactor);
+			shardMult += (itemToSell.level * shardFactor);
 		}
 		GameControl.control.gold += (int)(goldBase * goldMult)/3;
 		GameControl.control.shards += (int)(shardBase * shardMult)/3;
@@ -106,12 +106,12 @@ public class Shop : MonoBehaviour {
 			return new Vector2(goldCost,shardCost);
 		}else if(mode == 2)
 		{
-			int goldMult;
-			int shardMult;
+			float goldMult = 1f;
+			float shardMult = 1f;
 			for (int i = 0; i < level; i++)
 			{
-				goldCost = (int)(goldBase * (level * goldFactor));
-				shardCost = (int)(shardBase * (level * shardFactor));
+				goldMult += (level * goldFactor);
+				shardMult += (level * shardFactor);
 			}
 			int goldCost = (int)(goldBase * goldMult)/3;
 			int shardCost = (int)(shardBase * shardMult)/3;

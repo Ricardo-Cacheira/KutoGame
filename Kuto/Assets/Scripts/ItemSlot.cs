@@ -29,7 +29,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log(Application.platform);
+        // Debug.Log(Application.platform);
 
 		if(eventData != null && eventData.button == PointerEventData.InputButton.Right)
 		{
@@ -38,7 +38,7 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 				OnRightClickEvent(Item);
 				tooltip.HideToolTip();
 			}
-            Debug.Log("Right Touch");
+            // Debug.Log("Right Touch");
 		}else if(eventData != null && eventData.button == PointerEventData.InputButton.Left)
 		{
 			if(Item != null && OnLeftClickEvent != null)
@@ -46,15 +46,15 @@ public class ItemSlot : MonoBehaviour , IPointerClickHandler, IPointerEnterHandl
 				#if UNITY_EDITOR
 					#if UNITY_ANDROID
 						OnMobileClickedEvent(Item);
-						Debug.Log("Mobile Touch");
+						// Debug.Log("Mobile Touch");
 					#endif
 				#endif
 				if(Application.platform == RuntimePlatform.Android)
 				{
 					OnMobileClickedEvent(Item);
-					Debug.Log("Mobile Touch");
+					// Debug.Log("Mobile Touch");
 				}else{
-		            Debug.Log("Left Touch");
+		            // Debug.Log("Left Touch");
 					OnLeftClickEvent(Item);
 				}
 					tooltip.HideToolTip();

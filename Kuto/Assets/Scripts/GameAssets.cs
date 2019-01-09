@@ -34,4 +34,9 @@ public class GameAssets : MonoBehaviour {
     public Transform pfBoss;
     public GameObject testi;
 
+    public ParticleSystem psMelee;
+    public ParticleSystem psRanged;
+    public ParticleSystem psSlow;
+    public ParticleSystem psBoss;
+
 }

@@ -75,8 +75,8 @@ public class EnemySpawn : MonoBehaviour {
 			randSpawnTime = Random.Range(1, 7.5f);
 
 			InvokeRepeating("MeleeSpawner", 1.5f, randMelee - ((randMelee * tmpLvl) * 0.005f));
-			InvokeRepeating("RangedSpawner", 4f, randRanged );
-			InvokeRepeating("SlowerSpawner", 6f, randSlower );
+			InvokeRepeating("RangedSpawner", 4f, randRanged -((randMelee * tmpLvl) * 0.005f));
+			InvokeRepeating("SlowerSpawner", 6f, randSlower -((randMelee * tmpLvl) * 0.005f));
 
 			for (int i = 0; i < randNumBomb; i++)
 			{

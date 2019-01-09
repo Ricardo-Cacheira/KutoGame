@@ -8,9 +8,7 @@ public class Mobilebuttons : MonoBehaviour {
 	private Sprite aoe, potion, bullet, stun;
 	public Image k,l,i;
 	
-
 	void Start () {
-
         aoe = GameAssets.i.aoeFire.sprite;
         potion = GameAssets.i.potion.sprite;
         bullet = GameAssets.i.bullet.sprite;
@@ -40,8 +38,5 @@ public class Mobilebuttons : MonoBehaviour {
             }
 
         }
-		// k.targetGraphic = newImage;
 	}
-	
-	
 }

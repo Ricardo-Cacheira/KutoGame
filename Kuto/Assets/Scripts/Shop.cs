@@ -123,11 +123,11 @@ public class Shop : MonoBehaviour {
     public void Choose(int action)
     {
         mode = action;
-        Debug.Log("mode " + mode);
+        // Debug.Log("mode " + mode);
 
 		buttons.SetActive(false);
 
-        text.text = @"Left Click to "+ (mode == 1 ? "upgrade." : "sell.") +System.Environment.NewLine+"Cursor over item to see " + (mode == 1 ? "cost" : "reward");
+        text.text = @"Left-click to "+ (mode == 1 ? "upgrade." : "sell.") +System.Environment.NewLine+"Cursor over item to see " + (mode == 1 ? "cost" : "reward");
 
 		DefaultText();
 		if(mode == 1)

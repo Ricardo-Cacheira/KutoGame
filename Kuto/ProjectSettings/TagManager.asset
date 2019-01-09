@@ -21,6 +21,8 @@ TagManager:
   - Boss
   - reward
   - CanvasMobile
+  - UIDraggable
+  - Faya
   layers:
   - Default
   - TransparentFX

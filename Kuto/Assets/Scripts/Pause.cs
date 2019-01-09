@@ -46,7 +46,7 @@ public class Pause : MonoBehaviour {
 	public void Quit()
 	{
 		#if UNITY_EDITOR
-			Debug.Log("Quit!");
+			// Debug.Log("Quit!");
 		#endif
 		Application.Quit();
 	}

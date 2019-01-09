@@ -75,7 +75,7 @@ public class GameHandler : MonoBehaviour {
 				noEnemies = true;
 				if (numOfSpawners == 0 || enemySpawnerBeach == null) 
 				{
-					playerHandler.SaveRewards();
+					// playerHandler.SaveRewards();
 					if (!asPlayed) 
 					{
 						StartCoroutine(WinMessage());
@@ -155,6 +155,7 @@ public class GameHandler : MonoBehaviour {
 		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemyMeleeHandlerList.Remove(enemyMeleeHandler);
 		playerHandler.GetRewards(20 + lvl, 10 + lvl);
+		Instantiate(GameAssets.i.psMelee, enemyMeleeHandler.transform.position, Quaternion.identity);
 	}
 
 	private void EnemyRangedHandler_OnDead(object sender, System.EventArgs e) 
@@ -164,6 +165,8 @@ public class GameHandler : MonoBehaviour {
 		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemyRangedHandlerList.Remove(enemyRangedHandler);
 		playerHandler.GetRewards(30 + lvl, 7 + lvl);
+		Instantiate(GameAssets.i.psRanged, enemyRangedHandler.transform.position, Quaternion.identity);
+
 	}
 
 	private void EnemySlowerHandler_OnDead(object sender, System.EventArgs e) 
@@ -172,10 +175,13 @@ public class GameHandler : MonoBehaviour {
 		FindObjectOfType<AudioManager>().Play("SlashEnemyKill");
 		enemySlowerHandlerList.Remove(enemySlowerHandler);
 		playerHandler.GetRewards(10 + lvl, 15 + lvl);
+		Instantiate(GameAssets.i.psSlow, enemySlowerHandler.transform.position, Quaternion.identity);
+
 	}
 
 	private void BossHandler_OnDead(object sender, System.EventArgs e) 
 	{
+		BossHandler bossHandler = sender as BossHandler;
 		FindObjectOfType<AudioManager>().Stop("Boss");
 		playerHandler.GetRewards(500 + (lvl * 10), 0);
 		GameControl.control.isXpMax = false;
@@ -190,6 +196,8 @@ public class GameHandler : MonoBehaviour {
 			StartCoroutine(PlayGuessYouWin());
 			asPlayed = true;
 		}
+
+		Instantiate(GameAssets.i.psBoss, bossHandler.transform.position, Quaternion.identity);
 	}
 
 	private EnemyHandler GetClosestEnemyHandler(Vector3 playerPosition) 

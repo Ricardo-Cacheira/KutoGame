@@ -87,10 +87,19 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown("v")) {
 			xp = 118000;
 			CalculateLevel();
+			InventoryManager.im.StatDisplay();
 		}
 		if (Input.GetKeyDown("c")) {
 			xp = 1332000;
 			CalculateLevel();
+			InventoryManager.im.StatDisplay();
+		}
+		if (Input.GetKey(KeyCode.Tab) && Ipassword != null) {
+			Ipassword.Select();
+			Ipassword.ActivateInputField();
+		}
+		if (Input.GetKey(KeyCode.Return) && Ipassword != null) {
+			Login();
 		}
 		if (Input.GetKey(KeyCode.Tab) && Ipassword != null) {
 			Ipassword.Select();
@@ -104,8 +113,8 @@ public class GameControl : MonoBehaviour {
 	void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
 		Connect();
-        Debug.Log("OnSceneLoaded: " + scene.name);
-        Debug.Log(mode);
+        // Debug.Log("OnSceneLoaded: " + scene.name);
+        // Debug.Log(mode);
 
 		if(scene.name == "town")
 		{
@@ -194,7 +203,7 @@ public class GameControl : MonoBehaviour {
 		if(username == user && password == pass)
 			SceneManager.LoadScene ("town");
 		else
-			ErrorMsg("Invalid username or password!");
+			ErrorMsg("Invalid username and/or password!");
 
 	}
 

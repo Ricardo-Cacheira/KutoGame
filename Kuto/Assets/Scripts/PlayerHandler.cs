@@ -120,6 +120,8 @@ public class PlayerHandler : MonoBehaviour {
     Camera cam;
     AnimatorClipInfo[] m_CurrentClipInfo;
 
+    bool isInvincible;
+
     #endregion
 
     private enum State 
@@ -160,13 +162,8 @@ public class PlayerHandler : MonoBehaviour {
         xpPercentageText.text = Math.Round((tempPercentage), 1)  + "%";
         canvasObj = GameObject.FindGameObjectWithTag("Canvas");
         
-        // basicAtkDmg += GameControl.control.lvl;
-        // aoeDmg += GameControl.control.lvl;
-        // shootingDmg += GameControl.control.lvl;
-        // healingAmount += GameControl.control.lvl;
         float tmpLvl = GameControl.control.lvl;
         double p = Mathf.Pow(tmpLvl, 0.5f);
-        Debug.Log(p);
         basicAtkDmg += (int) p * 3;
         aoeDmg += (int) p;
         shootingDmg += (int) p;
@@ -250,6 +247,7 @@ public class PlayerHandler : MonoBehaviour {
                 default: break;
             }
 
+
         }
     }
 
@@ -283,8 +281,14 @@ public class PlayerHandler : MonoBehaviour {
         }
 
         //TESTING PURPOSES//
-		if (Input.GetKeyDown("p")) basicAtkDmg = 1000;
-        if (Input.GetKeyDown("n")) GetRewards(0, 100);
+		if (Input.GetKeyDown("p")) basicAtkDmg += 1000;
+        if (Input.GetKeyDown("n")) 
+        {
+            if (isInvincible) isInvincible = false;
+            else if (!isInvincible) isInvincible = true;
+        }  
+
+        if (isInvincible) Invincible();
         //---------------//
         
         switch (state) 
@@ -315,6 +319,11 @@ public class PlayerHandler : MonoBehaviour {
         case State.Dead:
             break;
         }
+    }
+
+    private void Invincible()
+    {
+        GetHealthSystem().Heal(1000);
     }
 
     private void HandleMovement() 
@@ -541,6 +550,7 @@ public class PlayerHandler : MonoBehaviour {
     IEnumerator Stun()
     {
         StartCoroutine(FadeTo(stunCd, stun));
+        audioManager.Play("Cracka");
         stunPoint.GetComponent<BoxCollider2D>().enabled = true;
         stunPoint.GetComponent<Animator>().SetTrigger("Stun");
         stunPoint.position = transform.position + (new Vector3(lastX, lastY,0)) * 3.5f;

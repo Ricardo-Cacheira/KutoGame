@@ -77,7 +77,7 @@ public class GameApi : MonoBehaviour
 
     private void SendRequest(WWW www, ResultCallback callback)
     {
-        Debug.Log("GameApi: send request to " + www.url);
+        // Debug.Log("GameApi: send request to " + www.url);
 
         StartCoroutine(ExecuteRequest(www, callback));
     }

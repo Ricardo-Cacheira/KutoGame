@@ -87,12 +87,10 @@ public class GameControl : MonoBehaviour {
 		if (Input.GetKeyDown("v")) {
 			xp = 118000;
 			CalculateLevel();
-			InventoryManager.im.StatDisplay();
 		}
 		if (Input.GetKeyDown("c")) {
 			xp = 1332000;
 			CalculateLevel();
-			InventoryManager.im.StatDisplay();
 		}
 		if (Input.GetKey(KeyCode.Tab) && Ipassword != null) {
 			Ipassword.Select();

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Healing Gloves
   m_EditorClassIdentifier: 
   id: a94cf63686584b442967d89ed7979a83
-  icon: {fileID: 21300062, guid: 63d2a355ab163f6489bb8b2b167e76da, type: 3}
+  icon: {fileID: 21300000, guid: a9ec068a844db494da488fa725b39425, type: 3}
   level: 1
   skillID: 1
   equipmentType: 2
